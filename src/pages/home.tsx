@@ -1,67 +1,92 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
+import { Button, Container, Alert } from 'react-bootstrap';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase-config'
 
 import NavBar from '../components/Navbar'
-import { Button, Container } from 'react-bootstrap';
+
+import '../styles/pages/home.sass';
 
 const groupPhoto = require('../assets/KA-16_photo.jpeg');
 
 const HomePage: FC = (props) => {
+  const [user, setUser] = useState<any | null>({});
+
+  onAuthStateChanged( auth, (currentuser) => {
+      setUser(currentuser);
+  })
+
   return (
     <>
       <NavBar/>
-      <Container className="mt-5 text-center">
-        <img
-          src={ groupPhoto }
-          width="150"
-          height="150"
-          className="d-inline-block align-top rounded-circle"
-          alt="studen logo"
-        />
-        <h2 className="mt-4 text-white">
-          KA-16
-        </h2>
-      </Container>
-      <h1 className="mt-5 text-white text-center">
-        Посилання на конференції
-      </h1>
-      <hr/>
-      <Container className="d-grid gap-3 mt-5">
-        <Button variant="light" href="https://meet.google.com/bwy-tbvf-kfr" size="lg">
-          <h3>
-            Матаналіз 🧮
-          </h3>
-        </Button>
-        <Button variant="light" href="https://us04web.zoom.us/j/2998834367?pwd=MFM1a1NKNCtPMDN5R2FOMnJaMlJBdz09" size="lg">
-          <h3>
-            Дискретка 🧣
-          </h3>
-        </Button>
-        <Button variant="light" href="https://meet.google.com/wzf-rdra-vxz" size="lg">
-          <h3>
-            Лінал (лекція) 🐏
-          </h3>
-        </Button>
-        <Button variant="light" href="https://meet.google.com/ioc-ouus-ozh" size="lg">
-          <h3>
-            Лінал (практика) 🙎🏼‍♀️
-          </h3>
-        </Button>
-        <Button variant="light" href="https://us02web.zoom.us/j/4803998293?pwd=U0J2cS85eDdJK0JYZDYxbk9yQnlJdz09" size="lg">
-          <h3>
-            Англійська мова 🇬🇧
-          </h3>
-        </Button>
-        <Button variant="light" href="https://us04web.zoom.us/j/7162303536?pwd=U3Q3M0JSTm1uL2MyNms0d3k0V2FrZz09" size="lg">
-          <h3>
-            ФIзкультура (ПРактика) 🏃
-          </h3>
-        </Button>
-        <Button variant="light" href=" https://meet.google.com/zog-yorh-yto" size="lg">
-          <h3>
-            Риторика (Практика) 👩🏼‍🎓
-          </h3>
-        </Button>
-      </Container>
+      {
+        auth.currentUser != null ?
+        <Container className="mt-5">
+          <h1 className="text-white">
+            Home (logged in as: {auth.currentUser.email})
+          </h1>
+          <Alert variant="dark box mt-5">
+            <h2 className="text-white">
+            Schedule
+            </h2>
+            <Container className="d-grid gap-3 mt-5">
+              <Button variant="danger" href="https://meet.google.com/bwy-tbvf-kfr" size="lg">
+                <h4>
+                  Join <b>current</b> conference
+                </h4>
+              </Button>
+              <Button variant="success" href="https://meet.google.com/bwy-tbvf-kfr" size="lg">
+                <h4>
+                  Join <b>next</b> conference
+                </h4>
+              </Button>
+            </Container>
+            <Container className="d-grid gap-3 mt-5">
+              <Button disabled={true} variant="secondary" href="https://meet.google.com/bwy-tbvf-kfr" size="lg">
+                <h4>
+                  Матаналіз 🧮
+                </h4>
+              </Button>
+              <Button disabled={true} variant="secondary" href="https://us04web.zoom.us/j/2998834367?pwd=MFM1a1NKNCtPMDN5R2FOMnJaMlJBdz09" size="lg">
+                <h4>
+                  Дискретка 🧣
+                </h4>
+              </Button>
+              <Button variant="secondary" href="https://meet.google.com/wzf-rdra-vxz" size="lg">
+                <h4>
+                  Лінал (лекція) 🐏
+                </h4>
+              </Button>
+              <Button variant="secondary" href="https://meet.google.com/ioc-ouus-ozh" size="lg">
+                <h4>
+                  Лінал (практика) 🙎🏼‍♀️
+                </h4>
+              </Button>
+              <Button variant="secondary" href="https://us02web.zoom.us/j/4803998293?pwd=U0J2cS85eDdJK0JYZDYxbk9yQnlJdz09" size="lg">
+                <h4>
+                  Англійська мова 🇬🇧
+                </h4>
+              </Button>
+              <Button variant="secondary" href="https://us04web.zoom.us/j/7162303536?pwd=U3Q3M0JSTm1uL2MyNms0d3k0V2FrZz09" size="lg">
+                <h4>
+                  ФIзкультура (ПРактика) 🏃
+                </h4>
+              </Button>
+              <Button variant="secondary" href=" https://meet.google.com/zog-yorh-yto" size="lg">
+                <h4>
+                  Риторика (Практика) 👩🏼‍🎓
+                </h4>
+              </Button>
+            </Container>
+          </Alert>
+        </Container>
+        :
+        <Container className="d-grid gap-3 mt-5">
+          <Alert variant="danger">
+            Please sign in or sign up to use STUDEN.
+          </Alert>
+        </ Container>
+    }
     </>
   );
 }
