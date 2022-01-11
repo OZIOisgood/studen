@@ -1,19 +1,18 @@
-import React, { FC, useState } from 'react';
-import { Button, Container, Form, Spinner } from 'react-bootstrap';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase-config'
+import React, { FC, useState } from "react";
+import { Button, Container, Form, Spinner } from "react-bootstrap";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase-config";
 
-import '../styles/pages/signin.sass';
+import "../styles/pages/signin.sass";
 
-const logo = require('../assets/studen_mid_logo_white.png');
-
+const logo = require("../assets/studen_mid_logo_white.png");
 
 const SignUpPage: FC = (props) => {
   const [loading, setLoading] = useState(false);
-  
+
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
-  
+
   const signup = async () => {
     try {
       setLoading(true);
@@ -21,28 +20,22 @@ const SignUpPage: FC = (props) => {
         auth,
         signupEmail,
         signupPassword
-      )
-      console.log(user)
+      );
+      // console.log(user)
 
-      window.location.href = '/'
+      window.location.href = "/";
     } catch (error) {
       // console.log(error.message) //TODO: ERROR
     }
-  }
+  };
 
   return (
     <Container id="main-container" className="d-grid h-100">
       <Form id="sign-up-form" className="text-center">
         <a href="/">
-          <img
-            src={ logo }
-            className="logo"
-            alt="studen logo"
-          />
+          <img src={logo} className="logo" alt="studen logo" />
         </a>
-        <h1 className="text-white fs-3 mt-5">
-          Plese sign up
-        </h1>
+        <h1 className="text-white fs-3 mt-5">Plese sign up</h1>
         <Form.Group controlId="sign-up-email-address" className="mt-4">
           <Form.Control
             type="email"
@@ -81,36 +74,33 @@ const SignUpPage: FC = (props) => {
             variant="info"
             className="mt-4"
             size="lg"
-            onClick={ signup }
+            onClick={signup}
             disabled={loading}
           >
             <span className="text-white fs-5">
-              {
-                loading === false ?
+              {loading === false ? (
                 <>
-                    <i className="fas fa-user-plus"></i> Sign up
+                  <i className="fas fa-user-plus"></i> Sign up
                 </>
-                :
+              ) : (
                 <>
-                    <Spinner
-                        as="span"
-                        animation="grow"
-                        size="sm"
-                        role="status"
-                        aria-hidden="true"
-                        />
-                        Loading...
+                  <Spinner
+                    as="span"
+                    animation="grow"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                  Loading...
                 </>
-              }
+              )}
             </span>
           </Button>
         </div>
-        <p className="mt-5 text-muted">
-          &copy; 2021-2022
-        </p>
+        <p className="mt-5 text-muted">&copy; 2021-2022</p>
       </Form>
     </Container>
   );
-}
+};
 
 export default SignUpPage;
