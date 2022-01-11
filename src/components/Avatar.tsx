@@ -16,7 +16,7 @@ interface UserAvatarData {
 export const Avatar: FC<UserAvatarData> = ({ email, height, size = 50 }) => {
   const url = `https://www.gravatar.com/avatar/${md5(email)}?s=${String(
     Math.max(size, 250)
-  )}&d=blank`;
+  )}&d=mp`;
 
   return (
     <img
