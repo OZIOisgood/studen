@@ -50,7 +50,7 @@ export default function NavBar() {
             </Nav>
           </Nav>
           <Nav>
-            {user != null ? (
+            {user ? (
               <DropdownButton
                 align={{ lg: "end" }}
                 id="dropdown-basic-button"
