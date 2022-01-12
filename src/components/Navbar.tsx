@@ -57,7 +57,7 @@ export default function NavBar() {
                 menuVariant="dark"
                 variant="info"
                 className="dropdown-avatar"
-                title={<Avatar email={`${user.email}`} height={28} size={50} />}
+                title={<Avatar email={user.email} height={28} size={50} />}
               >
                 <Dropdown.Item disabled>{user.email}</Dropdown.Item>
                 <hr />
