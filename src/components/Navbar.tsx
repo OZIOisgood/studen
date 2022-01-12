@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import ReactDOM from "react";
 import {
   Navbar,
   Nav,
@@ -7,31 +7,26 @@ import {
   Dropdown,
   DropdownButton,
 } from "react-bootstrap";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { auth } from "../firebase-config";
 import { Avatar } from "./Avatar";
 import * as ROUTES from "../constants/routes";
+import { useAuthState } from "../hooks";
 
 import "../styles/components/navbar.sass";
 
 const logo = require("../assets/studen_mid_logo_white.png");
 
 export default function NavBar() {
-  const [user, setUser] = useState<any | null>({});
-
-  onAuthStateChanged(auth, (currentuser) => {
-    setUser(currentuser);
-  });
+  const { user, initializing } = useAuthState(auth);
 
   const signout = async () => {
     try {
       await signOut(auth);
-    } catch (error) {
-      // console.log(error.message) //TODO: ERROR
+    } catch (error: any) {
+      console.log(error.message);
     }
   };
-
-  // console.log(auth.currentUser ? auth.currentUser.email : 'No user logged in')
 
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">

@@ -24,8 +24,8 @@ const SignInPage: FC = (props) => {
       // console.log(user)
 
       window.location.href = "/";
-    } catch (error) {
-      // console.log(error.message) //TODO: ERROR
+    } catch (error: any) {
+      console.log(error.message);
     }
   };
 

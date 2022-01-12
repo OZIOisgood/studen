@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC } from "react";
 import {
   Button,
   Container,
@@ -7,15 +7,10 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import { onAuthStateChanged } from "firebase/auth";
-import {
-  collection,
-  onSnapshot,
-  DocumentData,
-  query,
-  orderBy,
-} from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 import { auth, firestore } from "../firebase-config";
+import { useFirestoreQuery, useAuthState } from "../hooks";
+import * as ROUTES from "../constants/routes"; //TODO: use constants instead all link
 
 import NavBar from "../components/Navbar";
 
@@ -32,50 +27,35 @@ function prettyDateByStamp(stamp: number) {
     }
   );
 
-  // if (prettiedDate.length === 4) return `${prettiedDate}`;
-  // else
   return prettiedDate;
 }
 
 const HomePage: FC = (props) => {
-  const [user, setUser] = useState<any | null>({});
-  const [users, setUsers] = useState<DocumentData | null>([]);
+  const { user, initializing } = useAuthState(auth);
 
-  onAuthStateChanged(auth, (currentuser) => {
-    setUser(currentuser);
-  });
-  useEffect(
-    () =>
-      onSnapshot(collection(firestore, "users"), (snapshot) => {
-        setUsers(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      }),
-    []
+  const usersCollectionRef = collection(firestore, "users");
+  const usersQuery = query(usersCollectionRef);
+  const users = useFirestoreQuery(usersQuery);
+
+  const lessonsCollectionRef = collection(firestore, "lessons");
+  const lessonsQuery = query(
+    lessonsCollectionRef,
+    orderBy("beginningTime", "asc")
   );
+  const lessons = useFirestoreQuery(lessonsQuery);
 
-  const [lessons, setLessons] = useState<DocumentData | null>([]);
-
-  const usersCollectionRef = collection(firestore, "lessons");
-  const usersQuery = query(usersCollectionRef, orderBy("beginningTime", "asc"));
-  useEffect(
-    () =>
-      onSnapshot(usersQuery, (snapshot) => {
-        setLessons(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      }),
-    // eslint-disable-next-line
-    []
-  );
-
-  // console.log(users);
-  console.log(lessons);
-
+  // console.log("~~~~~~~~~~~~~~~~ user ~~~~~~~~~~~~~~~~");
+  // console.log(user);
+  // console.log(initializing);
+  // console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
   return (
     <>
       <NavBar />
-      {user != null ? (
+      {user ? (
         <Container className="mt-5">
           <h1 className="text-white">
             Home{" "}
-            {/* <span className="text-muted fs-3">(logged in as {user.email})</span> */}
+            <span className="text-muted fs-3">(logged in as {user.email})</span>
           </h1>
           <Alert variant="dark box mt-5">
             <h2 className="text-white">Schedule</h2>
