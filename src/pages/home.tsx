@@ -10,9 +10,7 @@ import {
 import { collection, query, orderBy, where } from "firebase/firestore";
 import { auth, firestore } from "../firebase-config";
 import { useFirestoreQuery, useAuthState } from "../hooks";
-import moment from "moment";
-import { getPrettyTimeByStamp } from "../utils";
-import { Avatar } from "../components/Avatar";
+import { Avatar, Schedule } from "../components";
 import * as ROUTES from "../constants/routes"; //TODO: use constants instead all link
 
 import NavBar from "../components/Navbar";
@@ -27,23 +25,6 @@ const HomePage: FC = (props) => {
   const usersCollectionRef = collection(firestore, "users");
   const usersQuery = query(usersCollectionRef);
   const users = useFirestoreQuery(usersQuery);
-
-  const startOfDay = moment().startOf("day").toDate();
-  const endOfDay = moment().endOf("day").toDate();
-
-  console.log("~~~~~~~~~~~~~~~~ moment ~~~~~~~~~~~~~~~~");
-  console.log(startOfDay);
-  console.log(endOfDay);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
-  const lessonsCollectionRef = collection(firestore, "lessons");
-  const lessonsQuery = query(
-    lessonsCollectionRef,
-    where("beginningTime", ">=", startOfDay),
-    where("beginningTime", "<=", endOfDay),
-    orderBy("beginningTime", "asc")
-  );
-  const lessons = useFirestoreQuery(lessonsQuery);
 
   console.log("~~~~~~~~~~~~~~~~ useFirestoreQuery ~~~~~~~~~~~~~~~~");
   console.log(user);
@@ -68,88 +49,7 @@ const HomePage: FC = (props) => {
             Home{" "}
             <span className="text-muted fs-3">(logged in as {user.email})</span>
           </h1>
-          <Alert variant="dark box mt-5">
-            <h2 className="text-white">Schedule</h2>
-            <Container className="d-grid gap-3 mt-5">
-              <h3 className="text-white">Join conference:</h3>
-              <ButtonGroup size="lg">
-                <Button variant="danger" href="#" size="lg">
-                  <h4>
-                    <b>previous</b>
-                  </h4>
-                </Button>
-                <Button
-                  variant="warning"
-                  href="#"
-                  size="lg"
-                  className="text-white btn-warning"
-                >
-                  <h4>
-                    <b>current</b>
-                  </h4>
-                </Button>
-                <Button variant="success" href="#" size="lg">
-                  <h4>
-                    <b>next</b>
-                  </h4>
-                </Button>
-              </ButtonGroup>
-            </Container>
-            <Container className="d-grid gap-3 mt-5">
-              {lessons?.map((lesson: any, index: number) => {
-                const lessonBeginningTimeMoment = moment(
-                  lesson.beginningTime.seconds * 1000
-                );
-                const lessonEndTimeMoment = moment(
-                  lesson.endTime.seconds * 1000
-                );
-                const buttonClasses = `lesson-btn ${
-                  lessonBeginningTimeMoment.isBefore(moment()) &&
-                  lessonEndTimeMoment.isAfter(moment())
-                    ? "btn-warning text-white"
-                    : ""
-                }`;
-
-                return (
-                  <Row key={lesson.id}>
-                    <Col xs={1}>
-                      <Row>
-                        <Col xs={12} className="lesson-time">
-                          <span className="text-muted">
-                            {getPrettyTimeByStamp(lesson.beginningTime)}
-                          </span>
-                        </Col>
-                        <Col xs={12} className="lesson-time">
-                          <span className="text-muted lesson-time">
-                            {getPrettyTimeByStamp(lesson.endTime)}
-                          </span>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col xs={11}>
-                      <Button
-                        disabled={moment(
-                          lesson.endTime.seconds * 1000
-                        ).isBefore(moment())}
-                        variant="secondary"
-                        href={lesson.conferenceLink}
-                        className={buttonClasses}
-                      >
-                        <Row>
-                          <Col xs={{ span: 1 }} className="lesson-number">
-                            <h4>{index + 1}.</h4>
-                          </Col>
-                          <Col xs={10} className="lesson-name">
-                            <h4>{lesson.name}</h4>
-                          </Col>
-                        </Row>
-                      </Button>
-                    </Col>
-                  </Row>
-                );
-              })}
-            </Container>
-          </Alert>
+          <Schedule />
           <Alert variant="dark box mt-5">
             <h2 className="text-white">Users</h2>
             <Container className="d-grid gap-3 mt-5">
