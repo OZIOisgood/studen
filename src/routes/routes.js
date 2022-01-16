@@ -1,18 +1,15 @@
 import * as ROUTES from "../constants/routes";
 
 import StarterPage from "../pages/starter";
-import HomePage from "../pages/home";
 import SignInPage from "../pages/signin";
 import SignUpPage from "../pages/signup";
+
+import HomePage from "../pages/home";
 
 export const publicRoutes = [
   {
     path: ROUTES.STARTER,
     Component: StarterPage,
-  },
-  {
-    path: ROUTES.HOME,
-    Component: HomePage,
   },
   {
     path: ROUTES.SIGN_IN,
@@ -21,5 +18,12 @@ export const publicRoutes = [
   {
     path: ROUTES.SIGN_UP,
     Component: SignUpPage,
+  },
+];
+
+export const privateRoutes = [
+  {
+    path: ROUTES.HOME,
+    Component: HomePage,
   },
 ];
