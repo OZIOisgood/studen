@@ -2,6 +2,8 @@ import React, { FC, useState } from "react";
 import { Button, Container, Form, Spinner } from "react-bootstrap";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase-config";
+import { addDoc, getFirestore, collection } from "firebase/firestore";
+import * as ROUTES from "../constants/routes";
 
 import "../styles/pages/signin.sass";
 
@@ -13,19 +15,31 @@ const SignUpPage: FC = (props) => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
+  const db = getFirestore();
+
   const signup = async () => {
     try {
       setLoading(true);
-      const user = await createUserWithEmailAndPassword(
+      const cred = await createUserWithEmailAndPassword(
         auth,
         signupEmail,
         signupPassword
       );
-      // console.log(user)
 
-      window.location.href = "/";
+      await addDoc(collection(db, "users"), {
+        email: cred.user.email,
+        firstName: "",
+        lastName: "",
+      });
+
+      console.log(cred.user);
+
+      window.location.href = ROUTES.HOME;
     } catch (error: any) {
       console.log(error.message);
+
+      setSignupEmail("");
+      setSignupPassword("");
     }
   };
 

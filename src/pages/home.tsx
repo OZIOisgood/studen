@@ -34,11 +34,19 @@ const HomePage: FC = (props) => {
   const [time, setTime] = useState(Date.now());
 
   useEffect(() => {
-    const interval = setInterval(() => setTime(Date.now()), 10000);
+    const interval = setInterval(() => setTime(Date.now()), 10 * 1000);
     return () => {
       clearInterval(interval);
     };
   }, []);
+
+  const groupsCollectionRef = collection(firestore, "groups");
+  const groupsQuery = query(groupsCollectionRef);
+  const groups = useFirestoreQuery(groupsQuery);
+
+  console.log("~~~~~~~~~~~~~~~~ groups ~~~~~~~~~~~~~~~~");
+  console.log(groups);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
   return (
     <>
@@ -59,17 +67,17 @@ const HomePage: FC = (props) => {
                   variant="secondary"
                   href="#"
                   key={item.id}
-                  className="lesson-btn"
+                  className="user-btn"
                 >
                   <Row>
                     <Col xs={1} className="user-number">
                       <h4>{index + 1}.</h4>
                     </Col>
-                    <Col xs={1} className="user-number">
-                      <Avatar email={item.id} height={28} size={50} />
+                    <Col xs={1} className="user-avatar">
+                      <Avatar email={item.email} height={28} size={50} />
                     </Col>
-                    <Col xs={10} className="user-email">
-                      <h4>{item.id}</h4>
+                    <Col xs={12} sm={10} className="user-email">
+                      <h4>{item.email}</h4>
                     </Col>
                   </Row>
                 </Button>

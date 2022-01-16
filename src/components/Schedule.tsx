@@ -34,11 +34,11 @@ export const Schedule: FC = () => {
   );
   const lessons = useFirestoreQuery(lessonsQuery);
 
-  let previousConferenceIndex: number;
-  let currentConferenceIndex: number;
-  let nextConferenceIndex: number;
+  let previousConferenceIndex = 0;
+  let currentConferenceIndex = 0;
+  let nextConferenceIndex = 0;
 
-  lessons?.map((lesson: any, index: number) => {
+  lessons?.forEach((lesson: any, index: number) => {
     const lessonBeginningTimeMoment = moment(
       lesson.beginningTime.seconds * 1000
     );
@@ -54,23 +54,53 @@ export const Schedule: FC = () => {
     }
   });
 
+  console.log("~~~~~~~~~~~~~~~~ lessons ~~~~~~~~~~~~~~~~");
+  console.log(lessons);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
   return (
     <Alert variant="dark box mt-5">
       <h2 className="text-white">Schedule</h2>
       <Container className="d-grid gap-3 mt-5">
         <h3 className="text-white">Join conference:</h3>
         <ButtonGroup size="lg">
-          <Button variant="danger" href="#" size="lg">
+          <Button
+            disabled={lessons ? !lessons[previousConferenceIndex] : true}
+            variant="danger"
+            href={
+              lessons
+                ? lessons[previousConferenceIndex]?.conferenceLink
+                : undefined
+            }
+            size="lg"
+          >
             <h4>
               <b>previous</b>
             </h4>
           </Button>
-          <Button variant="warning" href="#" size="lg" className="btn-warning">
+          <Button
+            disabled={lessons ? !lessons[currentConferenceIndex] : true}
+            variant="warning"
+            href={
+              lessons
+                ? lessons[currentConferenceIndex]?.conferenceLink
+                : undefined
+            }
+            size="lg"
+            className="btn-warning"
+          >
             <h4>
               <b>current</b>
             </h4>
           </Button>
-          <Button variant="success" href="#" size="lg">
+          <Button
+            disabled={lessons ? !lessons[nextConferenceIndex] : true}
+            variant="success"
+            href={
+              lessons ? lessons[nextConferenceIndex]?.conferenceLink : undefined
+            }
+            size="lg"
+          >
             <h4>
               <b>next</b>
             </h4>
@@ -79,10 +109,6 @@ export const Schedule: FC = () => {
       </Container>
       <Container className="d-grid gap-3 mt-5">
         {lessons?.map((lesson: any, index: number) => {
-          const lessonBeginningTimeMoment = moment(
-            lesson.beginningTime.seconds * 1000
-          );
-          const lessonEndTimeMoment = moment(lesson.endTime.seconds * 1000);
           let buttonClasses = `lesson-btn`;
 
           switch (index) {
