@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import { Button, Container, Form, Spinner } from "react-bootstrap";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase-config";
-import { addDoc, getFirestore, collection } from "firebase/firestore";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
 import * as ROUTES from "../constants/routes";
 
 import "../styles/pages/signin.sass";
@@ -26,13 +26,14 @@ const SignUpPage: FC = (props) => {
         signupPassword
       );
 
-      await addDoc(collection(db, "users"), {
-        email: cred.user.email,
+      const user = cred.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
         firstName: "",
         lastName: "",
       });
-
-      console.log(cred.user);
+      await localStorage.setItem("authUser", JSON.stringify(user));
 
       window.location.href = ROUTES.HOME;
     } catch (error: any) {
@@ -40,13 +41,15 @@ const SignUpPage: FC = (props) => {
 
       setSignupEmail("");
       setSignupPassword("");
+
+      setLoading(false);
     }
   };
 
   return (
     <Container id="main-container" className="d-grid h-100">
       <Form id="sign-up-form" className="text-center">
-        <a href="/">
+        <a href={ROUTES.STARTER}>
           <img src={logo} className="logo" alt="studen logo" />
         </a>
         <h1 className="text-white fs-3 mt-5">Plese sign up</h1>

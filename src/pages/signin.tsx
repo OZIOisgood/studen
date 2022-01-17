@@ -2,6 +2,7 @@ import React, { FC, useState } from "react";
 import { Button, Container, Form, Spinner } from "react-bootstrap";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase-config";
+import * as ROUTES from "../constants/routes";
 
 import "../styles/pages/signin.sass";
 
@@ -16,23 +17,29 @@ const SignInPage: FC = (props) => {
   const signin = async () => {
     try {
       setLoading(true);
-      const user = await signInWithEmailAndPassword(
+      const cred = await signInWithEmailAndPassword(
         auth,
         signinEmail,
         signinPassword
       );
-      // console.log(user)
 
-      window.location.href = "/";
+      await localStorage.setItem("authUser", JSON.stringify(cred.user));
+
+      window.location.href = ROUTES.HOME;
     } catch (error: any) {
       console.log(error.message);
+
+      setSigninEmail("");
+      setSigninPassword("");
+
+      setLoading(false);
     }
   };
 
   return (
     <Container id="main-container" className="d-grid h-100">
       <Form id="sign-in-form" className="text-center">
-        <a href="/">
+        <a href={ROUTES.STARTER}>
           <img src={logo} className="logo" alt="studen logo" />
         </a>
         <h1 className="text-white fs-3 mt-5">Plese sign in</h1>
@@ -87,7 +94,7 @@ const SignInPage: FC = (props) => {
                     size="sm"
                     role="status"
                     aria-hidden="true"
-                  />
+                  />{" "}
                   Loading...
                 </>
               )}

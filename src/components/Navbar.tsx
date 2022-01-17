@@ -1,4 +1,4 @@
-import ReactDOM from "react";
+import React, { FC, useContext } from "react";
 import {
   Navbar,
   Nav,
@@ -8,21 +8,21 @@ import {
   DropdownButton,
 } from "react-bootstrap";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase-config";
 import { Avatar } from "./Avatar";
 import * as ROUTES from "../constants/routes";
-import { useAuthState } from "../hooks";
+import { FirebaseContext } from "../context/firebase";
 
 import "../styles/components/navbar.sass";
 
 const logo = require("../assets/studen_mid_logo_white.png");
 
-export default function NavBar() {
-  const { user, initializing } = useAuthState(auth);
+export const NavBar: FC = () => {
+  const { auth, user, initializing } = useContext(FirebaseContext);
 
   const signout = async () => {
     try {
       await signOut(auth);
+      await localStorage.removeItem("authUser");
     } catch (error: any) {
       console.log(error.message);
     }
@@ -31,7 +31,7 @@ export default function NavBar() {
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand href="/">
+        <Navbar.Brand href={ROUTES.HOME}>
           <img
             src={logo}
             height="25"
@@ -43,10 +43,18 @@ export default function NavBar() {
         <Navbar.Collapse id="responsive-navbar-nav d-flex">
           <Nav className="me-auto">
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link href={ROUTES.HOME}>Home</Nav.Link>
-              <Nav.Link href={ROUTES.GROUPS}>Groups</Nav.Link>
-              <Nav.Link href={ROUTES.LESSONS}>Lessons</Nav.Link>
-              <Nav.Link href={ROUTES.HOMEWORK}>Homework</Nav.Link>
+              <Nav.Link href={ROUTES.HOME}>
+                <i className="fas fa-home"></i> Home
+              </Nav.Link>
+              <Nav.Link href={ROUTES.GROUPS}>
+                <i className="fas fa-users"></i> Groups
+              </Nav.Link>
+              <Nav.Link href={ROUTES.LESSONS}>
+                <i className="fas fa-chalkboard-teacher"></i> Lessons
+              </Nav.Link>
+              <Nav.Link href={ROUTES.HOMEWORK}>
+                <i className="fas fa-book-open"></i> Homework
+              </Nav.Link>
             </Nav>
           </Nav>
           <Nav>
@@ -70,16 +78,18 @@ export default function NavBar() {
                   </span>
                 </Dropdown.Item>
               </DropdownButton>
-            ) : (
+            ) : !initializing ? (
               <Button variant="info" href="/signin">
                 <span className="text-white">
                   <i className="fas fa-sign-in-alt"></i> Sign in
                 </span>
               </Button>
-            )}
+            ) : null}
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
   );
-}
+};
+
+export default NavBar;

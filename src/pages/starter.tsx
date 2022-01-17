@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Container } from "react-bootstrap";
 
-import NavBar from "../components/Navbar";
+import { NavBar } from "../components";
 
 const StarterPage: FC = (props) => {
   return (
