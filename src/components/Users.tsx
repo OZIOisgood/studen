@@ -1,18 +1,9 @@
-import React, { FC } from "react";
-import {
-  Button,
-  Container,
-  Alert,
-  ButtonGroup,
-  Row,
-  Col,
-} from "react-bootstrap";
-import moment from "moment";
+import { FC } from "react";
+import { Button, Container, Alert, Row, Col } from "react-bootstrap";
 import { firestore } from "../firebase-config";
-import { collection, query, orderBy, where } from "firebase/firestore";
+import { collection, query } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import { getPrettyTimeByStamp, getTimeNow } from "../utils";
-import { Avatar, Schedule, PrivateRoute, NavBar } from "../components";
+import { Avatar } from "../components";
 
 import "../styles/components/schedule.sass";
 

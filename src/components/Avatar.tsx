@@ -1,13 +1,8 @@
-import React, { FC } from "react";
-import { UserData } from "../types/types";
-// import { UserData } from "../types/types";
+import { FC } from "react";
 
 var md5 = require("md5");
 
 interface UserAvatarData {
-  // extends UserData
-  // firstName?: string;
-  // lastName?: string;
   email: string;
   height?: number;
   size?: number;

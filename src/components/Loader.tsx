@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Container, Spinner } from "react-bootstrap";
 
 import "../styles/components/loader.sass";

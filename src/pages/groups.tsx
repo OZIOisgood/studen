@@ -1,17 +1,9 @@
-import React, { FC, useContext, useEffect, useState } from "react";
-import {
-  Button,
-  Container,
-  Alert,
-  ButtonGroup,
-  Row,
-  Col,
-} from "react-bootstrap";
-import { collection, query, orderBy, where } from "firebase/firestore";
-import { useFirestoreQuery, useAuthState } from "../hooks";
-import { Avatar, Schedule, NavBar, PrivateRoute } from "../components";
+import { FC, useContext } from "react";
+import { Button, Container, Alert, Row, Col } from "react-bootstrap";
+import { collection, query, where } from "firebase/firestore";
+import { useFirestoreQuery } from "../hooks";
+import { PrivateRoute } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import * as ROUTES from "../constants/routes";
 
 const GroupsPage: FC = (props) => {
   console.clear();

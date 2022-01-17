@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 
 const usePageReloadInterval = (intervalTime: number) => {
   const [time, setTime] = useState(Date.now());

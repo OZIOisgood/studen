@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import { FC, useContext } from "react";
 import { Container } from "react-bootstrap";
 import { Schedule, PrivateRoute, Users } from "../components";
 import { usePageReloadInterval } from "../utils";

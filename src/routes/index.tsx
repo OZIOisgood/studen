@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Route, Routes } from "react-router-dom";
 import * as ROUTES from "../constants/routes";
 
@@ -21,25 +21,5 @@ const AppRoutes: FC = () => {
     </>
   );
 };
-
-// const AppRoutes = () => (
-//   <>
-//     <Switch>
-//       <Route path={ROUTES.STARTER}>
-//         <StarterPage />
-//       </Route>
-//       <Route path={ROUTES.HOME}>
-//         <HomePage />
-//       </Route>
-//       <Route path={ROUTES.SIGN_IN}>
-//         <SignInPage />
-//       </Route>
-//       <Route path={ROUTES.SIGN_UP}>
-//         <SignUpPage />
-//       </Route>
-//       <Redirect to={ROUTES.SIGN_IN} />
-//     </Switch>
-//   </>
-// );
 
 export default AppRoutes;
