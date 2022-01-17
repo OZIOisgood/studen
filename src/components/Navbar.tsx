@@ -43,18 +43,26 @@ export const NavBar: FC = () => {
         <Navbar.Collapse id="responsive-navbar-nav d-flex">
           <Nav className="me-auto">
             <Nav className="justify-content-end flex-grow-1 pe-3">
-              <Nav.Link href={ROUTES.HOME}>
-                <i className="fas fa-home"></i> Home
-              </Nav.Link>
-              <Nav.Link href={ROUTES.GROUPS}>
-                <i className="fas fa-users"></i> Groups
-              </Nav.Link>
-              <Nav.Link href={ROUTES.LESSONS}>
-                <i className="fas fa-chalkboard-teacher"></i> Lessons
-              </Nav.Link>
-              <Nav.Link href={ROUTES.HOMEWORK}>
-                <i className="fas fa-book-open"></i> Homework
-              </Nav.Link>
+              {user ? (
+                <>
+                  <Nav.Link href={ROUTES.HOME}>
+                    <i className="fas fa-home"></i> Home
+                  </Nav.Link>
+                  <Nav.Link href={ROUTES.GROUPS}>
+                    <i className="fas fa-users"></i> Groups
+                  </Nav.Link>
+                  <Nav.Link href={ROUTES.LESSONS}>
+                    <i className="fas fa-chalkboard-teacher"></i> Lessons
+                  </Nav.Link>
+                  <Nav.Link href={ROUTES.HOMEWORK}>
+                    <i className="fas fa-book-open"></i> Homework
+                  </Nav.Link>
+                </>
+              ) : !initializing ? (
+                <Nav.Link href={ROUTES.HOME}>
+                  <i className="fas fa-home"></i> Home
+                </Nav.Link>
+              ) : null}
             </Nav>
           </Nav>
           <Nav>
