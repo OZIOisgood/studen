@@ -3,6 +3,7 @@ import { Button, Container, Alert, Row, Col } from "react-bootstrap";
 import { collection, query, where } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
 import { PrivateRoute } from "../components";
+import { Avatar } from "../components/Avatar";
 import { FirebaseContext } from "../context/firebase";
 
 const GroupsPage: FC = (props) => {
@@ -49,7 +50,10 @@ const GroupsPage: FC = (props) => {
                   <Col xs={1} className="user-number">
                     <h4>{index + 1}.</h4>
                   </Col>
-                  <Col xs={11} className="user-email">
+                  <Col xs={1} className="user-avatar">
+                    <Avatar href={item.avatarURL} height={32} size={50} />
+                  </Col>
+                  <Col xs={12} sm={10} className="user-email">
                     <h4>{item.name}</h4>
                   </Col>
                 </Row>
@@ -73,7 +77,10 @@ const GroupsPage: FC = (props) => {
                   <Col xs={1} className="user-number">
                     <h4>{index + 1}.</h4>
                   </Col>
-                  <Col xs={11} className="user-email">
+                  <Col xs={1} className="user-avatar">
+                    <Avatar href={item.avatarURL} height={32} size={50} />
+                  </Col>
+                  <Col xs={12} sm={10} className="user-email">
                     <h4>{item.name}</h4>
                   </Col>
                 </Row>

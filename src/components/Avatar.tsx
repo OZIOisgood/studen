@@ -3,15 +3,25 @@ import { FC } from "react";
 var md5 = require("md5");
 
 interface UserAvatarData {
-  email: string;
+  email?: string;
+  href?: string;
   height?: number;
   size?: number;
 }
 
-export const Avatar: FC<UserAvatarData> = ({ email, height, size = 50 }) => {
-  const url = `https://www.gravatar.com/avatar/${md5(email)}?s=${String(
-    Math.max(size, 250)
-  )}&d=mp`;
+export const Avatar: FC<UserAvatarData> = ({
+  email,
+  href,
+  height,
+  size = 50,
+}) => {
+  let url = "";
+
+  if (email)
+    url = `https://www.gravatar.com/avatar/${md5(email)}?s=${String(
+      Math.max(size, 250)
+    )}&d=mp`;
+  else if (href) url = href;
 
   return (
     <img

@@ -9,8 +9,8 @@ import {
 } from "react-bootstrap";
 import { signOut } from "firebase/auth";
 import { Avatar } from "./Avatar";
-import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
+import * as ROUTES from "../constants/routes";
 
 import "../styles/components/navbar.sass";
 
