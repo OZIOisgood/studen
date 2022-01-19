@@ -1,20 +1,19 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import { Button, Container, Alert, Row, Col } from "react-bootstrap";
-import { firestore } from "../firebase-config";
-import { collection, query } from "firebase/firestore";
+import { FirebaseContext } from "../context/firebase";
+import { collection, DocumentData, query } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
 import { Avatar } from "../components";
 
-import "../styles/components/schedule.sass";
+type UsersProps = {
+  users: any;
+  title: string;
+};
 
-export const Users: FC = () => {
-  const usersCollectionRef = collection(firestore, "users");
-  const usersQuery = query(usersCollectionRef);
-  const users = useFirestoreQuery(usersQuery);
-
+export const Users: FC<UsersProps> = ({ users, title }) => {
   return (
     <Alert variant="dark box mt-5">
-      <h2 className="text-white">All users</h2>
+      <h2 className="text-white">{title}</h2>
       <Container className="d-grid gap-3 mt-5">
         {users?.map((item: any, index: number) => (
           <Button

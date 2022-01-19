@@ -2,12 +2,16 @@ import { FC, useContext } from "react";
 import { Button, Container, Alert, Row, Col } from "react-bootstrap";
 import { collection, query, where } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute } from "../components";
-import { Avatar } from "../components/Avatar";
+import { PrivateRoute, Avatar } from "../components";
 import { FirebaseContext } from "../context/firebase";
+import * as ROUTES from "../constants/routes";
 
 const GroupsPage: FC = (props) => {
   console.clear();
+
+  console.log(
+    "++++++++++++++++++++++++++++++++++++++ GroupsPage ++++++++++++++++++++++++++++++++++++++"
+  );
 
   const { firestore } = useContext(FirebaseContext);
 
@@ -30,6 +34,10 @@ const GroupsPage: FC = (props) => {
   const allGroupsQuery = query(allGroupsCollectionRef);
   const allGroups = useFirestoreQuery(allGroupsQuery);
 
+  console.log(
+    "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  );
+
   return (
     <PrivateRoute>
       <Container className="mt-5">
@@ -40,9 +48,8 @@ const GroupsPage: FC = (props) => {
           <Container className="d-grid gap-3 mt-5">
             {myGroups?.map((item: any, index: number) => (
               <Button
-                disabled={true}
                 variant="secondary"
-                href="#"
+                href={`${ROUTES.GROUPS}/${item.id}`}
                 key={item.id}
                 className="user-btn"
               >
@@ -67,7 +74,6 @@ const GroupsPage: FC = (props) => {
           <Container className="d-grid gap-3 mt-5">
             {allGroups?.map((item: any, index: number) => (
               <Button
-                disabled={true}
                 variant="secondary"
                 href="#"
                 key={item.id}

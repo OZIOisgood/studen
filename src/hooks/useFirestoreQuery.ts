@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { onSnapshot, DocumentData } from "firebase/firestore";
 
 export default function useFirestoreQuery(query: any) {
-  // prettier-ignore
   const [docs, setDocs] = useState<DocumentData | null>([]);
 
   useEffect(
@@ -15,9 +14,6 @@ export default function useFirestoreQuery(query: any) {
     // eslint-disable-next-line
     []
   );
-
-  console.log(query.type + ":");
-  console.log(docs);
 
   return docs;
 }

@@ -3,6 +3,7 @@ import { FC } from "react";
 var md5 = require("md5");
 
 interface UserAvatarData {
+  className?: string;
   email?: string;
   href?: string;
   height?: number;
@@ -11,6 +12,7 @@ interface UserAvatarData {
 
 export const Avatar: FC<UserAvatarData> = ({
   email,
+  className,
   href,
   height,
   size = 50,
@@ -28,7 +30,7 @@ export const Avatar: FC<UserAvatarData> = ({
       src={`${url}`}
       alt={`Avatar`}
       height={height}
-      className="avatar thumbnail-image rounded-circle"
+      className={`avatar thumbnail-image rounded-circle ${className}`}
     />
   );
 };

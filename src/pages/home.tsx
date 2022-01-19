@@ -1,29 +1,37 @@
 import { FC, useContext } from "react";
 import { Container } from "react-bootstrap";
 import { Schedule, PrivateRoute, Users } from "../components";
-import { usePageReloadInterval } from "../utils";
+import { getTimeNow, usePageReloadInterval } from "../utils";
 import { FirebaseContext } from "../context/firebase";
+import { collection, orderBy, query, where } from "firebase/firestore";
+import { useFirestoreQuery } from "../hooks";
 
 import "../styles/pages/home.sass";
 
 const HomePage: FC = (props) => {
-  console.clear();
+  const { firestore } = useContext(FirebaseContext);
 
-  usePageReloadInterval(10);
+  const usersCollectionRef = collection(firestore, "users");
+  const usersQuery = query(usersCollectionRef);
+  const users = useFirestoreQuery(usersQuery);
 
-  const { user, initializing } = useContext(FirebaseContext);
+  const startOfDay = getTimeNow().startOf("day").toDate();
+  const endOfDay = getTimeNow().endOf("day").toDate();
 
-  console.log("~~~~~~~~~~~~~~~~ useAuthState ~~~~~~~~~~~~~~~~");
-  console.log(user);
-  console.log(initializing);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  const lessonsCollectionRef = collection(firestore, "lessons");
+  const lessonsQuery = query(
+    lessonsCollectionRef,
+    where("beginningTime", ">=", startOfDay),
+    where("beginningTime", "<=", endOfDay),
+    orderBy("beginningTime", "asc")
+  );
 
   return (
     <PrivateRoute>
       <Container className="mt-5">
         <h1 className="text-white">Home</h1>
-        <Schedule />
-        <Users />
+        <Schedule collectionReference={lessonsQuery} />
+        <Users title="All users" users={users} />
       </Container>
     </PrivateRoute>
   );

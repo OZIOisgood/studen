@@ -51,8 +51,8 @@ export const NavBar: FC = () => {
                   <Nav.Link href={ROUTES.GROUPS}>
                     <i className="fas fa-users"></i> Groups
                   </Nav.Link>
-                  <Nav.Link href={ROUTES.LESSONS}>
-                    <i className="fas fa-chalkboard-teacher"></i> Lessons
+                  <Nav.Link href={ROUTES.COURSES}>
+                    <i className="fas fa-chalkboard-teacher"></i> Courses
                   </Nav.Link>
                   <Nav.Link href={ROUTES.HOMEWORK}>
                     <i className="fas fa-book-open"></i> Homework

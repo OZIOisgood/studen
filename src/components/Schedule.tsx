@@ -9,30 +9,30 @@ import {
 } from "react-bootstrap";
 import moment from "moment";
 import { firestore } from "../firebase-config";
-import { collection, query, orderBy, where } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+  where,
+  CollectionReference,
+} from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import { getPrettyTimeByStamp, getTimeNow } from "../utils";
+import {
+  getPrettyTimeByStamp,
+  getTimeNow,
+  usePageReloadInterval,
+} from "../utils";
 
 import "../styles/components/schedule.sass";
 
-export const Schedule: FC = () => {
-  const startOfDay = getTimeNow().startOf("day").toDate();
-  const endOfDay = getTimeNow().endOf("day").toDate();
+type ScheduleProps = {
+  collectionReference: any;
+};
 
-  console.log("~~~~~~~~~~~~~~~~ moment ~~~~~~~~~~~~~~~~");
-  console.log(startOfDay);
-  console.log(getTimeNow().toDate());
-  console.log(endOfDay);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+export const Schedule: FC<ScheduleProps> = ({ collectionReference }) => {
+  usePageReloadInterval(10);
 
-  const lessonsCollectionRef = collection(firestore, "lessons");
-  const lessonsQuery = query(
-    lessonsCollectionRef,
-    where("beginningTime", ">=", startOfDay),
-    where("beginningTime", "<=", endOfDay),
-    orderBy("beginningTime", "asc")
-  );
-  const lessons = useFirestoreQuery(lessonsQuery);
+  const lessons = useFirestoreQuery(collectionReference);
 
   let previousConferenceIndex = 0;
   let currentConferenceIndex = 0;
@@ -53,10 +53,6 @@ export const Schedule: FC = () => {
       nextConferenceIndex = index + 1;
     }
   });
-
-  console.log("~~~~~~~~~~~~~~~~ lessons ~~~~~~~~~~~~~~~~");
-  console.log(lessons);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
   return (
     <Alert variant="dark box mt-5">
