@@ -26,13 +26,11 @@ import {
 import "../styles/components/schedule.sass";
 
 type ScheduleProps = {
-  collectionReference: any;
+  lessons: any;
 };
 
-export const Schedule: FC<ScheduleProps> = ({ collectionReference }) => {
+export const Schedule: FC<ScheduleProps> = ({ lessons }) => {
   usePageReloadInterval(10);
-
-  const lessons = useFirestoreQuery(collectionReference);
 
   let previousConferenceIndex = 0;
   let currentConferenceIndex = 0;

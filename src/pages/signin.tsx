@@ -3,6 +3,8 @@ import { Button, Container, Form, Spinner } from "react-bootstrap";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase-config";
 import * as ROUTES from "../constants/routes";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { setUser } from "../utils";
 
 import "../styles/pages/signin.sass";
 
@@ -14,6 +16,8 @@ const SignInPage: FC = (props) => {
   const [signinEmail, setSigninEmail] = useState("");
   const [signinPassword, setSigninPassword] = useState("");
 
+  const db = getFirestore();
+
   const signin = async () => {
     try {
       setLoading(true);
@@ -23,7 +27,14 @@ const SignInPage: FC = (props) => {
         signinPassword
       );
 
-      await localStorage.setItem("authUser", JSON.stringify(cred.user));
+      const userDoc = await getDoc(doc(db, "users", cred.user.uid));
+
+      setUser(
+        JSON.stringify({
+          ...userDoc.data(),
+          id: cred.user.uid,
+        })
+      );
 
       window.location.href = ROUTES.HOME;
     } catch (error: any) {

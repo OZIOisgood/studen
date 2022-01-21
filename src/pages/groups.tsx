@@ -5,6 +5,7 @@ import { useFirestoreQuery } from "../hooks";
 import { PrivateRoute, Avatar } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import * as ROUTES from "../constants/routes";
+import { getUser } from "../utils";
 
 const GroupsPage: FC = (props) => {
   console.clear();
@@ -15,13 +16,12 @@ const GroupsPage: FC = (props) => {
 
   const { firestore } = useContext(FirebaseContext);
 
-  const userJSON = localStorage.getItem("authUser");
-  const user = userJSON ? JSON.parse(userJSON) : null;
+  const user = getUser();
 
   const myGroupsCollectionRef = collection(firestore, "groups");
   const myGroupsQuery = query(
     myGroupsCollectionRef,
-    where("users", "array-contains", user.uid)
+    where("users", "array-contains", user.id)
   );
   const myGroups = useFirestoreQuery(myGroupsQuery);
 

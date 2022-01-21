@@ -67,6 +67,24 @@ const GroupPage: FC = (props) => {
     where("beginningTime", "<=", endOfDay),
     orderBy("beginningTime", "asc")
   );
+  // const lessons = useFirestoreQuery(lessonsQuery);
+
+  const [lessons, setLessons] = useState<DocumentData | null>([]);
+
+  useEffect(
+    () => {
+      onSnapshot(lessonsQuery, (snapshot: any) => {
+        const lessonsSnapshot = snapshot.docs.map((doc: any) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        setLessons(lessonsSnapshot);
+      });
+    },
+    // eslint-disable-next-line
+    []
+  );
 
   return (
     <PrivateRoute>
@@ -77,7 +95,7 @@ const GroupPage: FC = (props) => {
         <h1 className="text-white d-flex justify-content-center mt-3">
           {group?.name}
         </h1>
-        <Schedule collectionReference={lessonsQuery} />
+        <Schedule lessons={lessons} />
         <Alert variant="dark box mt-5">
           <h2 className="text-white">Students</h2>
           <Container className="d-grid gap-3 mt-5">
