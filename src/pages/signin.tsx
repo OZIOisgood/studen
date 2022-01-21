@@ -38,7 +38,7 @@ const SignInPage: FC = (props) => {
 
       window.location.href = ROUTES.HOME;
     } catch (error: any) {
-      console.log(error.message);
+      console.error(error.message);
 
       setSigninEmail("");
       setSigninPassword("");
@@ -78,12 +78,12 @@ const SignInPage: FC = (props) => {
             }}
           />
         </Form.Group>
-        <Form.Group
+        {/* <Form.Group
           controlId="remember-me"
           className="d-flex justify-content-center mt-3"
         >
           <Form.Check label="Remember me" className="text-white" />
-        </Form.Group>
+        </Form.Group> */}
         <div className="d-grid">
           <Button
             variant="info"

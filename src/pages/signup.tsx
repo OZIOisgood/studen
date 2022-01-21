@@ -45,7 +45,7 @@ const SignUpPage: FC = (props) => {
 
       window.location.href = ROUTES.HOME;
     } catch (error: any) {
-      console.log(error.message);
+      console.error(error.message);
 
       setSignupEmail("");
       setSignupPassword("");
