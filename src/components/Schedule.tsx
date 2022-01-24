@@ -27,9 +27,10 @@ import "../styles/components/schedule.sass";
 
 type ScheduleProps = {
   lessons: any;
+  groupID?: string;
 };
 
-export const Schedule: FC<ScheduleProps> = ({ lessons }) => {
+export const Schedule: FC<ScheduleProps> = ({ lessons, groupID }) => {
   usePageReloadInterval(10);
 
   let previousConferenceIndex = 0;
@@ -54,7 +55,24 @@ export const Schedule: FC<ScheduleProps> = ({ lessons }) => {
 
   return (
     <Alert variant="dark box mt-5">
-      <h2 className="text-white">Schedule</h2>
+      <Row>
+        <Col xs={9}>
+          <h2 className="text-white">Schedule</h2>
+        </Col>
+        {groupID ? (
+          <Col xs={3} className="d-grid">
+            <Button
+              variant="info"
+              size="sm"
+              className="text-white fs-6"
+              href={`/groups/${groupID}/schedule/`}
+            >
+              <b>See all</b>
+            </Button>
+          </Col>
+        ) : null}
+      </Row>
+
       <Container className="d-grid gap-3 mt-5">
         <h3 className="text-white">Join conference:</h3>
         <ButtonGroup size="lg">

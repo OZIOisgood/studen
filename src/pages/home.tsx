@@ -1,7 +1,7 @@
 import { FC, useContext } from "react";
 import { Container } from "react-bootstrap";
 import { Schedule, PrivateRoute, Users } from "../components";
-import { getTimeNow, usePageReloadInterval } from "../utils";
+import { getTimeNow } from "../utils";
 import { FirebaseContext } from "../context/firebase";
 import { collection, orderBy, query, where } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";

@@ -20,7 +20,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute, Avatar } from "../components";
+import { PrivateRoute, Avatar, Groups } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import * as ROUTES from "../constants/routes";
 import { getUser, setUser } from "../utils";
@@ -147,10 +147,10 @@ const GroupsPage: FC = (props) => {
     <PrivateRoute>
       <Container className="mt-5">
         <Row>
-          <Col xs={7}>
+          <Col xs={6}>
             <h1 className="text-white">Groups</h1>
           </Col>
-          <Col xs={5} className="d-grid">
+          <Col xs={6} className="d-grid">
             <div className="d-grid">
               <ButtonGroup>
                 <Button
@@ -260,57 +260,8 @@ const GroupsPage: FC = (props) => {
             </Modal>
           </Col>
         </Row>
-        <Alert variant="dark box mt-5">
-          <h2 className="text-white">My groups</h2>
-          <Container className="d-grid gap-3 mt-5">
-            {myGroups?.map((item: any, index: number) => (
-              <Button
-                variant="secondary"
-                href={`${ROUTES.GROUPS}/${item.id}`}
-                key={item.id}
-                className="user-btn"
-              >
-                <Row>
-                  <Col xs={1} className="user-number">
-                    <h4>{index + 1}.</h4>
-                  </Col>
-                  <Col xs={1} className="user-avatar">
-                    <Avatar href={item.avatarURL} height={32} size={50} />
-                  </Col>
-                  <Col xs={12} sm={10} className="user-email">
-                    <h4>{item.name}</h4>
-                  </Col>
-                </Row>
-              </Button>
-            ))}
-          </Container>
-        </Alert>
-
-        <Alert variant="dark box mt-5">
-          <h2 className="text-white">All groups</h2>
-          <Container className="d-grid gap-3 mt-5">
-            {allGroups?.map((item: any, index: number) => (
-              <Button
-                variant="secondary"
-                href="#"
-                key={item.id}
-                className="user-btn"
-              >
-                <Row>
-                  <Col xs={1} className="user-number">
-                    <h4>{index + 1}.</h4>
-                  </Col>
-                  <Col xs={1} className="user-avatar">
-                    <Avatar href={item.avatarURL} height={32} size={50} />
-                  </Col>
-                  <Col xs={12} sm={10} className="user-email">
-                    <h4>{item.name}</h4>
-                  </Col>
-                </Row>
-              </Button>
-            ))}
-          </Container>
-        </Alert>
+        <Groups title="My groups" groups={myGroups} />
+        <Groups title="My groups" groups={allGroups} />
       </Container>
     </PrivateRoute>
   );

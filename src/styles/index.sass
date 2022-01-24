@@ -1,7 +1,9 @@
 @import "./variables"
 @import "~bootstrap/scss/bootstrap"
 
+
 *
+    // zoom: 98%
     // border: 1px solid cyan
 
 body
@@ -18,9 +20,15 @@ hr
     border-top: 3px solid #ffffffc7
     opacity: 100%
 
-// .btn-warning
-//     background-color: #e4ab01
-//     border-color: #e4ab01
+.box
+  background-color: #212529 !important
+  border: none !important
+
+.text-align-left
+        text-align: left
+
+.text-align-right
+        text-align: right
 
 .btn-warning
     color: #fff
@@ -31,3 +39,21 @@ hr
     color: #fff
     background-color: #c89600
     border-color: #c89600
+
+        
+@media (max-width: 1200px)
+    *
+        zoom: 100%
+        
+@media (max-width: 992px)
+    *
+        zoom: 100%
+
+@media (max-width: 768px)
+    *
+        zoom: 100%
+
+@media (max-width: 576px)
+    *
+        zoom: 98%
+    

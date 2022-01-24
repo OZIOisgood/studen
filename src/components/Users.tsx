@@ -24,13 +24,13 @@ export const Users: FC<UsersProps> = ({ users, title }) => {
           >
             <Row>
               <Col xs={1} className="user-number">
-                <h4>{index + 1}.</h4>
+                <h4 className="text-align-right">{index + 1}.</h4>
               </Col>
-              <Col xs={1} className="user-avatar">
+              <Col xs={2} className="user-avatar">
                 <Avatar email={item.email} height={28} size={50} />
               </Col>
-              <Col xs={12} sm={10} className="user-email">
-                <h4>{item.email}</h4>
+              <Col xs={9} className="user-fullName">
+                <h4 className="text-align-left">{`${item.lastName} ${item.firstName}`}</h4>
               </Col>
             </Row>
           </Button>
