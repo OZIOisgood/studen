@@ -74,6 +74,8 @@ const GroupsPage: FC = (props) => {
 
   const handleJoin = async () => {
     try {
+      setShowJoin(false);
+
       const groupDoc = await getDoc(doc(db, "groups", groupID));
 
       await setDoc(doc(db, "groups", groupID), {
@@ -99,8 +101,6 @@ const GroupsPage: FC = (props) => {
     } catch (error: any) {
       console.error(error.message);
     } finally {
-      setShowJoin(false);
-
       setGroupName("");
       setGroupAvatar("");
       setGroupBackground("");
@@ -109,12 +109,24 @@ const GroupsPage: FC = (props) => {
 
   const handleCreate = async () => {
     try {
+      setShowCreate(false);
+
       const groupRef = await addDoc(collection(db, "groups"), {
         name: groupName,
         avatarURL: groupAvatar,
         backgroundURL: groupBackground,
         admins: [user.id],
         users: [user.id],
+        schedule: [
+          "08:30/10:05",
+          "10:25/12:00",
+          "12:20/13:55",
+          "14:15/15:50",
+          "16:10/17:45",
+          "18:30/20:05",
+          "20:20/21:55",
+        ],
+        courses: [],
       });
 
       let userDoc = await getDoc(doc(db, "users", user.id));
@@ -135,8 +147,6 @@ const GroupsPage: FC = (props) => {
     } catch (error: any) {
       console.error(error.message);
     } finally {
-      setShowCreate(false);
-
       setGroupName("");
       setGroupAvatar("");
       setGroupBackground("");
@@ -260,8 +270,9 @@ const GroupsPage: FC = (props) => {
             </Modal>
           </Col>
         </Row>
+
         <Groups title="My groups" groups={myGroups} />
-        <Groups title="My groups" groups={allGroups} />
+        <Groups title="All groups" groups={allGroups} />
       </Container>
     </PrivateRoute>
   );

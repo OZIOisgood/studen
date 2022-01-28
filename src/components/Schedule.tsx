@@ -26,11 +26,12 @@ import {
 import "../styles/components/schedule.sass";
 
 type ScheduleProps = {
+  courses: any;
   lessons: any;
   groupID?: string;
 };
 
-export const Schedule: FC<ScheduleProps> = ({ lessons, groupID }) => {
+export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
   usePageReloadInterval(10);
 
   let previousConferenceIndex = 0;
@@ -54,7 +55,7 @@ export const Schedule: FC<ScheduleProps> = ({ lessons, groupID }) => {
   });
 
   return (
-    <Alert variant="dark box mt-5">
+    <Alert variant="dark box mt-5 schedule-container">
       <Row>
         <Col xs={9}>
           <h2 className="text-white">Schedule</h2>
@@ -63,7 +64,7 @@ export const Schedule: FC<ScheduleProps> = ({ lessons, groupID }) => {
           <Col xs={3} className="d-grid">
             <Button
               variant="info"
-              size="sm"
+              size="lg"
               className="text-white fs-6"
               href={`/groups/${groupID}/schedule/`}
             >
@@ -153,19 +154,32 @@ export const Schedule: FC<ScheduleProps> = ({ lessons, groupID }) => {
               </Col>
               <Col xs={11}>
                 <Button
-                  disabled={moment(lesson.endTime.seconds * 1000).isBefore(
-                    getTimeNow()
-                  )}
+                  disabled={lesson.conferenceLink === ""}
                   variant="secondary"
-                  href={lesson.conferenceLink}
+                  href={
+                    lesson.conferenceLink !== "" ? lesson.conferenceLink : null
+                  }
                   className={buttonClasses}
                 >
                   <Row>
-                    <Col xs={{ span: 1 }} className="lesson-number">
+                    <Col xs={1} className="lesson-number text-align-right">
                       <h4>{index + 1}.</h4>
                     </Col>
-                    <Col xs={10} className="lesson-name">
-                      <h4>{lesson.name}</h4>
+                    <Col xs={11}>
+                      <Row>
+                        <Col xs={12} md={5} className="lesson-course-name">
+                          <h4>
+                            {courses != null
+                              ? courses.find(
+                                  (course: any) => course.id === lesson.course
+                                )?.name
+                              : null}
+                          </h4>
+                        </Col>
+                        <Col xs={12} md={7} className="lesson-name">
+                          <h4>{lesson.name}</h4>
+                        </Col>
+                      </Row>
                     </Col>
                   </Row>
                 </Button>

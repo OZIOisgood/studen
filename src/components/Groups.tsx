@@ -27,21 +27,20 @@ export const Groups: FC<GroupsProps> = ({ groups, title }) => {
       <h2 className="text-white">{title}</h2>
       <Container className="d-grid gap-3 mt-5">
         <Row xs={1} sm={2} lg={3}>
-          <Col className="d-grid">
-            {groups?.map((group: any, index: number) => (
+          {groups?.map((group: any, index: number) => (
+            <Col key={group.id}>
               <Button
                 variant="secondary"
-                href={`${ROUTES.GROUPS}/${group.id}`}
-                key={group.id}
                 className="group-btn d-flex"
                 style={{ backgroundImage: `url(${group.backgroundURL})` }}
+                href={`${ROUTES.GROUPS}/${group.id}`}
               >
                 <h3 className="fs-2">
                   <b>{group.name}</b>
                 </h3>
               </Button>
-            ))}
-          </Col>
+            </Col>
+          ))}
         </Row>
       </Container>
     </Alert>

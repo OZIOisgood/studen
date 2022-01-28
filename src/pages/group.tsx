@@ -88,32 +88,34 @@ const GroupPage: FC = (props) => {
 
   const handleCreateCourse = async () => {
     try {
-      const courseRef = await addDoc(collection(db, "courses"), {
+      // const courseRef =
+      await addDoc(collection(db, "courses"), {
         name: courseName,
         group: params.id,
       });
-      let groupDoc = await getDoc(doc(db, "groups", `${params.id}`));
 
-      await setDoc(doc(db, "groups", `${params.id}`), {
-        ...groupDoc.data(),
-        courses: [...groupDoc.data()?.courses, courseRef.id],
-      });
+      // let groupDoc = await getDoc(doc(db, "groups", `${params.id}`));
 
-      let userDoc = await getDoc(doc(db, "users", user.id));
+      // await setDoc(doc(db, "groups", `${params.id}`), {
+      //   ...groupDoc.data(),
+      //   courses: [...groupDoc.data()?.courses, courseRef.id],
+      // });
 
-      await setDoc(doc(db, "users", user.id), {
-        ...userDoc.data(),
-        courses: [...userDoc.data()?.courses, courseRef.id],
-      });
+      // let userDoc = await getDoc(doc(db, "users", user.id));
 
-      userDoc = await getDoc(doc(db, "users", user.id));
+      // await setDoc(doc(db, "users", user.id), {
+      //   ...userDoc.data(),
+      //   courses: [...userDoc.data()?.courses, courseRef.id],
+      // });
 
-      setUser(
-        JSON.stringify({
-          ...userDoc.data(),
-          id: userDoc.id,
-        })
-      );
+      // userDoc = await getDoc(doc(db, "users", user.id));
+
+      // setUser(
+      //   JSON.stringify({
+      //     ...userDoc.data(),
+      //     id: userDoc.id,
+      //   })
+      // );
     } catch (error: any) {
       console.error(error.message);
     } finally {
@@ -135,7 +137,7 @@ const GroupPage: FC = (props) => {
         <h4 className="text-muted d-flex justify-content-center mt-1 fs-5">
           {params.id}
         </h4>
-        <Schedule lessons={lessons} groupID={params.id} />
+        <Schedule courses={courses} lessons={lessons} groupID={params.id} />
 
         <Alert variant="dark box mt-5">
           <Row>

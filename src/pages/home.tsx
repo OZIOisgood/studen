@@ -18,6 +18,13 @@ const HomePage: FC = (props) => {
   const usersQuery = query(usersCollectionRef);
   const users = useFirestoreQuery(usersQuery);
 
+  const coursesCollectionRef = collection(firestore, "courses");
+  const coursesQuery = query(
+    coursesCollectionRef,
+    where("group", "in", user.groups)
+  );
+  const courses = useFirestoreQuery(coursesQuery);
+
   const startOfDay = getTimeNow().startOf("day").toDate();
   const endOfDay = getTimeNow().endOf("day").toDate();
 
@@ -35,7 +42,7 @@ const HomePage: FC = (props) => {
     <PrivateRoute>
       <Container className="mt-5">
         <h1 className="text-white">Home</h1>
-        <Schedule lessons={lessons} />
+        <Schedule courses={courses} lessons={lessons} />
         <Users title="All users" users={users} />
       </Container>
     </PrivateRoute>

@@ -25,14 +25,16 @@ import {
   where,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute, Avatar, Users, Schedule } from "../components";
+import { PrivateRoute, Avatar, Users, Schedule, Lessons } from "../components";
 import { FirebaseContext } from "../context/firebase";
-
-import "../styles/pages/schedule.sass";
 import { getTimeNow, getUser, setUser } from "../utils";
 import moment from "moment";
 
+import "../styles/pages/schedule.sass";
+
 const SchedulePage: FC = (props) => {
+  console.clear();
+
   const { firestore } = useContext(FirebaseContext);
 
   const user = getUser();
@@ -62,16 +64,106 @@ const SchedulePage: FC = (props) => {
 
   const timeNowDayNumber = Number(timeNow.format("DD"));
 
+  //   const [lessons, setLessons] = useState<any>([]);
+
+  //   const dateChanged = () => {
+  //   };
+
+  //   const lessonsCollectionRef = collection(firestore, "lessons");
+  //   const lessonsQuery = query(
+  //     lessonsCollectionRef,
+  //     where("group", "==", params.id),
+  //     where("beginningTime", ">=", timeCalendar.startOf("day").toDate()),
+  //     where("beginningTime", "<=", timeCalendar.endOf("day").toDate()),
+  //     orderBy("beginningTime", "asc")
+  //   );
+  //   const lessons = useFirestoreQuery(lessonsQuery);
+
+  console.log("````````````````` SchedulePage ````````````````````");
+  console.log(`timeCalendar: ${timeCalendar.format("DD/MM/YYYY")}`);
+  //   console.log(lessons);
+
   return (
     <PrivateRoute>
-      <Container className="mt-5 schedule-container">
+      <Container className="mt-5 group-schedule-container">
         <h1 className="text-white">
           <a href={`/groups/${params.id}`}>{group?.name}</a>
           <span className="text-muted">{" / "}</span> Schedule
         </h1>
+
         <Alert variant="dark box mt-5 box">
-          <Container className="d-grid">
-            <h2 className="text-white">
+          <Container>
+            <Row className="mt-3">
+              <Col xs={2} md={1} className="text-align-right">
+                <Button
+                  variant="secondary"
+                  className="mt-1"
+                  onClick={() => {
+                    const timeCalendarPrevMonth = timeCalendar.toDate();
+
+                    timeCalendarPrevMonth.setMonth(
+                      timeCalendar.toDate().getMonth() - 1
+                    );
+                    timeCalendarPrevMonth.setDate(1);
+
+                    setTimeCalendar(moment(new Date(timeCalendarPrevMonth)));
+                    setTimeCalendarChoosenDay(1);
+                  }}
+                >
+                  <i className="fas fa-arrow-left"></i>
+                </Button>
+              </Col>
+              <Col xs={8} md={10}>
+                <h2 className="text-white text-center">
+                  {timeCalendar.format("MMMM Do YYYY")}
+                </h2>
+              </Col>
+              <Col xs={2} md={1}>
+                <Button
+                  variant="secondary"
+                  className="mt-1"
+                  onClick={() => {
+                    const timeCalendarPrevMonth = timeCalendar.toDate();
+
+                    timeCalendarPrevMonth.setMonth(
+                      timeCalendar.toDate().getMonth() + 1
+                    );
+                    timeCalendarPrevMonth.setDate(1);
+
+                    setTimeCalendar(moment(new Date(timeCalendarPrevMonth)));
+                    setTimeCalendarChoosenDay(1);
+                  }}
+                >
+                  <i className="fas fa-arrow-right"></i>
+                </Button>
+              </Col>
+            </Row>
+            <Container className="mt-4">
+              {[...Array(timeCalendar.daysInMonth())].map((item, index) => (
+                <Button
+                  key={index}
+                  variant={
+                    timeCalendarChoosenDay === index + 1
+                      ? "info"
+                      : timeNowDayNumber === index + 1 &&
+                        timeNowMonth === timeCalendar.format("MMMM YYYY")
+                      ? "danger"
+                      : "secondary"
+                  }
+                  className="m-1 calendar-number rounded-circle text-white"
+                  onClick={() => {
+                    setTimeCalendar(
+                      moment(new Date(timeCalendar.toDate().setDate(index + 1)))
+                    );
+                    setTimeCalendarChoosenDay(index + 1);
+                  }}
+                >
+                  {index + 1}
+                </Button>
+              ))}
+            </Container>
+
+            {/* <h2 className="text-white">
               {timeCalendar.format("MMMM Do YYYY")}
             </h2>
             <Row className="mt-3">
@@ -139,9 +231,11 @@ const SchedulePage: FC = (props) => {
                   <i className="fas fa-arrow-right"></i>
                 </Button>
               </Col>
-            </Row>
+            </Row> */}
           </Container>
         </Alert>
+
+        <Lessons groupID={params.id} timeCalendar={timeCalendar} />
       </Container>
     </PrivateRoute>
   );
