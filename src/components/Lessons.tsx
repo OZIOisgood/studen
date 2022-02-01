@@ -32,12 +32,13 @@ import { useFirestoreQuery } from "../hooks";
 import {
   getPrettyTimeByStamp,
   getTimeNow,
+  momentWeek,
   usePageReloadInterval,
 } from "../utils";
-
-import "../styles/components/lessons.sass";
 import { useParams } from "react-router";
 import { FirebaseContext } from "../context/firebase";
+
+import "../styles/components/lessons.sass";
 
 type LessonsProps = {
   groupID: string | undefined;
@@ -98,12 +99,22 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
 
   const [showAddLesson, setShowAddLesson] = useState(false);
   const [showDeleteLesson, setShowDeleteLesson] = useState(false);
+  const [showCopyLastWeek, setShowCopyLastWeek] = useState(false);
+  const [showCopyWeekBeforeLast, setShowCopyWeekBeforeLast] = useState(false);
+
+  const [lessonToDelete, setLessonToDelete] = useState(lessons[0]);
 
   const handleCloseAddLesson = () => setShowAddLesson(false);
   const handleShowAddLesson = () => setShowAddLesson(true);
 
   const handleCloseDeleteLesson = () => setShowDeleteLesson(false);
   const handleShowDeleteLesson = () => setShowDeleteLesson(true);
+
+  const handleCloseCopyLastWeek = () => setShowCopyLastWeek(false);
+  const handleShowCopyLastWeek = () => setShowCopyLastWeek(true);
+
+  const handleCloseCopyWeekBeforeLast = () => setShowCopyWeekBeforeLast(false);
+  const handleShowCopyWeekBeforeLast = () => setShowCopyWeekBeforeLast(true);
 
   const [lessonName, setLessonName] = useState("");
   const [courseIndex, setCourseIndex] = useState("0");
@@ -166,8 +177,99 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
     }
   };
 
-  // console.log("\n\n\n\n\n\n\n\n!!!!!!!!!!!!!! Lessons !!!!!!!!!!!!!!");
-  // console.log(useLessonNumber);
+  const handleCopyLastWeek = async () => {
+    try {
+      setShowCopyLastWeek(false);
+
+      const { prevWeekBeginning, prevWeekEnd } = momentWeek(timeCalendar);
+
+      const lessonsCollectionRef = collection(firestore, "lessons");
+      const lessonsQuery = query(
+        lessonsCollectionRef,
+        where("group", "==", params.id),
+        where("beginningTime", ">=", prevWeekBeginning.toDate()),
+        where("beginningTime", "<=", prevWeekEnd.toDate()),
+        orderBy("beginningTime", "asc")
+      );
+
+      const lessons = await getDocs(lessonsQuery).then((snapshot) => {
+        return snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }));
+      });
+
+      await lessons.forEach(async (lesson) => {
+        const newLessonBeginningTime = moment(
+          new Date(lesson.beginningTime.seconds * 1000)
+        );
+        const newLessonEndTime = moment(
+          new Date(lesson.endTime.seconds * 1000)
+        );
+
+        newLessonBeginningTime.add(1, "weeks");
+        newLessonEndTime.add(1, "weeks");
+
+        const newLesson = {
+          name: lesson.name,
+          group: lesson.group,
+          course: lesson.course,
+          beginningTime: newLessonBeginningTime.toDate(),
+          endTime: newLessonEndTime.toDate(),
+          conferenceLink: lesson.conferenceLink,
+        };
+
+        await addDoc(collection(db, "lessons"), newLesson);
+      });
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+
+  const handleCopyWeekBeforeLast = async () => {
+    try {
+      setShowCopyWeekBeforeLast(false);
+
+      const { prevWeekBeginning, prevWeekEnd } = momentWeek(
+        momentWeek(timeCalendar).prevWeekBeginning
+      );
+
+      const lessonsCollectionRef = collection(firestore, "lessons");
+      const lessonsQuery = query(
+        lessonsCollectionRef,
+        where("group", "==", params.id),
+        where("beginningTime", ">=", prevWeekBeginning.toDate()),
+        where("beginningTime", "<=", prevWeekEnd.toDate()),
+        orderBy("beginningTime", "asc")
+      );
+
+      const lessons = await getDocs(lessonsQuery).then((snapshot) => {
+        return snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }));
+      });
+
+      await lessons.forEach(async (lesson) => {
+        const newLessonBeginningTime = moment(
+          new Date(lesson.beginningTime.seconds * 1000)
+        );
+        const newLessonEndTime = moment(
+          new Date(lesson.endTime.seconds * 1000)
+        );
+
+        newLessonBeginningTime.add(2, "weeks");
+        newLessonEndTime.add(1, "weeks");
+
+        const newLesson = {
+          name: lesson.name,
+          group: lesson.group,
+          course: lesson.course,
+          beginningTime: newLessonBeginningTime.toDate(),
+          endTime: newLessonEndTime.toDate(),
+          conferenceLink: lesson.conferenceLink,
+        };
+
+        await addDoc(collection(db, "lessons"), newLesson);
+      });
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
 
   return (
     <Alert variant="dark box mt-5 lessons-container">
@@ -195,7 +297,24 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   variant="secondary"
                   className="lesson-btn"
                 >
-                  <h4 className="text-align-left">{item.name}</h4>
+                  <Row>
+                    <Col
+                      xs={12}
+                      md={5}
+                      className="lesson-course-name text-align-left"
+                    >
+                      <h4>
+                        {courses != null
+                          ? courses.find(
+                              (course: any) => course.id === item.course
+                            )?.name
+                          : null}
+                      </h4>
+                    </Col>
+                    <Col xs={12} md={7} className="lesson-name text-align-left">
+                      <h4>{item.name}</h4>
+                    </Col>
+                  </Row>
                 </Button>
               </Col>
               <Col xs={2} sm={2} md={1} className="d-grid gap-3">
@@ -203,11 +322,14 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   variant="danger"
                   key={item.id}
                   className="lesson-btn"
-                  onClick={handleShowDeleteLesson}
+                  onClick={() => {
+                    setLessonToDelete(item);
+                    handleShowDeleteLesson();
+                  }}
                 >
                   <i className="fas fa-trash-alt"></i>
                 </Button>
-                <Modal
+                {/* <Modal
                   show={showDeleteLesson}
                   onHide={handleCloseDeleteLesson}
                   centered
@@ -217,7 +339,13 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   </Modal.Header>
                   <Modal.Body>
                     <Modal.Title className="fs-5 text-secondary">
-                      Are you sure you want to delete the lesson?
+                      {`Are you sure you want to delete ${
+                        courses != null
+                          ? courses.find(
+                              (course: any) => course.id === item.course
+                            )?.name
+                          : null
+                      }: ${item.name}?`}
                     </Modal.Title>
                     <Form>
                       <div className="d-grid mt-4">
@@ -225,6 +353,9 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                           variant="danger"
                           className="text-white"
                           onClick={() => {
+                            console.log("^^^ Deleting the lesson ^^^");
+                            console.log(`lessonId: ${item.id}`);
+
                             handleDeleteLesson(item.id);
                           }}
                         >
@@ -233,21 +364,87 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                       </div>
                     </Form>
                   </Modal.Body>
-                </Modal>
+                </Modal> */}
               </Col>
             </Row>
           ))
         ) : (
           <h2 className="text-white">No lessons this day</h2>
         )}
+
+        <Modal
+          show={showDeleteLesson}
+          onHide={handleCloseDeleteLesson}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Deleting the lesson</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Modal.Title className="fs-5 text-secondary">
+              {`Are you sure you want to delete ${
+                courses != null
+                  ? courses.find(
+                      (course: any) => course.id === lessonToDelete?.course
+                    )?.name
+                  : null
+              }: ${lessonToDelete?.name}?`}
+            </Modal.Title>
+            <Form>
+              <div className="d-grid mt-4">
+                <Button
+                  variant="danger"
+                  className="text-white"
+                  onClick={() => {
+                    console.log("^^^ Deleting the lesson ^^^");
+                    console.log(`lessonId: ${lessonToDelete?.id}`);
+
+                    handleDeleteLesson(lessonToDelete?.id);
+                  }}
+                >
+                  <b>Delete lesson</b>
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
+
         <Button
           size="lg"
           variant="info"
           className="text-white mt-2"
           onClick={handleShowAddLesson}
         >
-          <b>Add new lesson</b>
+          <b>
+            <i className="far fa-calendar-plus"></i> Add new lesson
+          </b>
         </Button>
+
+        <Row>
+          <Col xs={12} md={6} className="d-grid gap-2">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="text-white mt-2"
+              onClick={handleShowCopyLastWeek}
+            >
+              <i className="fas fa-angle-left"></i> <b>Copy last week</b>
+            </Button>
+          </Col>
+
+          <Col xs={12} md={6} className="d-grid gap-2">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="text-white mt-2"
+              onClick={handleShowCopyWeekBeforeLast}
+            >
+              <i className="fas fa-angle-double-left"></i>{" "}
+              <b>Copy week before last</b>
+            </Button>
+          </Col>
+        </Row>
+
         <Modal show={showAddLesson} onHide={handleCloseAddLesson} centered>
           <Modal.Header closeButton>
             <Modal.Title>Adding new lesson</Modal.Title>
@@ -255,7 +452,9 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
           <Modal.Body>
             <Form>
               <Form.Group className="mb-3 lesson-name">
-                <Form.Label>Lesson name</Form.Label>
+                <Form.Label>
+                  Lesson name <span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter name"
@@ -266,7 +465,9 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
               </Form.Group>
 
               <Form.Group className="mb-3 lesson-course">
-                <Form.Label>Course</Form.Label>
+                <Form.Label>
+                  Course <span className="text-danger">*</span>
+                </Form.Label>
                 <Form.Select
                   onChange={(event) => {
                     setCourseIndex(event.target.value);
@@ -307,7 +508,9 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
 
                 {useLessonNumber ? (
                   <Form.Group className="mt-3 mb-3">
-                    <Form.Label>Lesson number</Form.Label>
+                    <Form.Label>
+                      Lesson number <span className="text-danger">*</span>
+                    </Form.Label>
                     <Form.Select
                       onChange={(event) => {
                         const values = event.target.value.split("/");
@@ -330,7 +533,10 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   <Row className="mt-3">
                     <Col xs={6}>
                       <Form.Group className="mb-3" controlId="formGroupName">
-                        <Form.Label>Lesson beginning</Form.Label>
+                        <Form.Label>
+                          Lesson beginning{" "}
+                          <span className="text-danger">*</span>
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           placeholder='Time format "00:00"'
@@ -342,7 +548,9 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                     </Col>
                     <Col xs={6}>
                       <Form.Group className="mb-3" controlId="formGroupName">
-                        <Form.Label>Lesson end</Form.Label>
+                        <Form.Label>
+                          Lesson end <span className="text-danger">*</span>
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           placeholder='Time format "00:00"'
@@ -415,6 +623,58 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   onClick={handleAddLesson}
                 >
                   <b>Add lesson</b>
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={showCopyLastWeek}
+          onHide={handleCloseCopyLastWeek}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Copying last week</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Modal.Title className="fs-5 text-secondary">
+              Are you sure you want to copy last week to this one?
+            </Modal.Title>
+            <Form>
+              <div className="d-grid mt-4">
+                <Button
+                  variant="info"
+                  className="text-white"
+                  onClick={handleCopyLastWeek}
+                >
+                  <b>Copy last week</b>
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={showCopyWeekBeforeLast}
+          onHide={handleCloseCopyWeekBeforeLast}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Copying last week</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Modal.Title className="fs-5 text-secondary">
+              Are you sure you want to copy week before last to this one?
+            </Modal.Title>
+            <Form>
+              <div className="d-grid mt-4">
+                <Button
+                  variant="info"
+                  className="text-white"
+                  onClick={handleCopyWeekBeforeLast}
+                >
+                  <b>Copy week before last</b>
                 </Button>
               </div>
             </Form>

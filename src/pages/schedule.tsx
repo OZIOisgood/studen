@@ -27,7 +27,7 @@ import {
 import { useFirestoreQuery } from "../hooks";
 import { PrivateRoute, Avatar, Users, Schedule, Lessons } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import { getTimeNow, getUser, setUser } from "../utils";
+import { getTimeNow, getUser, momentWeek, setUser } from "../utils";
 import moment from "moment";
 
 import "../styles/pages/schedule.sass";
@@ -64,6 +64,18 @@ const SchedulePage: FC = (props) => {
 
   const timeNowDayNumber = Number(timeNow.format("DD"));
 
+  const {
+    prevWeekBeginning,
+    prevWeekEnd,
+    nextWeekBeginning,
+    nextWeekEnd,
+    weeksInMonth,
+    daysInFirstWeek,
+    daysInLastWeek,
+  } = momentWeek(timeCalendar);
+
+  let tempDayButton = 1;
+
   //   const [lessons, setLessons] = useState<any>([]);
 
   //   const dateChanged = () => {
@@ -81,7 +93,7 @@ const SchedulePage: FC = (props) => {
 
   console.log("````````````````` SchedulePage ````````````````````");
   console.log(`timeCalendar: ${timeCalendar.format("DD/MM/YYYY")}`);
-  //   console.log(lessons);
+  // console.log(timeNowDayNumber);
 
   return (
     <PrivateRoute>
@@ -138,7 +150,47 @@ const SchedulePage: FC = (props) => {
                 </Button>
               </Col>
             </Row>
-            <Container className="mt-4">
+            <Row className="mt-4">
+              {/* {[...Array(weeksInMonth)].map((week, weekIndex) => (
+                <Col
+                  xs={12}
+                  sm={{ span: 6, offset: 3 }}
+                  style={{ border: "1px solid lightgray" }}
+                  className="gap-3"
+                >
+                  {[...Array(7)].map((day, dayIndex) => (
+                    <Button
+                      key={dayIndex}
+                      id={`day-${dayIndex}`}
+                      variant={
+                        timeCalendarChoosenDay === tempDayButton
+                          ? "info"
+                          : timeNowDayNumber === tempDayButton &&
+                            timeNowMonth === timeCalendar.format("MMMM YYYY")
+                          ? "danger"
+                          : "secondary"
+                      }
+                      className="m-1 calendar-number rounded-circle text-white"
+                      onClick={(event) => {
+                        setTimeCalendar(
+                          moment(
+                            new Date(
+                              timeCalendar
+                                .toDate()
+                                .setDate(
+                                  (event.target as Element).id.split("-")[1]
+                                )
+                            )
+                          )
+                        );
+                        setTimeCalendarChoosenDay(dayIndex + 1);
+                      }}
+                    >
+                      {tempDayButton++}
+                    </Button>
+                  ))}
+                </Col>
+              ))} */}
               {[...Array(timeCalendar.daysInMonth())].map((item, index) => (
                 <Button
                   key={index}
@@ -161,77 +213,7 @@ const SchedulePage: FC = (props) => {
                   {index + 1}
                 </Button>
               ))}
-            </Container>
-
-            {/* <h2 className="text-white">
-              {timeCalendar.format("MMMM Do YYYY")}
-            </h2>
-            <Row className="mt-3">
-              <Col xs={2} md={1} className="text-align-right">
-                <Button
-                  variant="secondary"
-                  className="mt-1"
-                  onClick={() => {
-                    const timeCalendarPrevMonth = timeCalendar.toDate();
-
-                    timeCalendarPrevMonth.setMonth(
-                      timeCalendar.toDate().getMonth() - 1
-                    );
-                    timeCalendarPrevMonth.setDate(1);
-
-                    setTimeCalendar(moment(new Date(timeCalendarPrevMonth)));
-                    setTimeCalendarChoosenDay(1);
-                  }}
-                >
-                  <i className="fas fa-arrow-left"></i>
-                </Button>
-              </Col>
-              <Col xs={8} md={10}>
-                {[...Array(timeCalendar.daysInMonth())].map((item, index) => (
-                  <Button
-                    key={index}
-                    variant={
-                      timeCalendarChoosenDay === index + 1
-                        ? "info"
-                        : timeNowDayNumber === index + 1 &&
-                          timeNowMonth === timeCalendar.format("MMMM YYYY")
-                        ? "danger"
-                        : "secondary"
-                    }
-                    className="m-1 calendar-number rounded-circle text-white"
-                    onClick={() => {
-                      setTimeCalendar(
-                        moment(
-                          new Date(timeCalendar.toDate().setDate(index + 1))
-                        )
-                      );
-                      setTimeCalendarChoosenDay(index + 1);
-                    }}
-                  >
-                    {index + 1}
-                  </Button>
-                ))}
-              </Col>
-              <Col xs={2} md={1}>
-                <Button
-                  variant="secondary"
-                  className="mt-1"
-                  onClick={() => {
-                    const timeCalendarPrevMonth = timeCalendar.toDate();
-
-                    timeCalendarPrevMonth.setMonth(
-                      timeCalendar.toDate().getMonth() + 1
-                    );
-                    timeCalendarPrevMonth.setDate(1);
-
-                    setTimeCalendar(moment(new Date(timeCalendarPrevMonth)));
-                    setTimeCalendarChoosenDay(1);
-                  }}
-                >
-                  <i className="fas fa-arrow-right"></i>
-                </Button>
-              </Col>
-            </Row> */}
+            </Row>
           </Container>
         </Alert>
 

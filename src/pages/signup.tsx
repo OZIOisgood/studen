@@ -15,12 +15,15 @@ const SignUpPage: FC = (props) => {
 
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [signupLastname, setLastname] = useState("");
+  const [signupFirstname, setFirstname] = useState("");
 
   const db = getFirestore();
 
   const signup = async () => {
     try {
       setLoading(true);
+
       const cred = await createUserWithEmailAndPassword(
         auth,
         signupEmail,
@@ -28,10 +31,12 @@ const SignUpPage: FC = (props) => {
       );
 
       const user = cred.user;
+
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
-        firstName: "",
-        lastName: "",
+        firstName: signupFirstname,
+        lastName: signupLastname,
+        groups: ["default"],
       });
 
       const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -56,32 +61,64 @@ const SignUpPage: FC = (props) => {
 
   return (
     <Container id="main-container" className="d-grid h-100">
-      <Form id="sign-up-form" className="text-center">
+      <Form id="sign-up-form">
         <a href={ROUTES.STARTER}>
-          <img src={logo} className="logo" alt="studen logo" />
+          <img src={logo} className="logo text-center" alt="studen logo" />
         </a>
-        <h1 className="text-white fs-3 mt-5">Plese sign up</h1>
+        <h1 className="text-white fs-3 mt-5 text-center">Please sign up</h1>
         <Form.Group controlId="sign-up-email-address" className="mt-4">
+          <Form.Label className="text-white">
+            Email <span className="text-danger">*</span>
+          </Form.Label>
           <Form.Control
             type="email"
             size="lg"
             placeholder="Email address"
-            autoComplete="username"
             className="position-relative"
+            disabled={loading}
             onChange={(event) => {
               setSignupEmail(event.target.value);
             }}
           />
         </Form.Group>
-        <Form.Group controlId="sign-up-password">
+        <Form.Group controlId="sign-up-password" className="mt-3">
+          <Form.Label className="text-white">
+            Password <span className="text-danger">*</span>
+          </Form.Label>
           <Form.Control
             type="password"
             size="lg"
             placeholder="Password"
-            autoComplete="current-password"
-            className="position-relative mt-3"
+            disabled={loading}
+            className="position-relative"
             onChange={(event) => {
               setSignupPassword(event.target.value);
+            }}
+          />
+        </Form.Group>
+        <Form.Group className="mt-4 lesson-name">
+          <Form.Label className="text-white">
+            Lastname <span className="text-danger">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            size="lg"
+            placeholder="Enter your lastname"
+            onChange={(event) => {
+              setLastname(event.target.value);
+            }}
+          />
+        </Form.Group>
+        <Form.Group className="mt-3 lesson-name">
+          <Form.Label className="text-white">
+            Firstname <span className="text-danger">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            size="lg"
+            placeholder="Enter your firstname"
+            onChange={(event) => {
+              setFirstname(event.target.value);
             }}
           />
         </Form.Group>
@@ -97,7 +134,7 @@ const SignUpPage: FC = (props) => {
         <div className="d-grid">
           <Button
             variant="info"
-            className="mt-4"
+            className="mt-5"
             size="lg"
             onClick={signup}
             disabled={loading}

@@ -189,7 +189,9 @@ const GroupsPage: FC = (props) => {
               <Modal.Body>
                 <Form>
                   <Form.Group className="mb-3" controlId="formGroupName">
-                    <Form.Label>Group</Form.Label>
+                    <Form.Label>
+                      Group <span className="text-danger">*</span>
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Enter id"
@@ -221,7 +223,9 @@ const GroupsPage: FC = (props) => {
               <Modal.Body>
                 <Form>
                   <Form.Group className="mb-3" controlId="formGroupName">
-                    <Form.Label>Name</Form.Label>
+                    <Form.Label>
+                      Name <span className="text-danger">*</span>
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Enter group name"
@@ -231,7 +235,9 @@ const GroupsPage: FC = (props) => {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formGroupAvatarURL">
-                    <Form.Label>Avatar</Form.Label>
+                    <Form.Label>
+                      Avatar <span className="text-danger">*</span>
+                    </Form.Label>
                     <Form.Control
                       type="url"
                       placeholder="Enter url"
@@ -244,7 +250,9 @@ const GroupsPage: FC = (props) => {
                     className="mb-3"
                     controlId="formGroupBackgroundURL"
                   >
-                    <Form.Label>Background</Form.Label>
+                    <Form.Label>
+                      Background <span className="text-danger">*</span>
+                    </Form.Label>
                     <Form.Control
                       type="url"
                       placeholder="Enter url"
@@ -272,7 +280,7 @@ const GroupsPage: FC = (props) => {
         </Row>
 
         <Groups title="My groups" groups={myGroups} />
-        <Groups title="All groups" groups={allGroups} />
+        {/* <Groups title="All groups" groups={allGroups} /> */}
       </Container>
     </PrivateRoute>
   );

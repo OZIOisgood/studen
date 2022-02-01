@@ -32,7 +32,12 @@ export const Groups: FC<GroupsProps> = ({ groups, title }) => {
               <Button
                 variant="secondary"
                 className="group-btn d-flex"
-                style={{ backgroundImage: `url(${group.backgroundURL})` }}
+                style={{
+                  backgroundImage: `url(${group.backgroundURL})`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
                 href={`${ROUTES.GROUPS}/${group.id}`}
               >
                 <h3 className="fs-2">

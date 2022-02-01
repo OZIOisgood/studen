@@ -53,13 +53,14 @@ const SignInPage: FC = (props) => {
         <a href={ROUTES.STARTER}>
           <img src={logo} className="logo" alt="studen logo" />
         </a>
-        <h1 className="text-white fs-3 mt-5">Plese sign in</h1>
+        <h1 className="text-white fs-3 mt-5">Please sign in</h1>
         <Form.Group controlId="sign-in-email-address" className="mt-4">
           <Form.Control
             type="email"
             size="lg"
             placeholder="Email address"
             autoComplete="username"
+            disabled={loading}
             className="position-relative"
             onChange={(event) => {
               setSigninEmail(event.target.value);
@@ -72,6 +73,7 @@ const SignInPage: FC = (props) => {
             size="lg"
             placeholder="Password"
             autoComplete="current-password"
+            disabled={loading}
             className="position-relative mt-1"
             onChange={(event) => {
               setSigninPassword(event.target.value);

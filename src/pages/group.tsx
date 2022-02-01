@@ -79,7 +79,9 @@ const GroupPage: FC = (props) => {
   const courses = useFirestoreQuery(coursesQuery);
 
   const [showCreateCourse, setShowCreateCourse] = useState(false);
+
   const [courseName, setCourseName] = useState("");
+  const [courseStaticLink, setCourseStaticLink] = useState("");
 
   const handleCloseCreateCourse = () => setShowCreateCourse(false);
   const handleShowCreateCourse = () => setShowCreateCourse(true);
@@ -92,6 +94,7 @@ const GroupPage: FC = (props) => {
       await addDoc(collection(db, "courses"), {
         name: courseName,
         group: params.id,
+        staticLink: courseStaticLink,
       });
 
       // let groupDoc = await getDoc(doc(db, "groups", `${params.id}`));
@@ -164,13 +167,25 @@ const GroupPage: FC = (props) => {
                 </Modal.Header>
                 <Modal.Body>
                   <Form>
-                    <Form.Group className="mb-3" controlId="formGroupName">
-                      <Form.Label>Course name</Form.Label>
+                    <Form.Group className="mb-3">
+                      <Form.Label>
+                        Course name <span className="text-danger">*</span>
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         placeholder="Enter name"
                         onChange={(event) => {
                           setCourseName(event.target.value);
+                        }}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Static link</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter url"
+                        onChange={(event) => {
+                          setCourseStaticLink(event.target.value);
                         }}
                       />
                     </Form.Group>

@@ -34,25 +34,60 @@ type ScheduleProps = {
 export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
   usePageReloadInterval(10);
 
-  let previousConferenceIndex = 0;
-  let currentConferenceIndex = 0;
-  let nextConferenceIndex = 0;
+  let previousConferenceIndex = -1;
+  let currentConferenceIndex = -1;
+  let nextConferenceIndex = -1;
 
-  lessons?.forEach((lesson: any, index: number) => {
-    const lessonBeginningTimeMoment = moment(
-      lesson.beginningTime.seconds * 1000
-    );
-    const lessonEndTimeMoment = moment(lesson.endTime.seconds * 1000);
+  if (lessons.length !== 0) {
+    lessons?.forEach((lesson: any, index: number) => {
+      const lessonBeginningTimeMoment = moment(
+        lesson.beginningTime.seconds * 1000
+      );
+      const lessonEndTimeMoment = moment(lesson.endTime.seconds * 1000);
 
-    if (
-      lessonBeginningTimeMoment.isBefore(getTimeNow()) &&
-      lessonEndTimeMoment.isAfter(getTimeNow())
-    ) {
-      previousConferenceIndex = index - 1;
-      currentConferenceIndex = index;
-      nextConferenceIndex = index + 1;
+      if (
+        lessonBeginningTimeMoment.isBefore(getTimeNow()) &&
+        lessonEndTimeMoment.isAfter(getTimeNow())
+      ) {
+        previousConferenceIndex = index - 1;
+        currentConferenceIndex = index;
+        nextConferenceIndex = index + 1;
+      }
+    });
+
+    if (currentConferenceIndex === -1) {
+      const nextLessons: any[] = [];
+
+      lessons?.forEach((lesson: any, index: number) => {
+        const lessonBeginningTimeMoment = moment(
+          lesson.beginningTime.seconds * 1000
+        );
+
+        if (lessonBeginningTimeMoment.isAfter(getTimeNow())) {
+          nextLessons.push(lesson);
+        }
+      });
+
+      console.clear();
+      console.log("^^^^^^^^ nextLessons ^^^^^^^^");
+      console.log(lessons);
+      console.log(nextLessons);
+      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+
+      if (nextLessons.length === 0) {
+        console.log("1");
+        previousConferenceIndex = lessons.length - 1;
+        currentConferenceIndex = -1;
+        nextConferenceIndex = -1;
+      } else {
+        console.log("2");
+        nextConferenceIndex = lessons.findIndex(
+          (lesson: any) => lesson.id === nextLessons[0].id
+        );
+        previousConferenceIndex = nextConferenceIndex - 1;
+      }
     }
-  });
+  }
 
   return (
     <Alert variant="dark box mt-5 schedule-container">
@@ -85,6 +120,7 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
                 ? lessons[previousConferenceIndex]?.conferenceLink
                 : undefined
             }
+            target="_blank"
             size="lg"
           >
             <h4>
@@ -99,6 +135,7 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
                 ? lessons[currentConferenceIndex]?.conferenceLink
                 : undefined
             }
+            target="_blank"
             size="lg"
             className="btn-warning"
           >
@@ -112,6 +149,7 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
             href={
               lessons ? lessons[nextConferenceIndex]?.conferenceLink : undefined
             }
+            target="_blank"
             size="lg"
           >
             <h4>
@@ -154,11 +192,12 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
               </Col>
               <Col xs={11}>
                 <Button
-                  disabled={lesson.conferenceLink === ""}
+                  disabled={lesson.conferenceLink === "" ? true : false}
                   variant="secondary"
                   href={
-                    lesson.conferenceLink !== "" ? lesson.conferenceLink : null
+                    lesson.conferenceLink !== "" ? lesson.conferenceLink : "#"
                   }
+                  target="_blank"
                   className={buttonClasses}
                 >
                   <Row>
