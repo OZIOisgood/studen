@@ -8,7 +8,8 @@ import {
   Col,
   Form,
   Modal,
-  ToggleButton,
+  Dropdown,
+  DropdownButton,
 } from "react-bootstrap";
 import moment from "moment";
 import { firestore } from "../firebase-config";
@@ -27,6 +28,7 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
 import {
@@ -98,14 +100,29 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
   const courses = useFirestoreQuery(coursesQuery);
 
   const [showAddLesson, setShowAddLesson] = useState(false);
+  const [showChangeLesson, setShowChangeLesson] = useState(false);
   const [showDeleteLesson, setShowDeleteLesson] = useState(false);
   const [showCopyLastWeek, setShowCopyLastWeek] = useState(false);
   const [showCopyWeekBeforeLast, setShowCopyWeekBeforeLast] = useState(false);
 
   const [lessonToDelete, setLessonToDelete] = useState(lessons[0]);
+  const [lessonToChange, setLessonToChange] = useState(lessons[0]);
 
-  const handleCloseAddLesson = () => setShowAddLesson(false);
+  const handleCloseAddLesson = () => {
+    setShowAddLesson(false);
+
+    setUseLessonNumber(true);
+    setUseStaticLink(false);
+  };
   const handleShowAddLesson = () => setShowAddLesson(true);
+
+  const handleCloseChangeLesson = () => {
+    setShowChangeLesson(false);
+
+    setUseLessonNumber(true);
+    setUseStaticLink(false);
+  };
+  const handleShowChangeLesson = () => setShowChangeLesson(true);
 
   const handleCloseDeleteLesson = () => setShowDeleteLesson(false);
   const handleShowDeleteLesson = () => setShowDeleteLesson(true);
@@ -133,6 +150,53 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
       await deleteDoc(doc(db, "lessons", lessonID));
     } catch (error: any) {
       console.error(error.message);
+    }
+  };
+
+  const handleChangeLesson = async () => {
+    try {
+      setShowChangeLesson(false);
+
+      const beginningTimeTimestamp = Timestamp.fromDate(
+        moment(
+          `${timeCalendar.format("YYYY-MM-DD")} ${lessonBeginningTime}`
+        ).toDate()
+      );
+      const endTimeTimestamp = Timestamp.fromDate(
+        moment(`${timeCalendar.format("YYYY-MM-DD")} ${lessonEndTime}`).toDate()
+      );
+
+      const newLesson = {
+        name: lessonName,
+        group: params.id,
+        course: courses != null ? courses[Number(courseIndex)].id : "",
+        beginningTime: beginningTimeTimestamp,
+        endTime: endTimeTimestamp,
+        conferenceLink: lessonConferenceLink,
+      };
+
+      const changeDocRef = doc(db, "lessons", lessonToChange.id);
+      await updateDoc(changeDocRef, newLesson);
+
+      // const newLessonRef = await addDoc(collection(db, "lessons"), newLesson);
+
+      console.log("^^^^ newLesson ^^^^");
+      // console.log(`id: ${newLessonRef.id}`);
+      console.log(newLesson);
+      console.log(lessonBeginningTime);
+      console.log(lessonEndTime);
+      console.log("^^^^^^^^^^^^^^^^^^^");
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      setLessonName("");
+      setCourseIndex("0");
+      setLessonBeginningTime("");
+      setLessonEndTime("");
+      setLessonConferenceLink("");
+
+      setUseLessonNumber(true);
+      setUseStaticLink(false);
     }
   };
 
@@ -174,6 +238,9 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
       setLessonBeginningTime("");
       setLessonEndTime("");
       setLessonConferenceLink("");
+
+      setUseLessonNumber(true);
+      setUseStaticLink(false);
     }
   };
 
@@ -271,13 +338,19 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
     }
   };
 
+  // console.log("\n\n\n^^^ Lessons ^^^");
+  // console.log("lessonToChange:");
+  // console.log(lessonToChange?.name);
+  // console.log(courses);
+  // console.log("^^^^^^^^^^^^^^^\n\n\n");
+
   return (
     <Alert variant="dark box mt-5 lessons-container">
       <Container className="d-grid gap-3">
         {lessons.length !== 0 ? (
           lessons?.map((item: any, index: number) => (
-            <Row key={item.id}>
-              <Col xs={2} sm={1} md={1} className="d-grid gap-3">
+            <Row key={`lesson-${item.id}`}>
+              <Col xs={2} md={1} className="d-grid gap-3">
                 <Row>
                   <Col xs={12} className="lesson-time">
                     <span className="text-muted">
@@ -291,7 +364,8 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   </Col>
                 </Row>
               </Col>
-              <Col xs={8} sm={9} md={10} className="d-grid gap-3">
+              <Col xs={7} sm={7} md={9} className="d-grid gap-3">
+                {" "}
                 <Button
                   disabled={true}
                   variant="secondary"
@@ -317,54 +391,46 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   </Row>
                 </Button>
               </Col>
-              <Col xs={2} sm={2} md={1} className="d-grid gap-3">
-                <Button
-                  variant="danger"
-                  key={item.id}
-                  className="lesson-btn"
-                  onClick={() => {
-                    setLessonToDelete(item);
-                    handleShowDeleteLesson();
-                  }}
-                >
-                  <i className="fas fa-trash-alt"></i>
-                </Button>
-                {/* <Modal
-                  show={showDeleteLesson}
-                  onHide={handleCloseDeleteLesson}
-                  centered
-                >
-                  <Modal.Header closeButton>
-                    <Modal.Title>Deleting the lesson</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Modal.Title className="fs-5 text-secondary">
-                      {`Are you sure you want to delete ${
-                        courses != null
-                          ? courses.find(
-                              (course: any) => course.id === item.course
-                            )?.name
-                          : null
-                      }: ${item.name}?`}
-                    </Modal.Title>
-                    <Form>
-                      <div className="d-grid mt-4">
-                        <Button
-                          variant="danger"
-                          className="text-white"
-                          onClick={() => {
-                            console.log("^^^ Deleting the lesson ^^^");
-                            console.log(`lessonId: ${item.id}`);
+              <Col xs={3} md={2} className="d-grid gap-3">
+                <ButtonGroup>
+                  <Button
+                    variant="secondary"
+                    key={`changeBtn-${item.id}`}
+                    className="lesson-btn"
+                    onClick={() => {
+                      setUseLessonNumber(false);
+                      setLessonToChange(item);
+                      handleShowChangeLesson();
 
-                            handleDeleteLesson(item.id);
-                          }}
-                        >
-                          <b>Delete lesson</b>
-                        </Button>
-                      </div>
-                    </Form>
-                  </Modal.Body>
-                </Modal> */}
+                      console.log(item);
+
+                      setLessonName(item.name);
+                      setCourseIndex(
+                        courses?.findIndex(
+                          (course: any) => course.id === item.course
+                        )
+                      );
+                      setLessonBeginningTime(
+                        getPrettyTimeByStamp(item.beginningTime)
+                      );
+                      setLessonEndTime(getPrettyTimeByStamp(item.endTime));
+                      setLessonConferenceLink(item.conferenceLink);
+                    }}
+                  >
+                    <i className="fas fa-cog"></i>
+                  </Button>
+                  <Button
+                    variant="danger"
+                    key={`deleteBtn-${item.id}`}
+                    className="lesson-btn"
+                    onClick={() => {
+                      setLessonToDelete(item);
+                      handleShowDeleteLesson();
+                    }}
+                  >
+                    <i className="fas fa-trash-alt"></i>
+                  </Button>
+                </ButtonGroup>
               </Col>
             </Row>
           ))
@@ -444,6 +510,216 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
             </Button>
           </Col>
         </Row>
+
+        <Modal
+          show={showChangeLesson}
+          onHide={handleCloseChangeLesson}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Changing new lesson</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group className="mb-3 lesson-name">
+                <Form.Label>
+                  Lesson name <span className="text-danger">*</span>
+                </Form.Label>
+                <Form.Control
+                  // id="Control-lessonToChange.name"
+                  defaultValue={lessonToChange?.name}
+                  type="text"
+                  placeholder="Enter name"
+                  onChange={(event) => {
+                    setLessonName(event.target.value);
+                  }}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3 lesson-course">
+                <Form.Label>
+                  Course <span className="text-danger">*</span>
+                </Form.Label>
+                <Form.Select
+                  // id="Control-lessonToChange.course"
+                  defaultValue={courses?.findIndex(
+                    (course: any) => course.id === lessonToChange?.course
+                  )}
+                  onChange={(event) => {
+                    setCourseIndex(event.target.value);
+                    setUseStaticLink(false);
+                    setLessonConferenceLink("");
+                  }}
+                >
+                  <option>Choose course ...</option>
+                  {courses?.map((item: any, index: number) => (
+                    <option key={`change-${index}`} value={index}>
+                      {item.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+
+              <div className="lesson-time mt-5">
+                <div className="d-grid">
+                  <ButtonGroup>
+                    <Button
+                      variant={useLessonNumber ? "success" : "secondary"}
+                      onClick={() => {
+                        setUseLessonNumber(true);
+                      }}
+                    >
+                      Lesson number
+                    </Button>
+                    <Button
+                      variant={!useLessonNumber ? "success" : "secondary"}
+                      onClick={() => {
+                        setUseLessonNumber(false);
+                      }}
+                    >
+                      Choose time
+                    </Button>
+                  </ButtonGroup>
+                </div>
+
+                {useLessonNumber ? (
+                  <Form.Group className="mt-3 mb-3">
+                    <Form.Label>
+                      Lesson number <span className="text-danger">*</span>
+                    </Form.Label>
+                    <Form.Select
+                      onChange={(event) => {
+                        const values = event.target.value.split("/");
+
+                        setLessonBeginningTime(values[0]);
+                        setLessonEndTime(values[1]);
+                      }}
+                    >
+                      <option>Choose lesson number ...</option>
+                      {group?.schedule?.map((item: any, index: number) => (
+                        <option key={`add-${index}`} value={item}>
+                          {`${index + 1}. ${item.split("/")[0]} - ${
+                            item.split("/")[1]
+                          }`}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                ) : (
+                  <Row className="mt-3">
+                    <Col xs={6}>
+                      <Form.Group className="mb-3" controlId="formGroupName">
+                        <Form.Label>
+                          Lesson beginning{" "}
+                          <span className="text-danger">*</span>
+                        </Form.Label>
+                        <Form.Control
+                          // id="Control-lessonToChange.beginningTime"
+                          defaultValue={getPrettyTimeByStamp(
+                            lessonToChange?.beginningTime
+                          )}
+                          type="text"
+                          placeholder='Time format "00:00"'
+                          onChange={(event) => {
+                            setLessonBeginningTime(event.target.value);
+                          }}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col xs={6}>
+                      <Form.Group className="mb-3" controlId="formGroupName">
+                        <Form.Label>
+                          Lesson end <span className="text-danger">*</span>
+                        </Form.Label>
+                        <Form.Control
+                          // id="Control-lessonToChange.endTime"
+                          defaultValue={getPrettyTimeByStamp(
+                            lessonToChange?.endTime
+                          )}
+                          type="text"
+                          placeholder='Time format "00:00"'
+                          onChange={(event) => {
+                            setLessonEndTime(event.target.value);
+                          }}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                )}
+              </div>
+
+              <div className="lesson-conferenceLink mt-5">
+                <div className="d-grid">
+                  <ButtonGroup>
+                    <Button
+                      variant={!useStaticLink ? "success" : "secondary"}
+                      onClick={() => {
+                        setUseStaticLink(false);
+                      }}
+                    >
+                      New link
+                    </Button>
+                    <Button
+                      disabled={
+                        courses != null
+                          ? courses[Number(courseIndex)]?.staticLink === ""
+                          : false
+                      }
+                      variant={useStaticLink ? "success" : "secondary"}
+                      onClick={() => {
+                        if (
+                          courses != null
+                            ? courses[Number(courseIndex)].staticLink
+                            : false
+                        ) {
+                          setUseStaticLink(true);
+                          setLessonConferenceLink(
+                            courses != null
+                              ? courses[Number(courseIndex)].staticLink
+                              : ""
+                          );
+                        }
+                      }}
+                    >
+                      Use static link
+                    </Button>
+                  </ButtonGroup>
+                </div>
+
+                <Form.Group className="mt-3">
+                  <Form.Label>Lesson conference link</Form.Label>
+                  {!useStaticLink ? (
+                    <Form.Control
+                      // id="Control-lessonToChange.conferenceLink"
+                      defaultValue={lessonToChange?.conferenceLink}
+                      type="text"
+                      placeholder="Enter url"
+                      onChange={(event) => {
+                        setLessonConferenceLink(event.target.value);
+                      }}
+                    />
+                  ) : (
+                    <Alert variant="secondary">
+                      {courses != null
+                        ? courses[Number(courseIndex)].staticLink
+                        : ""}
+                    </Alert>
+                  )}
+                </Form.Group>
+              </div>
+
+              <div className="d-grid mt-5">
+                <Button
+                  variant="info"
+                  className="text-white"
+                  onClick={handleChangeLesson}
+                >
+                  <b>Change lesson</b>
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
 
         <Modal show={showAddLesson} onHide={handleCloseAddLesson} centered>
           <Modal.Header closeButton>
@@ -578,8 +854,8 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                     <Button
                       disabled={
                         courses != null
-                          ? courses[Number(courseIndex)]?.staticLink == null
-                          : true
+                          ? courses[Number(courseIndex)]?.staticLink === ""
+                          : false
                       }
                       variant={useStaticLink ? "success" : "secondary"}
                       onClick={() => {
@@ -587,8 +863,14 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                           courses != null
                             ? courses[Number(courseIndex)].staticLink
                             : false
-                        )
+                        ) {
                           setUseStaticLink(true);
+                          setLessonConferenceLink(
+                            courses != null
+                              ? courses[Number(courseIndex)].staticLink
+                              : ""
+                          );
+                        }
                       }}
                     >
                       Use static link

@@ -33,8 +33,6 @@ import moment from "moment";
 import "../styles/pages/schedule.sass";
 
 const SchedulePage: FC = (props) => {
-  console.clear();
-
   const { firestore } = useContext(FirebaseContext);
 
   const user = getUser();
@@ -74,7 +72,11 @@ const SchedulePage: FC = (props) => {
     daysInLastWeek,
   } = momentWeek(timeCalendar);
 
+  const dayNumbers = [...Array(timeCalendar.daysInMonth())];
+
   let tempDayButton = 1;
+  let tempWeekRendering = 1;
+  let tempDaysInWeekRendered = 0;
 
   //   const [lessons, setLessons] = useState<any>([]);
 
@@ -91,7 +93,8 @@ const SchedulePage: FC = (props) => {
   //   );
   //   const lessons = useFirestoreQuery(lessonsQuery);
 
-  console.log("````````````````` SchedulePage ````````````````````");
+  // console.clear();
+  console.log("\n\n````````````````` SchedulePage ````````````````````");
   console.log(`timeCalendar: ${timeCalendar.format("DD/MM/YYYY")}`);
   // console.log(timeNowDayNumber);
 
@@ -151,46 +154,6 @@ const SchedulePage: FC = (props) => {
               </Col>
             </Row>
             <Row className="mt-4">
-              {/* {[...Array(weeksInMonth)].map((week, weekIndex) => (
-                <Col
-                  xs={12}
-                  sm={{ span: 6, offset: 3 }}
-                  style={{ border: "1px solid lightgray" }}
-                  className="gap-3"
-                >
-                  {[...Array(7)].map((day, dayIndex) => (
-                    <Button
-                      key={dayIndex}
-                      id={`day-${dayIndex}`}
-                      variant={
-                        timeCalendarChoosenDay === tempDayButton
-                          ? "info"
-                          : timeNowDayNumber === tempDayButton &&
-                            timeNowMonth === timeCalendar.format("MMMM YYYY")
-                          ? "danger"
-                          : "secondary"
-                      }
-                      className="m-1 calendar-number rounded-circle text-white"
-                      onClick={(event) => {
-                        setTimeCalendar(
-                          moment(
-                            new Date(
-                              timeCalendar
-                                .toDate()
-                                .setDate(
-                                  (event.target as Element).id.split("-")[1]
-                                )
-                            )
-                          )
-                        );
-                        setTimeCalendarChoosenDay(dayIndex + 1);
-                      }}
-                    >
-                      {tempDayButton++}
-                    </Button>
-                  ))}
-                </Col>
-              ))} */}
               {[...Array(timeCalendar.daysInMonth())].map((item, index) => (
                 <Button
                   key={index}
@@ -213,6 +176,29 @@ const SchedulePage: FC = (props) => {
                   {index + 1}
                 </Button>
               ))}
+              {/* {[...Array(weeksInMonth)].map((week, weekIndex) => (
+                <Col
+                  xs={12}
+                  sm={{ span: 6, offset: 3 }}
+                  style={{
+                    border: "1px solid lightgray",
+                    borderRadius: "15px",
+                  }}
+                  className="gap-3 p-1"
+                >
+                  {
+                    // if (tempWeekRendering === 1) {
+                
+                    // }
+                    dayNumbers.map((day, dayIndex) => {
+                    if (tempDayButton !== day) {
+                      return <h5>{tempDayButton++}</h5>;
+                    } else {
+                      return null;
+                    }
+                  })}
+                </Col>
+              ))} */}
             </Row>
           </Container>
         </Alert>

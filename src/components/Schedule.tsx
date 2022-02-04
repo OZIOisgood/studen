@@ -89,6 +89,24 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
     }
   }
 
+  // console.log("\n\n\n^^^^^^^^ nextLessons ^^^^^^^^");
+  // console.log(lessons[currentConferenceIndex]);
+  // console.log(
+  //   lessons[previousConferenceIndex]
+  //     ? lessons[previousConferenceIndex].conferenceLink === ""
+  //       ? true
+  //       : false
+  //     : true
+  // );
+  // console.log(
+  //   lessons[previousConferenceIndex]
+  //     ? lessons[previousConferenceIndex].conferenceLink === ""
+  //       ? "#"
+  //       : lessons[previousConferenceIndex].conferenceLink
+  //     : "#"
+  // );
+  // console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n\n");
+
   return (
     <Alert variant="dark box mt-5 schedule-container">
       <Row>
@@ -113,12 +131,20 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
         <h3 className="text-white">Join conference:</h3>
         <ButtonGroup size="lg">
           <Button
-            disabled={lessons ? !lessons[previousConferenceIndex] : true}
+            disabled={
+              lessons[previousConferenceIndex]
+                ? lessons[previousConferenceIndex].conferenceLink === ""
+                  ? true
+                  : false
+                : true
+            }
             variant="danger"
             href={
-              lessons
-                ? lessons[previousConferenceIndex]?.conferenceLink
-                : undefined
+              lessons[previousConferenceIndex]
+                ? lessons[previousConferenceIndex].conferenceLink === ""
+                  ? "#"
+                  : lessons[previousConferenceIndex].conferenceLink
+                : "#"
             }
             target="_blank"
             size="lg"
@@ -128,12 +154,20 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
             </h4>
           </Button>
           <Button
-            disabled={lessons ? !lessons[currentConferenceIndex] : true}
+            disabled={
+              lessons[currentConferenceIndex]
+                ? lessons[currentConferenceIndex].conferenceLink === ""
+                  ? true
+                  : false
+                : true
+            }
             variant="warning"
             href={
-              lessons
-                ? lessons[currentConferenceIndex]?.conferenceLink
-                : undefined
+              lessons[currentConferenceIndex]
+                ? lessons[currentConferenceIndex].conferenceLink === ""
+                  ? "#"
+                  : lessons[currentConferenceIndex].conferenceLink
+                : "#"
             }
             target="_blank"
             size="lg"
@@ -144,10 +178,20 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
             </h4>
           </Button>
           <Button
-            disabled={lessons ? !lessons[nextConferenceIndex] : true}
+            disabled={
+              lessons[nextConferenceIndex]
+                ? lessons[nextConferenceIndex].conferenceLink === ""
+                  ? true
+                  : false
+                : true
+            }
             variant="success"
             href={
-              lessons ? lessons[nextConferenceIndex]?.conferenceLink : undefined
+              lessons[nextConferenceIndex]
+                ? lessons[nextConferenceIndex].conferenceLink === ""
+                  ? "#"
+                  : lessons[nextConferenceIndex].conferenceLink
+                : "#"
             }
             target="_blank"
             size="lg"

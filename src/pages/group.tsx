@@ -23,6 +23,8 @@ import {
   query,
   setDoc,
   where,
+  deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
 import { PrivateRoute, Avatar, Users, Schedule } from "../components";
@@ -79,52 +81,96 @@ const GroupPage: FC = (props) => {
   const courses = useFirestoreQuery(coursesQuery);
 
   const [showCreateCourse, setShowCreateCourse] = useState(false);
+  const [showDeleteCourse, setShowDeleteCourse] = useState(false);
+  const [showChangeCourse, setShowChangeCourse] = useState(false);
 
   const [courseName, setCourseName] = useState("");
   const [courseStaticLink, setCourseStaticLink] = useState("");
 
+  const [courseToDelete, setCourseToDelete] = useState(
+    courses ? courses[0] : null
+  );
+  const [courseToChange, setCourseToChange] = useState(
+    courses ? courses[0] : null
+  );
+
   const handleCloseCreateCourse = () => setShowCreateCourse(false);
   const handleShowCreateCourse = () => setShowCreateCourse(true);
+
+  const handleCloseDeleteCourse = () => setShowDeleteCourse(false);
+  const handleShowDeleteCourse = () => setShowDeleteCourse(true);
+
+  const handleCloseChangeCourse = () => setShowChangeCourse(false);
+  const handleShowChangeCourse = () => setShowChangeCourse(true);
 
   const db = getFirestore();
 
   const handleCreateCourse = async () => {
     try {
-      // const courseRef =
+      setShowCreateCourse(false);
+
       await addDoc(collection(db, "courses"), {
         name: courseName,
         group: params.id,
         staticLink: courseStaticLink,
       });
-
-      // let groupDoc = await getDoc(doc(db, "groups", `${params.id}`));
-
-      // await setDoc(doc(db, "groups", `${params.id}`), {
-      //   ...groupDoc.data(),
-      //   courses: [...groupDoc.data()?.courses, courseRef.id],
-      // });
-
-      // let userDoc = await getDoc(doc(db, "users", user.id));
-
-      // await setDoc(doc(db, "users", user.id), {
-      //   ...userDoc.data(),
-      //   courses: [...userDoc.data()?.courses, courseRef.id],
-      // });
-
-      // userDoc = await getDoc(doc(db, "users", user.id));
-
-      // setUser(
-      //   JSON.stringify({
-      //     ...userDoc.data(),
-      //     id: userDoc.id,
-      //   })
-      // );
     } catch (error: any) {
       console.error(error.message);
     } finally {
-      setShowCreateCourse(false);
-
       setCourseName("");
+    }
+  };
+
+  const handleChangeCourse = async () => {
+    try {
+      setShowChangeCourse(false);
+
+      const newCourse = {
+        name: courseName,
+        group: courseToChange.group,
+        staticLink: courseStaticLink,
+      };
+
+      const changeDocRef = doc(db, "courses", courseToChange.id);
+      await updateDoc(changeDocRef, newCourse);
+
+      console.log("^^^^ newCourse ^^^^");
+      // console.log(`id: ${newLessonRef.id}`);
+      console.log(newCourse.name);
+      console.log(newCourse.group);
+      console.log(newCourse.staticLink);
+      console.log("^^^^^^^^^^^^^^^^^^^");
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      setCourseName("");
+    }
+  };
+
+  const handleDeleteCourse = async (courseID: string) => {
+    try {
+      setShowDeleteCourse(false);
+
+      const lessonsToDeleteCollectionRef = collection(firestore, "lessons");
+      const lessonsToDeleteQuery = query(
+        lessonsToDeleteCollectionRef,
+        where("course", "==", courseID)
+      );
+      const lessonsToDeleteSnapshot = await getDocs(lessonsToDeleteQuery);
+      const lessonsToDelete = lessonsToDeleteSnapshot.docs.map((doc: any) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      lessonsToDelete.forEach((lesson) => {
+        deleteDoc(doc(db, "lessons", lesson.id));
+
+        console.log(`$$$ Delete: lesson.id ${lesson.id} $$$`);
+      });
+
+      await deleteDoc(doc(db, "courses", courseID));
+    } catch (error: any) {
+      console.error(error.message);
     }
   };
 
@@ -195,7 +241,7 @@ const GroupPage: FC = (props) => {
                         className="text-white"
                         onClick={handleCreateCourse}
                       >
-                        Join
+                        Create
                       </Button>
                       <Button
                         variant="secondary"
@@ -211,22 +257,139 @@ const GroupPage: FC = (props) => {
           </Row>
           <Container className="d-grid gap-3 mt-5">
             {courses?.map((course: any, index: number) => (
-              <Button
-                disabled={true}
-                variant="secondary"
-                key={course.id}
-                className="user-btn"
-              >
-                <Row>
-                  <Col xs={1} className="user-number">
-                    <h4 className="text-align-right">{index + 1}.</h4>
-                  </Col>
-                  <Col xs={11} className="user-fullName">
-                    <h4 className="text-align-left">{course.name}</h4>
-                  </Col>
-                </Row>
-              </Button>
+              <Row>
+                <Col xs={9} md={10} className="d-grid">
+                  <Button
+                    disabled={true}
+                    variant="secondary"
+                    key={course.id}
+                    className="user-btn"
+                  >
+                    <Row>
+                      <Col xs={1} className="user-number">
+                        <h4 className="text-align-right">{index + 1}.</h4>
+                      </Col>
+                      <Col xs={11} className="user-fullName">
+                        <h4 className="text-align-left">{course.name}</h4>
+                      </Col>
+                    </Row>
+                  </Button>
+                </Col>
+                <Col xs={3} md={2} className="d-grid gap-3">
+                  <ButtonGroup>
+                    <Button
+                      variant="secondary"
+                      key={`changeBtn-${course.id}`}
+                      className="lesson-btn"
+                      onClick={() => {
+                        setCourseToChange(course);
+                        handleShowChangeCourse();
+
+                        setCourseName(course.name);
+                        setCourseStaticLink(course.staticLink);
+                      }}
+                    >
+                      <i className="fas fa-cog"></i>
+                    </Button>
+                    <Button
+                      variant="danger"
+                      key={`deleteBtn-${course.id}`}
+                      className="lesson-btn"
+                      onClick={() => {
+                        setCourseToDelete(course);
+                        handleShowDeleteCourse();
+                      }}
+                    >
+                      <i className="fas fa-trash-alt"></i>
+                    </Button>
+                  </ButtonGroup>
+                </Col>
+              </Row>
             ))}
+
+            <Modal
+              show={showDeleteCourse}
+              onHide={handleCloseDeleteCourse}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Deleting the course</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Modal.Title className="fs-5 text-secondary">
+                  {`Are you sure you want to delete ${courseToDelete?.name}?`}
+                </Modal.Title>
+                <Form>
+                  <div className="d-grid mt-4">
+                    <Button
+                      variant="danger"
+                      className="text-white"
+                      onClick={() => {
+                        console.log("^^^ Deleting the course ^^^");
+                        console.log(`courseId: ${courseToDelete?.id}`);
+
+                        handleDeleteCourse(courseToDelete?.id);
+                      }}
+                    >
+                      <b>Delete lesson</b>
+                    </Button>
+                  </div>
+                </Form>
+              </Modal.Body>
+            </Modal>
+
+            <Modal
+              show={showChangeCourse}
+              onHide={handleCloseChangeCourse}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Changing the course</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group className="mb-3">
+                    <Form.Label>
+                      Course name <span className="text-danger">*</span>
+                    </Form.Label>
+                    <Form.Control
+                      defaultValue={courseToChange?.name}
+                      type="text"
+                      placeholder="Enter name"
+                      onChange={(event) => {
+                        setCourseName(event.target.value);
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Static link</Form.Label>
+                    <Form.Control
+                      defaultValue={courseToChange?.staticLink}
+                      type="text"
+                      placeholder="Enter url"
+                      onChange={(event) => {
+                        setCourseStaticLink(event.target.value);
+                      }}
+                    />
+                  </Form.Group>
+                  <div className="d-grid gap-2">
+                    <Button
+                      variant="info"
+                      className="text-white"
+                      onClick={handleChangeCourse}
+                    >
+                      Change
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={handleCloseChangeCourse}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </Form>
+              </Modal.Body>
+            </Modal>
           </Container>
         </Alert>
 
