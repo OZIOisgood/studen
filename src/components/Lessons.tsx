@@ -169,7 +169,6 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
       const newLesson = {
         name: lessonName,
         group: params.id,
-        course: courses != null ? courses[Number(courseIndex)].id : "",
         beginningTime: beginningTimeTimestamp,
         endTime: endTimeTimestamp,
         conferenceLink: lessonConferenceLink,
@@ -190,7 +189,6 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
       console.error(error.message);
     } finally {
       setLessonName("");
-      setCourseIndex("0");
       setLessonBeginningTime("");
       setLessonEndTime("");
       setLessonConferenceLink("");
@@ -402,14 +400,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                       setLessonToChange(item);
                       handleShowChangeLesson();
 
-                      console.log(item);
-
                       setLessonName(item.name);
-                      setCourseIndex(
-                        courses?.findIndex(
-                          (course: any) => course.id === item.course
-                        )
-                      );
                       setLessonBeginningTime(
                         getPrettyTimeByStamp(item.beginningTime)
                       );
@@ -534,30 +525,6 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                     setLessonName(event.target.value);
                   }}
                 />
-              </Form.Group>
-
-              <Form.Group className="mb-3 lesson-course">
-                <Form.Label>
-                  Course <span className="text-danger">*</span>
-                </Form.Label>
-                <Form.Select
-                  // id="Control-lessonToChange.course"
-                  defaultValue={courses?.findIndex(
-                    (course: any) => course.id === lessonToChange?.course
-                  )}
-                  onChange={(event) => {
-                    setCourseIndex(event.target.value);
-                    setUseStaticLink(false);
-                    setLessonConferenceLink("");
-                  }}
-                >
-                  <option>Choose course ...</option>
-                  {courses?.map((item: any, index: number) => (
-                    <option key={`change-${index}`} value={index}>
-                      {item.name}
-                    </option>
-                  ))}
-                </Form.Select>
               </Form.Group>
 
               <div className="lesson-time mt-5">

@@ -25,10 +25,10 @@ export const Groups: FC<GroupsProps> = ({ groups, title }) => {
   return (
     <Alert variant="dark box mt-5 box-groups">
       <h2 className="text-white">{title}</h2>
-      <Container className="d-grid gap-3 mt-5">
-        <Row xs={1} sm={2} lg={3}>
+      <Container className="mt-3">
+        <Row xs={1} md={2} lg={3}>
           {groups?.map((group: any, index: number) => (
-            <Col key={group.id}>
+            <Col key={group.id} className="mt-4">
               <Button
                 variant="secondary"
                 className="group-btn d-flex"

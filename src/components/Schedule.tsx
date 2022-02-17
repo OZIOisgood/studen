@@ -68,19 +68,17 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
         }
       });
 
-      console.clear();
-      console.log("^^^^^^^^ nextLessons ^^^^^^^^");
-      console.log(lessons);
-      console.log(nextLessons);
-      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+      // console.clear();
+      // console.log("^^^^^^^^ nextLessons ^^^^^^^^");
+      // console.log(lessons);
+      // console.log(nextLessons);
+      // console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 
       if (nextLessons.length === 0) {
-        console.log("1");
         previousConferenceIndex = lessons.length - 1;
         currentConferenceIndex = -1;
         nextConferenceIndex = -1;
       } else {
-        console.log("2");
         nextConferenceIndex = lessons.findIndex(
           (lesson: any) => lesson.id === nextLessons[0].id
         );

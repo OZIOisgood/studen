@@ -30,7 +30,9 @@ export const Avatar: FC<UserAvatarData> = ({
       src={`${url}`}
       alt={`Avatar`}
       height={height}
+      width={height}
       className={`avatar thumbnail-image rounded-circle ${className}`}
+      style={{ objectFit: "cover" }}
     />
   );
 };

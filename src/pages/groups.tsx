@@ -17,7 +17,9 @@ import {
   getFirestore,
   query,
   setDoc,
+  updateDoc,
   where,
+  arrayUnion,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
 import { PrivateRoute, Avatar, Groups } from "../components";
@@ -85,9 +87,8 @@ const GroupsPage: FC = (props) => {
 
       let userDoc = await getDoc(doc(db, "users", user.id));
 
-      await setDoc(doc(db, "users", user.id), {
-        ...userDoc.data(),
-        groups: [...userDoc.data()?.groups, groupID],
+      await updateDoc(doc(db, "users", user.id), {
+        groups: arrayUnion(groupID),
       });
 
       userDoc = await getDoc(doc(db, "users", user.id));
@@ -126,14 +127,12 @@ const GroupsPage: FC = (props) => {
           "18:30/20:05",
           "20:20/21:55",
         ],
-        courses: [],
       });
 
       let userDoc = await getDoc(doc(db, "users", user.id));
 
-      await setDoc(doc(db, "users", user.id), {
-        ...userDoc.data(),
-        groups: [...userDoc.data()?.groups, groupRef.id],
+      await updateDoc(doc(db, "users", user.id), {
+        groups: arrayUnion(groupRef.id),
       });
 
       userDoc = await getDoc(doc(db, "users", user.id));
@@ -222,7 +221,7 @@ const GroupsPage: FC = (props) => {
               </Modal.Header>
               <Modal.Body>
                 <Form>
-                  <Form.Group className="mb-3" controlId="formGroupName">
+                  <Form.Group className="mb-3">
                     <Form.Label>
                       Name <span className="text-danger">*</span>
                     </Form.Label>
@@ -234,7 +233,7 @@ const GroupsPage: FC = (props) => {
                       }}
                     />
                   </Form.Group>
-                  <Form.Group className="mb-3" controlId="formGroupAvatarURL">
+                  <Form.Group className="mb-3">
                     <Form.Label>
                       Avatar <span className="text-danger">*</span>
                     </Form.Label>
@@ -246,10 +245,7 @@ const GroupsPage: FC = (props) => {
                       }}
                     />
                   </Form.Group>
-                  <Form.Group
-                    className="mb-3"
-                    controlId="formGroupBackgroundURL"
-                  >
+                  <Form.Group className="mb-3">
                     <Form.Label>
                       Background <span className="text-danger">*</span>
                     </Form.Label>
