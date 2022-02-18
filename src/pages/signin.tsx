@@ -1,10 +1,11 @@
 import { FC, useState } from "react";
-import { Button, Container, Form, Spinner } from "react-bootstrap";
+import { Button, Container, Form, Modal, Spinner } from "react-bootstrap";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase-config";
 import * as ROUTES from "../constants/routes";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
-import { setUser } from "../utils";
+import { getAuthErrorDesc, setUser } from "../utils";
+import { ErrorModal } from "../components";
 
 import "../styles/pages/signin.sass";
 
@@ -12,6 +13,12 @@ const logo = require("../assets/studen_mid_logo_white.png");
 
 const SignInPage: FC = (props) => {
   const [loading, setLoading] = useState(false);
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleCloseErrorModal = () => setShowErrorModal(false);
+  const handleShowErrorModal = () => setShowErrorModal(true);
 
   const [signinEmail, setSigninEmail] = useState("");
   const [signinPassword, setSigninPassword] = useState("");
@@ -38,10 +45,8 @@ const SignInPage: FC = (props) => {
 
       window.location.href = ROUTES.HOME;
     } catch (error: any) {
-      console.error(error.message);
-
-      setSigninEmail("");
-      setSigninPassword("");
+      setErrorMessage(getAuthErrorDesc(error.code.split("/")[1]));
+      handleShowErrorModal();
 
       setLoading(false);
     }
@@ -122,6 +127,14 @@ const SignInPage: FC = (props) => {
         </p>
         <p className="mt-5 text-muted">&copy; 2021-2022</p>
       </Form>
+
+      <ErrorModal
+        modalTitle="Error detected"
+        buttonTitle="Try again"
+        showErrorModal={showErrorModal}
+        handleCloseErrorModal={handleCloseErrorModal}
+        errorMessage={errorMessage}
+      />
     </Container>
   );
 };

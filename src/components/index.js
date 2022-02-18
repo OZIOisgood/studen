@@ -7,3 +7,4 @@ export { PrivateRoute } from "./PrivateRoute";
 export { GroupRoute } from "./GroupRoute";
 export { NavBar } from "./Navbar";
 export { Loader } from "./Loader";
+export { ErrorModal } from "./ErrorModal";

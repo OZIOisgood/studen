@@ -4,7 +4,8 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase-config";
 import { getFirestore, setDoc, doc, getDoc } from "firebase/firestore";
 import * as ROUTES from "../constants/routes";
-import { setUser } from "../utils";
+import { getAuthErrorDesc, setUser } from "../utils";
+import { ErrorModal } from "../components";
 
 import "../styles/pages/signin.sass";
 
@@ -12,6 +13,12 @@ const logo = require("../assets/studen_mid_logo_white.png");
 
 const SignUpPage: FC = (props) => {
   const [loading, setLoading] = useState(false);
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleCloseErrorModal = () => setShowErrorModal(false);
+  const handleShowErrorModal = () => setShowErrorModal(true);
 
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
@@ -50,10 +57,8 @@ const SignUpPage: FC = (props) => {
 
       window.location.href = ROUTES.HOME;
     } catch (error: any) {
-      console.error(error.message);
-
-      setSignupEmail("");
-      setSignupPassword("");
+      setErrorMessage(getAuthErrorDesc(error.code.split("/")[1]));
+      handleShowErrorModal();
 
       setLoading(false);
     }
@@ -161,6 +166,14 @@ const SignUpPage: FC = (props) => {
         </div>
         <p className="mt-5 text-muted">&copy; 2021-2022</p>
       </Form>
+
+      <ErrorModal
+        modalTitle="Error detected"
+        buttonTitle="Try again"
+        showErrorModal={showErrorModal}
+        handleCloseErrorModal={handleCloseErrorModal}
+        errorMessage={errorMessage}
+      />
     </Container>
   );
 };
