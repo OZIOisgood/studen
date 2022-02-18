@@ -4,5 +4,6 @@ export { Groups } from "./Groups";
 export { Lessons } from "./Lessons";
 export { Avatar } from "./Avatar";
 export { PrivateRoute } from "./PrivateRoute";
+export { GroupRoute } from "./GroupRoute";
 export { NavBar } from "./Navbar";
 export { Loader } from "./Loader";

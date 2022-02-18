@@ -125,7 +125,7 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
         ) : null}
       </Row>
 
-      <Container className="d-grid gap-3 mt-5">
+      <Container className="d-grid gap-3 mt-5 lesson-btns">
         <h3 className="text-white">Join conference:</h3>
         <ButtonGroup size="lg">
           <Button

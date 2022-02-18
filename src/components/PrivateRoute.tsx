@@ -10,6 +10,7 @@ type PrivateRouteProps = {
 
 export const PrivateRoute: FC<PrivateRouteProps> = (props) => {
   const { user, initializing } = useContext(FirebaseContext);
+
   return (
     <>
       <NavBar />

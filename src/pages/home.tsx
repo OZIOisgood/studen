@@ -23,7 +23,7 @@ const HomePage: FC = (props) => {
     const coursesCollectionRef = collection(firestore, "courses");
     const coursesQuery = query(
       coursesCollectionRef,
-      where("group", "in", user.groups)
+      where("group", "in", user ? user.groups : [""])
     );
 
     courses = useFirestoreQuery(coursesQuery);
@@ -38,7 +38,7 @@ const HomePage: FC = (props) => {
     const lessonsCollectionRef = collection(firestore, "lessons");
     const lessonsQuery = query(
       lessonsCollectionRef,
-      where("group", "in", user.groups),
+      where("group", "in", user ? user.groups : [""]),
       where("beginningTime", ">=", startOfDay),
       where("beginningTime", "<=", endOfDay),
       orderBy("beginningTime", "asc")
@@ -53,7 +53,7 @@ const HomePage: FC = (props) => {
     const myGroupsCollectionRef = collection(firestore, "groups");
     const myGroupsQuery = query(
       myGroupsCollectionRef,
-      where("users", "array-contains", user.id)
+      where("users", "array-contains", user ? user.id : "")
     );
 
     myGroups = useFirestoreQuery(myGroupsQuery);
