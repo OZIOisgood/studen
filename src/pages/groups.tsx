@@ -22,7 +22,7 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute, Avatar, Groups } from "../components";
+import { PrivateRoute, Avatar, Groups, ErrorModal } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import * as ROUTES from "../constants/routes";
 import { getUser, setUser } from "../utils";
@@ -38,6 +38,15 @@ const GroupsPage: FC = (props) => {
 
   const user = getUser();
 
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleCloseErrorModal = () => setShowErrorModal(false);
+  const handleShowErrorModal = (message: string) => {
+    setErrorMessage(message);
+    setShowErrorModal(true);
+  };
+
   const myGroupsCollectionRef = collection(firestore, "groups");
   const myGroupsQuery = query(
     myGroupsCollectionRef,
@@ -50,9 +59,9 @@ const GroupsPage: FC = (props) => {
   console.log(myGroups);
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-  const allGroupsCollectionRef = collection(firestore, "groups");
-  const allGroupsQuery = query(allGroupsCollectionRef);
-  const allGroups = useFirestoreQuery(allGroupsQuery);
+  // const allGroupsCollectionRef = collection(firestore, "groups");
+  // const allGroupsQuery = query(allGroupsCollectionRef);
+  // const allGroups = useFirestoreQuery(allGroupsQuery);
 
   console.log(
     "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -80,6 +89,9 @@ const GroupsPage: FC = (props) => {
 
       const groupDoc = await getDoc(doc(db, "groups", groupID));
 
+      if (typeof groupDoc.data() === "undefined")
+        throw new Error("There is no group with such id");
+
       await setDoc(doc(db, "groups", groupID), {
         ...groupDoc.data(),
         users: [...groupDoc.data()?.users, user.id],
@@ -100,17 +112,21 @@ const GroupsPage: FC = (props) => {
         })
       );
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     } finally {
-      setGroupName("");
-      setGroupAvatar("");
-      setGroupBackground("");
+      setGroupID("");
     }
   };
 
   const handleCreate = async () => {
     try {
       setShowCreate(false);
+
+      if (groupName === "") throw new Error("You haven't entered group name.");
+      if (groupAvatar === "")
+        throw new Error("You haven't entered group avatar link.");
+      if (groupBackground === "")
+        throw new Error("You haven't entered group background link.");
 
       const groupRef = await addDoc(collection(db, "groups"), {
         name: groupName,
@@ -144,7 +160,7 @@ const GroupsPage: FC = (props) => {
         })
       );
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     } finally {
       setGroupName("");
       setGroupAvatar("");
@@ -277,6 +293,14 @@ const GroupsPage: FC = (props) => {
 
         <Groups title="My groups" groups={myGroups} />
         {/* <Groups title="All groups" groups={allGroups} /> */}
+
+        <ErrorModal
+          modalTitle="Error detected"
+          buttonTitle="Try again"
+          showErrorModal={showErrorModal}
+          handleCloseErrorModal={handleCloseErrorModal}
+          errorMessage={errorMessage}
+        />
       </Container>
     </PrivateRoute>
   );

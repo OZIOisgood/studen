@@ -26,7 +26,13 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute, GroupRoute, Avatar, Schedule } from "../components";
+import {
+  PrivateRoute,
+  GroupRoute,
+  Avatar,
+  Schedule,
+  ErrorModal,
+} from "../components";
 import { FirebaseContext } from "../context/firebase";
 import * as ROUTES from "../constants/routes";
 import { getTimeNow, getUser } from "../utils";
@@ -37,6 +43,15 @@ const GroupPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
 
   const user = getUser();
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleCloseErrorModal = () => setShowErrorModal(false);
+  const handleShowErrorModal = (message: string) => {
+    setErrorMessage(message);
+    setShowErrorModal(true);
+  };
 
   const params = useParams();
 
@@ -122,37 +137,26 @@ const GroupPage: FC = (props) => {
     try {
       setShowGroupSettings(false);
 
+      if (groupName === "") throw new Error("You haven't entered group name.");
+      if (groupAvatar === "")
+        throw new Error("You haven't entered group avatar link.");
+      if (groupBackground === "")
+        throw new Error("You haven't entered group background link.");
+
       const newGroup = {
         name: groupName,
         avatarURL: groupAvatar,
         backgroundURL: groupBackground,
-        // admins: group?.admins,
-        // users: group?.users,
-        // schedule: group?.schedule,
       };
 
       const changeDocRef = doc(db, "groups", `${params.id}`);
       await updateDoc(changeDocRef, newGroup);
-
-      // console.log("^^^^ newGroup ^^^^");
-      // console.log(newGroup.name);
-      // console.log(newGroup.avatarURL);
-      // console.log(newGroup.backgroundURL);
-      // console.log(newGroup.admins);
-      // console.log(newGroup.users);
-      // console.log(newGroup.schedule);
-      // console.log("^^^^ oldGroup ^^^^");
-      // console.log(group?.name);
-      // console.log(group?.avatarURL);
-      // console.log(group?.backgroundURL);
-      // console.log(group?.admins);
-      // console.log(group?.users);
-      // console.log(group?.schedule);
-      // console.log("^^^^^^^^^^^^^^^^^^^");
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     } finally {
-      setCourseName("");
+      setGroupName("");
+      setGroupAvatar("");
+      setGroupBackground("");
     }
   };
 
@@ -160,21 +164,32 @@ const GroupPage: FC = (props) => {
     try {
       setShowCreateCourse(false);
 
+      if (courseName === "")
+        throw new Error("You haven't entered course name.");
+      if (courseStaticLink === "")
+        throw new Error("You haven't entered course static link.");
+
       await addDoc(collection(db, "courses"), {
         name: courseName,
         group: params.id,
         staticLink: courseStaticLink,
       });
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     } finally {
       setCourseName("");
+      setCourseStaticLink("");
     }
   };
 
   const handleChangeCourse = async () => {
     try {
       setShowChangeCourse(false);
+
+      if (courseName === "")
+        throw new Error("You haven't entered course name.");
+      if (courseStaticLink === "")
+        throw new Error("You haven't entered course static link.");
 
       const newCourse = {
         name: courseName,
@@ -192,9 +207,10 @@ const GroupPage: FC = (props) => {
       console.log(newCourse.staticLink);
       console.log("^^^^^^^^^^^^^^^^^^^");
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     } finally {
       setCourseName("");
+      setCourseStaticLink("");
     }
   };
 
@@ -670,6 +686,14 @@ const GroupPage: FC = (props) => {
                   </Form>
                 </Modal.Body>
               </Modal>
+
+              <ErrorModal
+                modalTitle="Error detected"
+                buttonTitle="Try again"
+                showErrorModal={showErrorModal}
+                handleCloseErrorModal={handleCloseErrorModal}
+                errorMessage={errorMessage}
+              />
             </Container>
           </Alert>
         </Container>

@@ -8,6 +8,7 @@ import { getAuthErrorDesc, setUser } from "../utils";
 import { ErrorModal } from "../components";
 
 import "../styles/pages/signin.sass";
+import { isImportEqualsDeclaration } from "typescript";
 
 const logo = require("../assets/studen_mid_logo_white.png");
 
@@ -18,7 +19,10 @@ const SignUpPage: FC = (props) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleCloseErrorModal = () => setShowErrorModal(false);
-  const handleShowErrorModal = () => setShowErrorModal(true);
+  const handleShowErrorModal = (message: string) => {
+    setErrorMessage(message);
+    setShowErrorModal(true);
+  };
 
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
@@ -30,6 +34,9 @@ const SignUpPage: FC = (props) => {
   const signup = async () => {
     try {
       setLoading(true);
+
+      if (signupLastname === "") throw new Error("auth/lastname-not-entered");
+      if (signupFirstname === "") throw new Error("auth/firstname-not-entered");
 
       const cred = await createUserWithEmailAndPassword(
         auth,
@@ -57,8 +64,18 @@ const SignUpPage: FC = (props) => {
 
       window.location.href = ROUTES.HOME;
     } catch (error: any) {
-      setErrorMessage(getAuthErrorDesc(error.code.split("/")[1]));
-      handleShowErrorModal();
+      // if (typeof error.code === "undefined")
+      //   handleShowErrorModal(getAuthErrorDesc(error.message));
+      // else handleShowErrorModal(getAuthErrorDesc(error.code.split("/")[1]));
+
+      handleShowErrorModal(
+        getAuthErrorDesc(
+          (typeof error.code === "undefined"
+            ? error.message
+            : error.code
+          ).split("/")[1]
+        )
+      );
 
       setLoading(false);
     }

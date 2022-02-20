@@ -3,6 +3,9 @@ export default function getAuthErrorDesc(errorCode) {
 }
 
 const authErrors = {
+  "firstname-not-entered": "You haven't entered your first name.",
+  "lastname-not-entered": "You haven't entered your last name.",
+
   "admin-restricted-operation":
     "This operation is restricted to administrators only.",
   "argument-error": "",

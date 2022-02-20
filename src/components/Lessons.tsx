@@ -39,6 +39,7 @@ import {
 } from "../utils";
 import { useParams } from "react-router";
 import { FirebaseContext } from "../context/firebase";
+import { ErrorModal } from "../components";
 
 import "../styles/components/lessons.sass";
 
@@ -49,6 +50,15 @@ type LessonsProps = {
 
 export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
   const { firestore } = useContext(FirebaseContext);
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleCloseErrorModal = () => setShowErrorModal(false);
+  const handleShowErrorModal = (message: string) => {
+    setErrorMessage(message);
+    setShowErrorModal(true);
+  };
 
   const params = useParams();
 
@@ -156,6 +166,13 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
   const handleChangeLesson = async () => {
     try {
       setShowChangeLesson(false);
+
+      // if (lessonName === "") throw new Error("You haven't entered group name.");
+      // if (lessonName === "") throw new Error("You haven't entered group name.");
+      // if (lessonBeginningTime === "")
+      //   throw new Error("You haven't entered beginning time of lesson.");
+      // if (lessonEndTime === "")
+      //   throw new Error("You haven't entered end time of lesson.");
 
       const beginningTimeTimestamp = Timestamp.fromDate(
         moment(
@@ -929,6 +946,14 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
             </Form>
           </Modal.Body>
         </Modal>
+
+        <ErrorModal
+          modalTitle="Error detected"
+          buttonTitle="Try again"
+          showErrorModal={showErrorModal}
+          handleCloseErrorModal={handleCloseErrorModal}
+          errorMessage={errorMessage}
+        />
       </Container>
     </Alert>
   );
