@@ -20,20 +20,6 @@
 .env.test.local
 .env.production.local
 
-.prettierrc
-
-package-lock.json
-
-tsconfig.json
-
-firebase.json
-.firebaserc
-/.firebase
-
-/.github
-
-.*
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
