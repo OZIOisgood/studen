@@ -30,7 +30,7 @@ firebase.json
 .firebaserc
 .firebase
 
-.github
+/.github
 
 npm-debug.log*
 yarn-debug.log*
