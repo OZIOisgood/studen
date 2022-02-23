@@ -18,6 +18,15 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.gitignore
+.prettierrc
+package-lock.json
+package.json
+tsconfig.json
+firebase.json
+.firebaserc
+.firebase
+.github
 
 npm-debug.log*
 yarn-debug.log*
