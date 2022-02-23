@@ -28,7 +28,7 @@ tsconfig.json
 
 firebase.json
 .firebaserc
-.firebase
+/.firebase
 
 /.github
 
