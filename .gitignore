@@ -23,3 +23,11 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+tsconfig.json
+
+.firebaserc
+.prettierrc
+package-lock.json
+.github/workflows/firebase-hosting-pull-request.yml
+.firebase/
+
