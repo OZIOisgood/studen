@@ -26,7 +26,7 @@ const StarterPage: FC = (props) => {
             <Container>
               <h1 className="text-white">What is it?</h1>
               <h4 className="text-white mt-3">
-                <b>STUDEN.</b> – is a simple manager for study process.
+                <b>STUDEN.</b> - a simple manager for study process.
               </h4>
             </Container>
           </div>
