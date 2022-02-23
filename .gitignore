@@ -20,12 +20,9 @@
 .env.test.local
 .env.production.local
 
-.gitignore
-
 .prettierrc
 
 package-lock.json
-package.json
 
 tsconfig.json
 
