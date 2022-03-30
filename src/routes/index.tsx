@@ -6,6 +6,7 @@ import StarterPage from "../pages/starter";
 import HomePage from "../pages/home";
 import GroupsPage from "../pages/groups";
 import GroupPage from "../pages/group";
+import ProfilePage from "../pages/profile";
 import SchedulePage from "../pages/schedule";
 import SimpleSchedulePage from "../pages/simpleSchedule";
 import SignInPage from "../pages/signin";
@@ -30,6 +31,8 @@ const AppRoutes: FC = () => {
           path={`${ROUTES.GROUPS}/:id/demo`}
           element={<SimpleSchedulePage />}
         />
+
+        <Route path={`${ROUTES.PROFILE}/:id`} element={<ProfilePage />} />
 
         <Route path={ROUTES.SIGN_IN} element={<SignInPage />} />
         <Route path={ROUTES.SIGN_UP} element={<SignUpPage />} />

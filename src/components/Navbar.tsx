@@ -79,7 +79,9 @@ export const NavBar: FC = () => {
               >
                 <Dropdown.Item disabled>{user.email}</Dropdown.Item>
                 <hr />
-                <Dropdown.Item href={ROUTES.PROFILE}>Profile</Dropdown.Item>
+                <Dropdown.Item href={`${ROUTES.PROFILE}/${user.uid}`}>
+                  Profile
+                </Dropdown.Item>
                 <Dropdown.Item href={ROUTES.SETTINGS}>Settings</Dropdown.Item>
                 <hr />
                 <Dropdown.Item href="/" onClick={signout}>
