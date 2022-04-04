@@ -3,7 +3,8 @@
 ## What is it?
 
 **STUDEN.** - a simple manager for study process.
-![student group page](https://lh3.googleusercontent.com/tWeM-7WFfvviewspVpgcXRx6sSwqyFTnZJ5BW-Rl3194r4aSEKp6M5I_AP9d1BdcmLS8NNaKDFVQsE5d333a=w3072-h1760)
+<br/>
+<img src="https://drive.google.com/uc?export=view&id=1W3KEYMxh39zWGPHc2sO0bv7SiPno3k32" alt="studen group page"/>
 
 ## Why should I use it?
 
@@ -16,9 +17,12 @@ In the era of distance education, we have problems of having a
 lot of conference links. Is it familiar to you? Yeah… Using
 STUDEN. you will forget about this pain in ass for EVER!
 
+
+
 ## Who did this insane project?
 
 It is created by Lobarev Pavel, student of CS in KPI IASA.
+
 
 ## How you can help the project?
 
