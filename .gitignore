@@ -30,5 +30,3 @@ tsconfig.json
 package-lock.json
 .github/workflows/firebase-hosting-pull-request.yml
 .firebase/
-
-src/assets/screenshot_studen_group_page.png
