@@ -3,7 +3,7 @@
 ## What is it?
 
 **STUDEN.** - a simple manager for study process.
-<img src="https://drive.google.com/uc?export=view&id=1xHb5RwRWNRNCG0g4VBso2mZnJjvp4yBc" alt="drawing" width="100%"/>
+<img src="https://drive.google.com/uc?export=view&id=1xHb5RwRWNRNCG0g4VBso2mZnJjvp4yBc" alt="drawing" width="50%"/>
 
 
 ## Why should I use it?
