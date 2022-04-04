@@ -3,7 +3,7 @@
 ## What is it?
 
 **STUDEN.** - a simple manager for study process.
-![student group page](https://drive.google.com/uc?export=view&id=1W3KEYMxh39zWGPHc2sO0bv7SiPno3k32)
+![student group page](https://drive.google.com/uc?export=view&id=1xHb5RwRWNRNCG0g4VBso2mZnJjvp4yBc)
 
 ## Why should I use it?
 
