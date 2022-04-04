@@ -4,7 +4,9 @@
 
 **STUDEN.** - a simple manager for study process.
 <br/>
-<img src="https://raw.githubusercontent.com/OZIOisgood/studen/master/src/assets/screenshot_studen_group_page.png" alt="studen group page"/>
+<p align="center">
+    <img src="https://raw.githubusercontent.com/OZIOisgood/studen/master/src/assets/screenshot_studen_group_page.png" width="50%" alt="studen group page"/>
+</p>
 
 ## Why should I use it?
 
