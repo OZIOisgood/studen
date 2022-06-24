@@ -1,17 +1,5 @@
-import { FC, useContext } from "react";
-import {
-  Button,
-  Container,
-  Alert,
-  Row,
-  Col,
-  Card,
-  CardGroup,
-} from "react-bootstrap";
-import { FirebaseContext } from "../context/firebase";
-import { collection, DocumentData, query } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
-import { Avatar } from "../components";
+import { FC } from "react";
+import { Button, Container, Alert, Row, Col } from "react-bootstrap";
 import * as ROUTES from "../constants/routes";
 
 import "../styles/components/groups.sass";

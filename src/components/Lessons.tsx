@@ -8,17 +8,13 @@ import {
   Col,
   Form,
   Modal,
-  Dropdown,
-  DropdownButton,
 } from "react-bootstrap";
 import moment from "moment";
-import { firestore } from "../firebase-config";
 import {
   collection,
   query,
   orderBy,
   where,
-  CollectionReference,
   getFirestore,
   getDocs,
   onSnapshot,
@@ -31,12 +27,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import {
-  getPrettyTimeByStamp,
-  getTimeNow,
-  momentWeek,
-  usePageReloadInterval,
-} from "../utils";
+import { getPrettyTimeByStamp, momentWeek } from "../utils";
 import { useParams } from "react-router";
 import { FirebaseContext } from "../context/firebase";
 import { ErrorModal } from "../components";
@@ -237,14 +228,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
         conferenceLink: lessonConferenceLink,
       };
 
-      const newLessonRef = await addDoc(collection(db, "lessons"), newLesson);
-
-      console.log("^^^^ newLesson ^^^^");
-      console.log(`id: ${newLessonRef.id}`);
-      console.log(newLesson);
-      console.log(lessonBeginningTime);
-      console.log(lessonEndTime);
-      console.log("^^^^^^^^^^^^^^^^^^^");
+      await addDoc(collection(db, "lessons"), newLesson);
     } catch (error: any) {
       console.error(error.message);
     } finally {
@@ -352,12 +336,6 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
       console.error(error.message);
     }
   };
-
-  // console.log("\n\n\n^^^ Lessons ^^^");
-  // console.log("lessonToChange:");
-  // console.log(lessonToChange?.name);
-  // console.log(courses);
-  // console.log("^^^^^^^^^^^^^^^\n\n\n");
 
   return (
     <Alert variant="dark box mt-5 lessons-container">

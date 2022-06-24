@@ -1,25 +1,11 @@
-import { FC, useContext } from "react";
-import {
-  Button,
-  Container,
-  Alert,
-  Row,
-  Col,
-  Modal,
-  Form,
-} from "react-bootstrap";
-import { FirebaseContext } from "../context/firebase";
-import { collection, DocumentData, query } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
-import { Avatar } from "../components";
+import { FC } from "react";
+import { Button, Modal, Form } from "react-bootstrap";
 
 type ErrorModalProps = {
   modalTitle: string;
   buttonTitle: string;
-
   showErrorModal: any;
   handleCloseErrorModal: any;
-
   errorMessage: string;
 };
 

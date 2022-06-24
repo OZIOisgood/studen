@@ -8,15 +8,6 @@ import {
   Col,
 } from "react-bootstrap";
 import moment from "moment";
-import { firestore } from "../firebase-config";
-import {
-  collection,
-  query,
-  orderBy,
-  where,
-  CollectionReference,
-} from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
 import {
   getPrettyTimeByStamp,
   getTimeNow,
@@ -68,12 +59,6 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
         }
       });
 
-      // console.clear();
-      // console.log("^^^^^^^^ nextLessons ^^^^^^^^");
-      // console.log(lessons);
-      // console.log(nextLessons);
-      // console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-
       if (nextLessons.length === 0) {
         previousConferenceIndex = lessons.length - 1;
         currentConferenceIndex = -1;
@@ -86,24 +71,6 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
       }
     }
   }
-
-  // console.log("\n\n\n^^^^^^^^ nextLessons ^^^^^^^^");
-  // console.log(lessons[currentConferenceIndex]);
-  // console.log(
-  //   lessons[previousConferenceIndex]
-  //     ? lessons[previousConferenceIndex].conferenceLink === ""
-  //       ? true
-  //       : false
-  //     : true
-  // );
-  // console.log(
-  //   lessons[previousConferenceIndex]
-  //     ? lessons[previousConferenceIndex].conferenceLink === ""
-  //       ? "#"
-  //       : lessons[previousConferenceIndex].conferenceLink
-  //     : "#"
-  // );
-  // console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n\n");
 
   return (
     <Alert variant="dark box mt-5 schedule-container">

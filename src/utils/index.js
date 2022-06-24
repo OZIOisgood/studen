@@ -1,4 +1,5 @@
 export { default as getPrettyTimeByStamp } from "./getPrettyTimeByStamp";
+export { default as getPrettyDateByStamp } from "./getPrettyDateByStamp";
 export { default as getTimeNow } from "./getTimeNow";
 export { default as momentWeek } from "./momentWeek";
 export { default as getUser } from "./getUser";

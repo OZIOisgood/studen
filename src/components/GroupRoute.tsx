@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { FC } from "react";
 import { Navigate } from "react-router-dom";
 import { Loader } from "../components";
 import * as ROUTES from "../constants/routes";

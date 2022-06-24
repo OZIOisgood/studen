@@ -1,8 +1,5 @@
-import { FC, useContext } from "react";
+import { FC } from "react";
 import { Button, Container, Alert, Row, Col } from "react-bootstrap";
-import { FirebaseContext } from "../context/firebase";
-import { collection, DocumentData, query } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
 import { Avatar } from "../components";
 
 type UsersProps = {

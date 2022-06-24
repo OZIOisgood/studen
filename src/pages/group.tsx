@@ -31,6 +31,7 @@ import {
   GroupRoute,
   Avatar,
   Schedule,
+  Tasks,
   ErrorModal,
 } from "../components";
 import { FirebaseContext } from "../context/firebase";
@@ -87,6 +88,14 @@ const GroupPage: FC = (props) => {
     orderBy("beginningTime", "asc")
   );
   const lessons = useFirestoreQuery(lessonsQuery);
+
+  const homeworksCollectionRef = collection(firestore, "homeworks");
+  const homeworksQuery = query(
+    homeworksCollectionRef,
+    where("group", "==", params.id)
+    // orderBy("deadlineTime", "asc")
+  );
+  const homeworks = useFirestoreQuery(homeworksQuery);
 
   const coursesCollectionRef = collection(firestore, "courses");
   const coursesQuery = query(
@@ -259,20 +268,12 @@ const GroupPage: FC = (props) => {
 
       const changeUserDocRef = doc(db, "users", userIDToDelete);
       await updateDoc(changeUserDocRef, newUser);
-
-      // console.log("^^^^ userToDelete ^^^^");
-      // console.log(userIDToDelete);
-      // console.log("^^^^ oldGroup ^^^^");
-      // console.log(group?.admins);
-      // console.log(group?.users);
-      // console.log("^^^^ newGroup ^^^^");
-      // console.log(newAdmins);
-      // console.log(newUsers);
-      // console.log("^^^^^^^^^^^^^^^^^^^");
     } catch (error: any) {
       console.error(error.message);
     }
   };
+
+  console.log(homeworks);
 
   return (
     <PrivateRoute>
@@ -401,6 +402,8 @@ const GroupPage: FC = (props) => {
           </div>
 
           <Schedule courses={courses} lessons={lessons} groupID={params.id} />
+
+          <Tasks courses={courses} tasks={homeworks} groupID={params.id} />
 
           <Alert variant="dark box mt-5">
             <Row>

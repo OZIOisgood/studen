@@ -38,8 +38,6 @@ export const NavBar: FC = () => {
             className="d-inline-block align-top"
             alt="studen logo"
           />
-          <span className="m-2 mt-0 mr-0 mb-0">v0.8.3</span>
-          {/* ^^^^^^^^^^^^^^^^^^ version ^^^^^^^^^^^^^^^^^^ */}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav d-flex">
