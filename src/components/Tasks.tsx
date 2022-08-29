@@ -165,7 +165,7 @@ export const Tasks: FC<TasksProps> = ({
             );
           })
         ) : (
-          <h3 className="text-white text-center">No tasks to do</h3>
+          <h3 className="text-muted text-center">No tasks to do</h3>
         )}
       </Container>
     </Alert>

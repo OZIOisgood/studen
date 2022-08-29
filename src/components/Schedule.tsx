@@ -168,73 +168,77 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
         </ButtonGroup>
       </Container>
       <Container className="d-grid gap-3 mt-5">
-        {lessons?.map((lesson: any, index: number) => {
-          let buttonClasses = `lesson-btn`;
+        {lessons.length !== 0 ? (
+          lessons?.map((lesson: any, index: number) => {
+            let buttonClasses = `lesson-btn`;
 
-          switch (index) {
-            case previousConferenceIndex:
-              buttonClasses += " btn-danger";
-              break;
-            case currentConferenceIndex:
-              buttonClasses += " btn-warning";
-              break;
-            case nextConferenceIndex:
-              buttonClasses += " btn-success";
-              break;
-          }
+            switch (index) {
+              case previousConferenceIndex:
+                buttonClasses += " btn-danger";
+                break;
+              case currentConferenceIndex:
+                buttonClasses += " btn-warning";
+                break;
+              case nextConferenceIndex:
+                buttonClasses += " btn-success";
+                break;
+            }
 
-          return (
-            <Row key={lesson.id}>
-              <Col xs={1}>
-                <Row>
-                  <Col xs={12} className="lesson-time">
-                    <span className="text-muted">
-                      {getPrettyTimeByStamp(lesson.beginningTime)}
-                    </span>
-                  </Col>
-                  <Col xs={12} className="lesson-time">
-                    <span className="text-muted lesson-time">
-                      {getPrettyTimeByStamp(lesson.endTime)}
-                    </span>
-                  </Col>
-                </Row>
-              </Col>
-              <Col xs={11}>
-                <Button
-                  disabled={lesson.conferenceLink === "" ? true : false}
-                  variant="secondary"
-                  href={
-                    lesson.conferenceLink !== "" ? lesson.conferenceLink : "#"
-                  }
-                  target="_blank"
-                  className={buttonClasses}
-                >
+            return (
+              <Row key={lesson.id}>
+                <Col xs={1}>
                   <Row>
-                    <Col xs={1} className="lesson-number text-align-right">
-                      <h4>{index + 1}.</h4>
+                    <Col xs={12} className="lesson-time">
+                      <span className="text-muted">
+                        {getPrettyTimeByStamp(lesson.beginningTime)}
+                      </span>
                     </Col>
-                    <Col xs={11}>
-                      <Row>
-                        <Col xs={12} md={5} className="lesson-course-name">
-                          <h4>
-                            {courses != null
-                              ? courses.find(
-                                  (course: any) => course.id === lesson.course
-                                )?.name
-                              : null}
-                          </h4>
-                        </Col>
-                        <Col xs={12} md={7} className="lesson-name">
-                          <h4>{lesson.name}</h4>
-                        </Col>
-                      </Row>
+                    <Col xs={12} className="lesson-time">
+                      <span className="text-muted lesson-time">
+                        {getPrettyTimeByStamp(lesson.endTime)}
+                      </span>
                     </Col>
                   </Row>
-                </Button>
-              </Col>
-            </Row>
-          );
-        })}
+                </Col>
+                <Col xs={11}>
+                  <Button
+                    disabled={lesson.conferenceLink === "" ? true : false}
+                    variant="secondary"
+                    href={
+                      lesson.conferenceLink !== "" ? lesson.conferenceLink : "#"
+                    }
+                    target="_blank"
+                    className={buttonClasses}
+                  >
+                    <Row>
+                      <Col xs={1} className="lesson-number text-align-right">
+                        <h4>{index + 1}.</h4>
+                      </Col>
+                      <Col xs={11}>
+                        <Row>
+                          <Col xs={12} md={5} className="lesson-course-name">
+                            <h4>
+                              {courses != null
+                                ? courses.find(
+                                    (course: any) => course.id === lesson.course
+                                  )?.name
+                                : null}
+                            </h4>
+                          </Col>
+                          <Col xs={12} md={7} className="lesson-name">
+                            <h4>{lesson.name}</h4>
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Button>
+                </Col>
+              </Row>
+            );
+          })
+        ) : (
+          <h2 className="text-muted text-center">No lessons this day</h2>
+        )}
       </Container>
     </Alert>
   );
