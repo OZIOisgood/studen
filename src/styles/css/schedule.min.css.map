@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAEQ,yBAFiB,CACrB,EAAE,CACE,CAAC,AAAC,CACE,KAAK,CAAE,IAAI,CACX,eAAe,CAAE,IAAI,CAGD,AAPhC,AAMY,yBANa,CACrB,EAAE,CACE,CAAC,AAII,MAAM,AAAC,CACJ,KAAK,CAAE,IAAI,CAAG,AAP9B,AAUQ,yBAViB,CAUhB,gBAAO,AAAC,CACL,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CAAG",
+    "sources": [
+        "../pages/schedule.sass"
+    ],
+    "names": [],
+    "file": "schedule.min.css"
+}

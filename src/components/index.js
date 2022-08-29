@@ -1,5 +1,6 @@
 export { Schedule } from "./Schedule";
 export { Tasks } from "./Tasks";
+export { TasksList } from "./TasksList";
 export { Users } from "./Users";
 export { Groups } from "./Groups";
 export { Lessons } from "./Lessons";

@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,eAAe,AAAC,CACZ,WAAW,CAAE,MAAM,CAAG,AAE1B,AAAA,aAAa,AAAC,CACV,SAAS,CAAE,KAAK,CAGc,AAJlC,AAGI,aAHS,CAGT,aAAa,AAAC,CACV,eAAe,CAAE,IAAI,CAAG,AAEhC,AACI,aADS,AACR,MAAM,AAAC,CACJ,OAAO,CAAE,CAAC,CAAG,AAErB,AAAA,KAAK,AAAC,CACF,KAAK,CAAE,KAAK,CAAG",
+    "sources": [
+        "../pages/signin.sass"
+    ],
+    "names": [],
+    "file": "signin.min.css"
+}

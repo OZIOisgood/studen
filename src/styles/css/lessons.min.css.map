@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "../components/lessons.sass"
+    ],
+    "names": [],
+    "file": "lessons.min.css"
+}

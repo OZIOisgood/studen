@@ -8,7 +8,6 @@ import { getAuthErrorDesc, setUser } from "../utils";
 import { ErrorModal } from "../components";
 
 import "../styles/pages/signin.sass";
-import { isImportEqualsDeclaration } from "typescript";
 
 const logo = require("../assets/studen_mid_logo_white.png");
 
@@ -98,7 +97,7 @@ const SignUpPage: FC = (props) => {
             placeholder="Email address"
             className="position-relative"
             disabled={loading}
-            onChange={(event) => {
+            onChange={(event: any) => {
               setSignupEmail(event.target.value);
             }}
           />
@@ -113,7 +112,7 @@ const SignUpPage: FC = (props) => {
             placeholder="Password"
             disabled={loading}
             className="position-relative"
-            onChange={(event) => {
+            onChange={(event: any) => {
               setSignupPassword(event.target.value);
             }}
           />
@@ -126,7 +125,7 @@ const SignUpPage: FC = (props) => {
             type="text"
             size="lg"
             placeholder="Enter your lastname"
-            onChange={(event) => {
+            onChange={(event: any) => {
               setLastname(event.target.value);
             }}
           />
@@ -139,7 +138,7 @@ const SignUpPage: FC = (props) => {
             type="text"
             size="lg"
             placeholder="Enter your firstname"
-            onChange={(event) => {
+            onChange={(event: any) => {
               setFirstname(event.target.value);
             }}
           />

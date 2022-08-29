@@ -210,7 +210,7 @@ const GroupsPage: FC = (props) => {
                     <Form.Control
                       type="text"
                       placeholder="Enter id"
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         setGroupID(event.target.value);
                       }}
                     />
@@ -244,7 +244,7 @@ const GroupsPage: FC = (props) => {
                     <Form.Control
                       type="text"
                       placeholder="Enter group name"
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         setGroupName(event.target.value);
                       }}
                     />
@@ -256,7 +256,7 @@ const GroupsPage: FC = (props) => {
                     <Form.Control
                       type="url"
                       placeholder="Enter url"
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         setGroupAvatar(event.target.value);
                       }}
                     />
@@ -268,7 +268,7 @@ const GroupsPage: FC = (props) => {
                     <Form.Control
                       type="url"
                       placeholder="Enter url"
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         setGroupBackground(event.target.value);
                       }}
                     />

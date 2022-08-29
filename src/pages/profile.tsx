@@ -149,7 +149,7 @@ const ProfilePage: FC = (props) => {
                     defaultValue={profileLastname}
                     type="text"
                     placeholder="Enter lastname"
-                    onChange={(event) => {
+                    onChange={(event: any) => {
                       setProfileLastname(event.target.value);
                     }}
                   />
@@ -162,7 +162,7 @@ const ProfilePage: FC = (props) => {
                     defaultValue={profileFirstname}
                     type="text"
                     placeholder="Enter firstname"
-                    onChange={(event) => {
+                    onChange={(event: any) => {
                       setProfileFirstname(event.target.value);
                     }}
                   />

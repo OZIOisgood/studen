@@ -1,31 +1,38 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Container, Alert, Row, Col } from "react-bootstrap";
+import { Button, Container, Modal, Form } from "react-bootstrap";
 import {
-  addDoc,
   collection,
   doc,
   DocumentData,
   getDoc,
-  getDocs,
-  getFirestore,
-  orderBy,
   query,
   where,
-  deleteDoc,
-  updateDoc,
-  arrayRemove,
+  getFirestore,
+  Timestamp,
+  addDoc,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute, GroupRoute, Lessons } from "../components";
+import { PrivateRoute, GroupRoute, TasksList, ErrorModal } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import { getTimeNow, getPrettyDateByStamp, getUser } from "../utils";
+import { getTimeNow, getUser } from "../utils";
+import Calendar from "react-calendar";
 import moment from "moment";
 
+import "react-calendar/dist/Calendar.css";
 import "../styles/pages/tasks.sass";
 
 const TasksPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleCloseErrorModal = () => setShowErrorModal(false);
+  const handleShowErrorModal = (message: string) => {
+    setErrorMessage(message);
+    setShowErrorModal(true);
+  };
 
   const user = getUser();
 
@@ -73,185 +80,220 @@ const TasksPage: FC = (props) => {
     );
   });
 
-  console.log("!!!!!!!!!");
-
   let toDoHomeworksList: any[] = [];
+  let overdueHomeworksList: any[] = [];
 
   allHomeworks?.forEach((homework: any) => {
     if (
       !doneHomeworksList?.find(
         (doneHomework: any) => doneHomework.id === homework.id
-      )
+      ) &&
+      moment.unix(homework.deadlineTime.seconds).isAfter(getTimeNow())
     ) {
       toDoHomeworksList.push(homework);
+    } else if (
+      !doneHomeworksList?.find(
+        (doneHomework: any) => doneHomework.id === homework.id
+      ) &&
+      moment.unix(homework.deadlineTime.seconds).isBefore(getTimeNow())
+    ) {
+      overdueHomeworksList.push(homework);
     }
   });
 
-  console.log(toDoHomeworksList);
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  console.log("!!!!!!!!!");
+  const [showAddTask, setShowAddTask] = useState(false);
+
+  const [taskTitle, setTaskTitle] = useState("");
+  const [courseIndex, setCourseIndex] = useState("");
+  const [taskDeadLineTime, setTaskDeadLineTime] = useState("");
+  const [taskDeadLineDate, setTaskDeadLineDate] = useState(
+    getTimeNow().toDate()
+  );
+  const [taskDescription, setTaskDescription] = useState("");
+
+  const handleCloseAddTask = () => setShowAddTask(false);
+  const handleShowAddTask = () => setShowAddTask(true);
+
+  const db = getFirestore();
+
+  const handleAddTask = async () => {
+    try {
+      setShowAddTask(false);
+
+      const deadlineTimeTimestamp = Timestamp.fromDate(
+        moment(
+          `${moment(taskDeadLineDate).format("YYYY-MM-DD")} ${taskDeadLineTime}`
+        ).toDate()
+      );
+      const createTimeTimestamp = Timestamp.fromDate(getTimeNow().toDate());
+
+      const newTask = {
+        title: taskTitle,
+        group: params.id,
+        course: courses != null ? courses[Number(courseIndex)].id : "",
+        createTime: createTimeTimestamp,
+        deadlineTime: deadlineTimeTimestamp,
+        description: taskDescription,
+      };
+
+      await addDoc(collection(db, "homeworks"), newTask);
+    } catch (error: any) {
+      handleShowErrorModal(error.message);
+    } finally {
+      setTaskTitle("");
+      setTaskDescription("");
+      setCourseIndex("0");
+      setTaskDeadLineTime("");
+      setTaskDeadLineDate(getTimeNow().toDate());
+    }
+  };
+
+  const handleDateChange = (date: Date) => {
+    setTaskDeadLineDate(date);
+  };
 
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
-        <Container className="mt-5 group-schedule-container">
-          <h1 className="text-white">
-            <a href={`/groups/${params.id}`}>{group?.name}</a>
+        <Container className="mt-5 tasks-container d-grid gap-3">
+          <h1 className="text-white mb-5">
+            <a
+              href={`/groups/${params.id}`}
+              className="text-decoration-none text-white"
+            >
+              {group?.name}
+            </a>
             <span className="text-muted">{" / "}</span> Tasks
           </h1>
 
-          <Alert variant="dark box mt-5 box">
-            <Container className="d-grid gap-3">
-              <h2 className="text-white">Overdue:</h2>
-              {doneHomeworksList?.map((task: any, index: number) => {
-                return (
-                  <Row key={`${task?.id}-done-tasks`}>
-                    <Col xs={1}>
-                      <span className="text-muted">
-                        {getPrettyDateByStamp(task?.deadlineTime)}
-                      </span>
-                    </Col>
-                    <Col xs={11} className="d-grid">
-                      <Button variant="success" target="_blank">
-                        <Row>
-                          <Col xs={1} className="task-number text-align-right">
-                            <h4>{index + 1}.</h4>
-                          </Col>
-                          <Col xs={11}>
-                            <Row>
-                              <Col
-                                xs={12}
-                                md={4}
-                                className="task-course-name text-align-left"
-                              >
-                                <h4>
-                                  {courses != null
-                                    ? courses.find(
-                                        (course: any) =>
-                                          course.id === task?.course
-                                      )?.name
-                                    : null}
-                                </h4>
-                              </Col>
-                              <Col
-                                xs={12}
-                                md={8}
-                                className="task-name text-align-left"
-                              >
-                                <h4>{task?.title}</h4>
-                              </Col>
-                            </Row>
-                          </Col>
-                        </Row>
-                      </Button>
-                    </Col>
-                  </Row>
-                );
-              })}
-            </Container>
-          </Alert>
+          <TasksList
+            tasks={overdueHomeworksList}
+            courses={courses}
+            buttonClassNames="danger"
+            title="Overdue"
+          />
 
-          <Alert variant="dark box mt-5 box">
-            <Container className="d-grid gap-3">
-              <h2 className="text-white">To Do:</h2>
-              {toDoHomeworksList?.map((task: any, index: number) => {
-                return (
-                  <Row key={`${task?.id}-toDo-tasks`}>
-                    <Col xs={1}>
-                      <span className="text-muted">
-                        {getPrettyDateByStamp(task?.deadlineTime)}
-                      </span>
-                    </Col>
-                    <Col xs={11} className="d-grid">
-                      <Button variant="warning" target="_blank">
-                        <Row>
-                          <Col xs={1} className="task-number text-align-right">
-                            <h4>{index + 1}.</h4>
-                          </Col>
-                          <Col xs={11}>
-                            <Row>
-                              <Col
-                                xs={12}
-                                md={4}
-                                className="task-course-name text-align-left"
-                              >
-                                <h4>
-                                  {courses != null
-                                    ? courses.find(
-                                        (course: any) =>
-                                          course.id === task?.course
-                                      )?.name
-                                    : null}
-                                </h4>
-                              </Col>
-                              <Col
-                                xs={12}
-                                md={8}
-                                className="task-name text-align-left"
-                              >
-                                <h4>{task?.title}</h4>
-                              </Col>
-                            </Row>
-                          </Col>
-                        </Row>
-                      </Button>
-                    </Col>
-                  </Row>
-                );
-              })}
-            </Container>
-          </Alert>
+          <TasksList
+            tasks={toDoHomeworksList}
+            courses={courses}
+            buttonClassNames="warning"
+            title="To Do"
+          />
 
-          <Alert variant="dark box mt-5 box">
-            <Container className="d-grid gap-3">
-              <h2 className="text-white">Done:</h2>
-              {doneHomeworksList?.map((task: any, index: number) => {
-                return (
-                  <Row key={`${task?.id}-done-tasks`}>
-                    <Col xs={1}>
-                      <span className="text-muted">
-                        {getPrettyDateByStamp(task?.deadlineTime)}
-                      </span>
-                    </Col>
-                    <Col xs={11} className="d-grid">
-                      <Button variant="success" target="_blank">
-                        <Row>
-                          <Col xs={1} className="task-number text-align-right">
-                            <h4>{index + 1}.</h4>
-                          </Col>
-                          <Col xs={11}>
-                            <Row>
-                              <Col
-                                xs={12}
-                                md={4}
-                                className="task-course-name text-align-left"
-                              >
-                                <h4>
-                                  {courses != null
-                                    ? courses.find(
-                                        (course: any) =>
-                                          course.id === task?.course
-                                      )?.name
-                                    : null}
-                                </h4>
-                              </Col>
-                              <Col
-                                xs={12}
-                                md={8}
-                                className="task-name text-align-left"
-                              >
-                                <h4>{task?.title}</h4>
-                              </Col>
-                            </Row>
-                          </Col>
-                        </Row>
-                      </Button>
-                    </Col>
-                  </Row>
-                );
-              })}
-            </Container>
-          </Alert>
+          <TasksList
+            tasks={doneHomeworksList}
+            courses={courses}
+            buttonClassNames="success"
+            title="Done"
+          />
+
+          <Button
+            size="lg"
+            variant="info"
+            className="text-white mt-2"
+            onClick={handleShowAddTask}
+          >
+            <b>
+              <i className="far fa-calendar-plus"></i> Add new task
+              {/* <i class="fa-solid fa-books-medical"></i> */}
+            </b>
+          </Button>
+
+          <Modal show={showAddTask} onHide={handleCloseAddTask} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Adding new task</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3 task-title">
+                  <Form.Label>
+                    Task title <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter title"
+                    onChange={(event: any) => {
+                      setTaskTitle(event.target.value);
+                    }}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3 task-description">
+                  <Form.Label>
+                    Task description <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter description"
+                    as="textarea"
+                    rows={3}
+                    onChange={(event: any) => {
+                      setTaskDescription(event.target.value);
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3 task-course">
+                  <Form.Label>
+                    Course <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Select
+                    onChange={(event: any) => {
+                      setCourseIndex(event.target.value);
+                    }}
+                  >
+                    <option>Choose course ...</option>
+                    {courses?.map((item: any, index: number) => (
+                      <option key={index} value={index}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
+                <Form.Group className="mb-3 justify-content-center">
+                  <Form.Label>
+                    Task deadline <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Calendar
+                    onChange={handleDateChange}
+                    value={taskDeadLineDate}
+                    locale="en"
+                    className="m-auto mb-2"
+                  />
+                  <Form.Control
+                    className="mt-2"
+                    type="text"
+                    placeholder='Time format "00:00"'
+                    onChange={(event: any) => {
+                      setTaskDeadLineTime(event.target.value);
+                    }}
+                  />
+                </Form.Group>
+
+                <div className="d-grid mt-5">
+                  <Button
+                    variant="info"
+                    className="text-white"
+                    onClick={handleAddTask}
+                  >
+                    <b>
+                      <i className="far fa-calendar-plus"></i> Add task
+                    </b>
+                  </Button>
+                </div>
+              </Form>
+            </Modal.Body>
+          </Modal>
+
+          <ErrorModal
+            modalTitle="Error detected"
+            buttonTitle="Try again"
+            showErrorModal={showErrorModal}
+            handleCloseErrorModal={handleCloseErrorModal}
+            errorMessage={errorMessage}
+          />
         </Container>
       </GroupRoute>
     </PrivateRoute>

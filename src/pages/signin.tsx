@@ -67,7 +67,7 @@ const SignInPage: FC = (props) => {
             autoComplete="username"
             disabled={loading}
             className="position-relative"
-            onChange={(event) => {
+            onChange={(event: any) => {
               setSigninEmail(event.target.value);
             }}
           />
@@ -80,7 +80,7 @@ const SignInPage: FC = (props) => {
             autoComplete="current-password"
             disabled={loading}
             className="position-relative mt-1"
-            onChange={(event) => {
+            onChange={(event: any) => {
               setSigninPassword(event.target.value);
             }}
           />

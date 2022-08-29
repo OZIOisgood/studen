@@ -150,7 +150,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
 
       await deleteDoc(doc(db, "lessons", lessonID));
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     }
   };
 
@@ -184,17 +184,8 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
 
       const changeDocRef = doc(db, "lessons", lessonToChange.id);
       await updateDoc(changeDocRef, newLesson);
-
-      // const newLessonRef = await addDoc(collection(db, "lessons"), newLesson);
-
-      console.log("^^^^ newLesson ^^^^");
-      // console.log(`id: ${newLessonRef.id}`);
-      console.log(newLesson);
-      console.log(lessonBeginningTime);
-      console.log(lessonEndTime);
-      console.log("^^^^^^^^^^^^^^^^^^^");
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     } finally {
       setLessonName("");
       setLessonBeginningTime("");
@@ -230,7 +221,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
 
       await addDoc(collection(db, "lessons"), newLesson);
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     } finally {
       setLessonName("");
       setCourseIndex("0");
@@ -285,7 +276,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
         await addDoc(collection(db, "lessons"), newLesson);
       });
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     }
   };
 
@@ -333,7 +324,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
         await addDoc(collection(db, "lessons"), newLesson);
       });
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     }
   };
 
@@ -448,9 +439,6 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   variant="danger"
                   className="text-white"
                   onClick={() => {
-                    console.log("^^^ Deleting the lesson ^^^");
-                    console.log(`lessonId: ${lessonToDelete?.id}`);
-
                     handleDeleteLesson(lessonToDelete?.id);
                   }}
                 >
@@ -516,7 +504,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   defaultValue={lessonToChange?.name}
                   type="text"
                   placeholder="Enter name"
-                  onChange={(event) => {
+                  onChange={(event: any) => {
                     setLessonName(event.target.value);
                   }}
                 />
@@ -550,7 +538,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                       Lesson number <span className="text-danger">*</span>
                     </Form.Label>
                     <Form.Select
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         const values = event.target.value.split("/");
 
                         setLessonBeginningTime(values[0]);
@@ -582,7 +570,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                           )}
                           type="text"
                           placeholder='Time format "00:00"'
-                          onChange={(event) => {
+                          onChange={(event: any) => {
                             setLessonBeginningTime(event.target.value);
                           }}
                         />
@@ -600,7 +588,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                           )}
                           type="text"
                           placeholder='Time format "00:00"'
-                          onChange={(event) => {
+                          onChange={(event: any) => {
                             setLessonEndTime(event.target.value);
                           }}
                         />
@@ -656,7 +644,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                       defaultValue={lessonToChange?.conferenceLink}
                       type="text"
                       placeholder="Enter url"
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         setLessonConferenceLink(event.target.value);
                       }}
                     />
@@ -696,7 +684,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                 <Form.Control
                   type="text"
                   placeholder="Enter name"
-                  onChange={(event) => {
+                  onChange={(event: any) => {
                     setLessonName(event.target.value);
                   }}
                 />
@@ -707,7 +695,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   Course <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Select
-                  onChange={(event) => {
+                  onChange={(event: any) => {
                     setCourseIndex(event.target.value);
                     setUseStaticLink(false);
                     setLessonConferenceLink("");
@@ -750,7 +738,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                       Lesson number <span className="text-danger">*</span>
                     </Form.Label>
                     <Form.Select
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         const values = event.target.value.split("/");
 
                         setLessonBeginningTime(values[0]);
@@ -778,7 +766,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                         <Form.Control
                           type="text"
                           placeholder='Time format "00:00"'
-                          onChange={(event) => {
+                          onChange={(event: any) => {
                             setLessonBeginningTime(event.target.value);
                           }}
                         />
@@ -792,7 +780,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                         <Form.Control
                           type="text"
                           placeholder='Time format "00:00"'
-                          onChange={(event) => {
+                          onChange={(event: any) => {
                             setLessonEndTime(event.target.value);
                           }}
                         />
@@ -846,7 +834,7 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                     <Form.Control
                       type="text"
                       placeholder="Enter url"
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         setLessonConferenceLink(event.target.value);
                       }}
                     />

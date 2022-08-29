@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,eAAe,AAAC,CACZ,WAAW,CAAE,MAAM,CAAG,AAE1B,AAAA,aAAa,AAAC,CACV,SAAS,CAAE,KAAK,CAAG,AAEvB,AACI,aADS,AACR,MAAM,AAAC,CACJ,OAAO,CAAE,CAAC,CAAG,AAErB,AAAA,KAAK,AAAC,CACF,KAAK,CAAE,KAAK,CAAG",
+    "sources": [
+        "../pages/signup.sass"
+    ],
+    "names": [],
+    "file": "signup.min.css"
+}

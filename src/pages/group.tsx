@@ -95,7 +95,15 @@ const GroupPage: FC = (props) => {
     where("group", "==", params.id)
     // orderBy("deadlineTime", "asc")
   );
-  const homeworks = useFirestoreQuery(homeworksQuery);
+  const allHomeworks = useFirestoreQuery(homeworksQuery);
+
+  const doneHomeworksCollectionRef = collection(firestore, "doneHomeworks");
+  const doneHomeworksQuery = query(
+    doneHomeworksCollectionRef,
+    where("user", "==", user.id)
+    // orderBy("deadlineTime", "asc")
+  );
+  const doneHomeworks = useFirestoreQuery(doneHomeworksQuery);
 
   const coursesCollectionRef = collection(firestore, "courses");
   const coursesQuery = query(
@@ -208,13 +216,6 @@ const GroupPage: FC = (props) => {
 
       const changeDocRef = doc(db, "courses", courseToChange.id);
       await updateDoc(changeDocRef, newCourse);
-
-      console.log("^^^^ newCourse ^^^^");
-      // console.log(`id: ${newLessonRef.id}`);
-      console.log(newCourse.name);
-      console.log(newCourse.group);
-      console.log(newCourse.staticLink);
-      console.log("^^^^^^^^^^^^^^^^^^^");
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
@@ -240,13 +241,11 @@ const GroupPage: FC = (props) => {
 
       lessonsToDelete.forEach((lesson) => {
         deleteDoc(doc(db, "lessons", lesson.id));
-
-        console.log(`$$$ Delete: lesson.id ${lesson.id} $$$`);
       });
 
       await deleteDoc(doc(db, "courses", courseID));
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     }
   };
 
@@ -269,11 +268,9 @@ const GroupPage: FC = (props) => {
       const changeUserDocRef = doc(db, "users", userIDToDelete);
       await updateDoc(changeUserDocRef, newUser);
     } catch (error: any) {
-      console.error(error.message);
+      handleShowErrorModal(error.message);
     }
   };
-
-  console.log(homeworks);
 
   return (
     <PrivateRoute>
@@ -338,7 +335,7 @@ const GroupPage: FC = (props) => {
                         defaultValue={group?.name}
                         type="text"
                         placeholder="Enter group name"
-                        onChange={(event) => {
+                        onChange={(event: any) => {
                           setGroupName(event.target.value);
                         }}
                       />
@@ -351,7 +348,7 @@ const GroupPage: FC = (props) => {
                         defaultValue={group?.avatarURL}
                         type="url"
                         placeholder="Enter url"
-                        onChange={(event) => {
+                        onChange={(event: any) => {
                           setGroupAvatar(event.target.value);
                         }}
                       />
@@ -364,7 +361,7 @@ const GroupPage: FC = (props) => {
                         defaultValue={group?.backgroundURL}
                         type="url"
                         placeholder="Enter url"
-                        onChange={(event) => {
+                        onChange={(event: any) => {
                           setGroupBackground(event.target.value);
                         }}
                       />
@@ -382,7 +379,7 @@ const GroupPage: FC = (props) => {
                         variant="danger"
                         className="text-white"
                         // onClick={() => {
-                        //   handleDeleteLesson();
+                        //   handleDeleteGroup();
                         // }}
                       >
                         <b>Delete group</b>
@@ -403,7 +400,12 @@ const GroupPage: FC = (props) => {
 
           <Schedule courses={courses} lessons={lessons} groupID={params.id} />
 
-          <Tasks courses={courses} tasks={homeworks} groupID={params.id} />
+          <Tasks
+            courses={courses}
+            allTasks={allHomeworks}
+            doneTasks={doneHomeworks}
+            groupID={params.id}
+          />
 
           <Alert variant="dark box mt-5">
             <Row>
@@ -437,7 +439,7 @@ const GroupPage: FC = (props) => {
                         <Form.Control
                           type="text"
                           placeholder="Enter name"
-                          onChange={(event) => {
+                          onChange={(event: any) => {
                             setCourseName(event.target.value);
                           }}
                         />
@@ -447,7 +449,7 @@ const GroupPage: FC = (props) => {
                         <Form.Control
                           type="text"
                           placeholder="Enter url"
-                          onChange={(event) => {
+                          onChange={(event: any) => {
                             setCourseStaticLink(event.target.value);
                           }}
                         />
@@ -570,7 +572,7 @@ const GroupPage: FC = (props) => {
                         defaultValue={courseToChange?.name}
                         type="text"
                         placeholder="Enter name"
-                        onChange={(event) => {
+                        onChange={(event: any) => {
                           setCourseName(event.target.value);
                         }}
                       />
@@ -581,7 +583,7 @@ const GroupPage: FC = (props) => {
                         defaultValue={courseToChange?.staticLink}
                         type="text"
                         placeholder="Enter url"
-                        onChange={(event) => {
+                        onChange={(event: any) => {
                           setCourseStaticLink(event.target.value);
                         }}
                       />

@@ -1,4 +1,4 @@
-import { FC, useContext } from "react";
+import { FC, useContext, useState } from "react";
 import {
   Navbar,
   Nav,
@@ -13,20 +13,34 @@ import { FirebaseContext } from "../context/firebase";
 import * as ROUTES from "../constants/routes";
 
 import "../styles/components/navbar.sass";
+import { ErrorModal } from "./ErrorModal";
 
 const logo = require("../assets/studen_mid_logo_white.png");
 
 export const NavBar: FC = () => {
   const { auth, user, initializing } = useContext(FirebaseContext);
 
+  // Error modal
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleCloseErrorModal = () => setShowErrorModal(false);
+  const handleShowErrorModal = (message: string) => {
+    setErrorMessage(message);
+    setShowErrorModal(true);
+  };
+  //
+
+  // signOut
   const signout = async () => {
     try {
       await signOut(auth);
       await localStorage.removeItem("authUser");
     } catch (error: any) {
-      console.log(error.message);
+      handleShowErrorModal(error.message);
     }
   };
+  //
 
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -97,6 +111,14 @@ export const NavBar: FC = () => {
             ) : null}
           </Nav>
         </Navbar.Collapse>
+
+        <ErrorModal
+          modalTitle="Error detected"
+          buttonTitle="Try again"
+          showErrorModal={showErrorModal}
+          handleCloseErrorModal={handleCloseErrorModal}
+          errorMessage={errorMessage}
+        />
       </Container>
     </Navbar>
   );
