@@ -1,10 +1,10 @@
+import { collection, orderBy, query, where } from "firebase/firestore";
 import { FC, useContext } from "react";
 import { Container } from "react-bootstrap";
-import { Schedule, PrivateRoute, Groups, Users } from "../components";
-import { getTimeNow } from "../utils";
+import { Groups, PrivateRoute, Schedule } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import { collection, orderBy, query, where } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
+import { getTimeNow } from "../utils";
 
 import "../styles/pages/home.sass";
 

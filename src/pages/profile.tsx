@@ -1,41 +1,16 @@
-import { FC, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import {
-  Button,
-  Container,
-  Alert,
-  Row,
-  Col,
-  ButtonGroup,
-  Modal,
-  Form,
-} from "react-bootstrap";
-import {
-  addDoc,
-  collection,
   doc,
   DocumentData,
   getDoc,
-  getDocs,
   getFirestore,
-  orderBy,
-  query,
-  where,
-  deleteDoc,
   updateDoc,
-  arrayRemove,
 } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
-import {
-  PrivateRoute,
-  GroupRoute,
-  Avatar,
-  Schedule,
-  ErrorModal,
-} from "../components";
+import { FC, useContext, useEffect, useState } from "react";
+import { Button, Container, Form, Modal } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import { Avatar, ErrorModal, PrivateRoute } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import * as ROUTES from "../constants/routes";
-import { getTimeNow, getUser } from "../utils";
+import { getUser } from "../utils";
 
 // import "../styles/pages/profile.sass";
 

@@ -1,16 +1,6 @@
-import { FC, useContext, useState } from "react";
-import {
-  Button,
-  Container,
-  Alert,
-  Row,
-  Col,
-  Modal,
-  Form,
-  ButtonGroup,
-} from "react-bootstrap";
 import {
   addDoc,
+  arrayUnion,
   collection,
   doc,
   getDoc,
@@ -19,12 +9,20 @@ import {
   setDoc,
   updateDoc,
   where,
-  arrayUnion,
 } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute, Avatar, Groups, ErrorModal } from "../components";
+import { FC, useContext, useState } from "react";
+import {
+  Button,
+  ButtonGroup,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+} from "react-bootstrap";
+import { ErrorModal, Groups, PrivateRoute } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import * as ROUTES from "../constants/routes";
+import { useFirestoreQuery } from "../hooks";
 import { getUser, setUser } from "../utils";
 
 const GroupsPage: FC = (props) => {

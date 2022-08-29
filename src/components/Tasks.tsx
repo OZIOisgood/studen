@@ -1,9 +1,9 @@
 import { FC } from "react";
-import { Button, Container, Alert, Row, Col } from "react-bootstrap";
+import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import { getPrettyDateByStamp, getTimeNow } from "../utils";
 
-import "../styles/components/tasks.sass";
 import moment from "moment";
+import "../styles/components/tasks.sass";
 
 type TasksProps = {
   courses: any;

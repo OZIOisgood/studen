@@ -1,11 +1,11 @@
-import { FC, useState } from "react";
-import { Button, Container, Form, Modal, Spinner } from "react-bootstrap";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase-config";
-import * as ROUTES from "../constants/routes";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
-import { getAuthErrorDesc, setUser } from "../utils";
+import { FC, useState } from "react";
+import { Button, Container, Form, Spinner } from "react-bootstrap";
 import { ErrorModal } from "../components";
+import * as ROUTES from "../constants/routes";
+import { auth } from "../firebase-config";
+import { getAuthErrorDesc, setUser } from "../utils";
 
 import "../styles/pages/signin.sass";
 

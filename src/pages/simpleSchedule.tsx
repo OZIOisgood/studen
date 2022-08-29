@@ -1,42 +1,20 @@
-import { FC, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import {
-  Button,
-  Container,
-  Alert,
-  Row,
-  Col,
-  ButtonGroup,
-  Modal,
-  Form,
-} from "react-bootstrap";
-import {
-  addDoc,
   collection,
   doc,
   DocumentData,
   getDoc,
-  getDocs,
-  getFirestore,
-  onSnapshot,
   orderBy,
   query,
-  setDoc,
   where,
 } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
-import {
-  PrivateRoute,
-  Avatar,
-  Users,
-  Schedule,
-  Lessons,
-  NavBar,
-} from "../components";
-import { FirebaseContext } from "../context/firebase";
-import { getTimeNow, getUser, momentWeek, setUser } from "../utils";
-import moment from "moment";
+import { FC, useContext, useEffect, useState } from "react";
+import { Button, Container } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import { Avatar, NavBar, Schedule } from "../components";
 import * as ROUTES from "../constants/routes";
+import { FirebaseContext } from "../context/firebase";
+import { useFirestoreQuery } from "../hooks";
+import { getTimeNow } from "../utils";
 
 import "../styles/pages/schedule.sass";
 

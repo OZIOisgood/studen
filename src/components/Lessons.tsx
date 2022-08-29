@@ -1,36 +1,36 @@
-import { FC, useContext, useEffect, useState } from "react";
 import {
-  Button,
-  Container,
-  Alert,
-  ButtonGroup,
-  Row,
-  Col,
-  Form,
-  Modal,
-} from "react-bootstrap";
-import moment from "moment";
-import {
-  collection,
-  query,
-  orderBy,
-  where,
-  getFirestore,
-  getDocs,
-  onSnapshot,
-  DocumentData,
-  Timestamp,
   addDoc,
+  collection,
   deleteDoc,
   doc,
+  DocumentData,
   getDoc,
+  getDocs,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+  Timestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
+import moment from "moment";
+import { FC, useContext, useEffect, useState } from "react";
+import {
+  Alert,
+  Button,
+  ButtonGroup,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+} from "react-bootstrap";
+import { useParams } from "react-router";
+import { ErrorModal } from "../components";
+import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { getPrettyTimeByStamp, momentWeek } from "../utils";
-import { useParams } from "react-router";
-import { FirebaseContext } from "../context/firebase";
-import { ErrorModal } from "../components";
 
 import "../styles/components/lessons.sass";
 

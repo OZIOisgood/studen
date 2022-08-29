@@ -237,7 +237,7 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
             );
           })
         ) : (
-          <h2 className="text-muted text-center">No lessons this day</h2>
+          <h2 className="text-muted text-center ">No lessons this day</h2>
         )}
       </Container>
     </Alert>

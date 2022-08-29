@@ -1,8 +1,6 @@
-import { FC, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Button, Container, Alert, Row, Col } from "react-bootstrap";
-import { PrivateRoute, Avatar, NavBar } from "../components";
-import { FirebaseContext } from "../context/firebase";
+import { FC } from "react";
+import { Alert, Container } from "react-bootstrap";
+import { NavBar } from "../components";
 // import * as ROUTES from "../constants/routes";
 
 const NotFoundPage: FC = (props) => {

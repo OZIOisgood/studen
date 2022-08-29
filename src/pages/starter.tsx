@@ -20,8 +20,6 @@ const StarterPage: FC = (props) => {
         <Loader />
       ) : (
         <div className="starter-container">
-          {/* <h1 className="text-white">Starter page</h1> */}
-
           <div className="screen">
             <Container>
               <h1 className="text-white">What is it?</h1>
