@@ -11,6 +11,7 @@ import SchedulePage from "../pages/schedule";
 import TasksPage from "../pages/tasks";
 import TaskPage from "../pages/task";
 import SimpleSchedulePage from "../pages/simpleSchedule";
+import AllTasksPage from "../pages/allTasks";
 import SignInPage from "../pages/signin";
 import SignUpPage from "../pages/signup";
 import NotFoundPage from "../pages/notFound";
@@ -38,6 +39,8 @@ const AppRoutes: FC = () => {
           path={`${ROUTES.GROUPS}/:id/demo`}
           element={<SimpleSchedulePage />}
         />
+
+        <Route path={`${ROUTES.HOMEWORKS}`} element={<AllTasksPage />} />
 
         <Route path={`${ROUTES.PROFILE}/:id`} element={<ProfilePage />} />
 

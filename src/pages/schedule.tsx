@@ -4,7 +4,7 @@ import { Button, Container, Alert, Row, Col } from "react-bootstrap";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { PrivateRoute, GroupRoute, Lessons } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import { getTimeNow, getUser } from "../utils";
+import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
 import moment from "moment";
 
 import "../styles/pages/schedule.sass";
@@ -71,9 +71,13 @@ const SchedulePage: FC = (props) => {
   //   const lessons = useFirestoreQuery(lessonsQuery);
 
   // console.clear();
-  console.log("\n\n````````````````` SchedulePage ````````````````````");
-  console.log(`timeCalendar: ${timeCalendar.format("DD/MM/YYYY")}`);
+  // console.log("\n\n````````````````` SchedulePage ````````````````````");
+  // console.log(`timeCalendar: ${timeCalendar.format("DD/MM/YYYY")}`);
   // console.log(timeNowDayNumber);
+
+  // check if User Is Group Admin
+  let isAdmin = checkUserIsGroupAdmin(group, user);
+  //
 
   return (
     <PrivateRoute>
@@ -183,7 +187,11 @@ const SchedulePage: FC = (props) => {
             </Container>
           </Alert>
 
-          <Lessons groupID={params.id} timeCalendar={timeCalendar} />
+          <Lessons
+            groupID={params.id}
+            timeCalendar={timeCalendar}
+            isAdmin={isAdmin}
+          />
         </Container>
       </GroupRoute>
     </PrivateRoute>

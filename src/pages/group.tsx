@@ -24,6 +24,7 @@ import {
   deleteDoc,
   updateDoc,
   arrayRemove,
+  setDoc,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
 import {
@@ -36,15 +37,18 @@ import {
 } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import * as ROUTES from "../constants/routes";
-import { getTimeNow, getUser } from "../utils";
+import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
+import { BsShieldShaded, BsShieldSlashFill } from "react-icons/bs";
+import { FaUserAlt } from "react-icons/fa";
 
 import "../styles/pages/group.sass";
 
 const GroupPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
-
   const user = getUser();
+  const params = useParams();
 
+  // Error modal
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -53,9 +57,9 @@ const GroupPage: FC = (props) => {
     setErrorMessage(message);
     setShowErrorModal(true);
   };
+  //
 
-  const params = useParams();
-
+  // get group snapshot
   const [group, setGroup] = useState<DocumentData | undefined>({});
 
   const groupRef = doc(firestore, "groups", `${params.id}`);
@@ -68,17 +72,23 @@ const GroupPage: FC = (props) => {
     getGroup();
     // eslint-disable-next-line
   }, []);
+  //
 
+  // get group users collection
   const usersCollectionRef = collection(firestore, "users");
   const usersQuery = query(
     usersCollectionRef,
     where("groups", "array-contains", params.id)
   );
   const users = useFirestoreQuery(usersQuery);
+  //
 
+  // today time borders
   const startOfDay = getTimeNow().startOf("day").toDate();
   const endOfDay = getTimeNow().endOf("day").toDate();
+  //
 
+  // get group lessons for today
   const lessonsCollectionRef = collection(firestore, "lessons");
   const lessonsQuery = query(
     lessonsCollectionRef,
@@ -88,7 +98,9 @@ const GroupPage: FC = (props) => {
     orderBy("beginningTime", "asc")
   );
   const lessons = useFirestoreQuery(lessonsQuery);
+  //
 
+  // get group homeworks
   const homeworksCollectionRef = collection(firestore, "homeworks");
   const homeworksQuery = query(
     homeworksCollectionRef,
@@ -96,7 +108,9 @@ const GroupPage: FC = (props) => {
     // orderBy("deadlineTime", "asc")
   );
   const allHomeworks = useFirestoreQuery(homeworksQuery);
+  //
 
+  // get user done homeworks
   const doneHomeworksCollectionRef = collection(firestore, "doneHomeworks");
   const doneHomeworksQuery = query(
     doneHomeworksCollectionRef,
@@ -104,14 +118,18 @@ const GroupPage: FC = (props) => {
     // orderBy("deadlineTime", "asc")
   );
   const doneHomeworks = useFirestoreQuery(doneHomeworksQuery);
+  //
 
+  // get group course collection
   const coursesCollectionRef = collection(firestore, "courses");
   const coursesQuery = query(
     coursesCollectionRef,
     where("group", "==", params.id)
   );
   const courses = useFirestoreQuery(coursesQuery);
+  //
 
+  // state
   const [showCreateCourse, setShowCreateCourse] = useState(false);
   const [showDeleteCourse, setShowDeleteCourse] = useState(false);
   const [showChangeCourse, setShowChangeCourse] = useState(false);
@@ -132,7 +150,9 @@ const GroupPage: FC = (props) => {
     courses ? courses[0] : null
   );
   const [userToDelete, setUserToDelete] = useState(users ? users[0] : null);
+  //
 
+  // handle Show and Close
   const handleCloseCreateCourse = () => setShowCreateCourse(false);
   const handleShowCreateCourse = () => setShowCreateCourse(true);
 
@@ -147,9 +167,13 @@ const GroupPage: FC = (props) => {
 
   const handleCloseGroupSettings = () => setShowGroupSettings(false);
   const handleShowGroupSettings = () => setShowGroupSettings(true);
+  //
 
+  // getFirestore
   const db = getFirestore();
+  //
 
+  // changeGroup
   const handleChangeGroup = async () => {
     try {
       setShowGroupSettings(false);
@@ -176,7 +200,9 @@ const GroupPage: FC = (props) => {
       setGroupBackground("");
     }
   };
+  //
 
+  // createCourse
   const handleCreateCourse = async () => {
     try {
       setShowCreateCourse(false);
@@ -198,7 +224,9 @@ const GroupPage: FC = (props) => {
       setCourseStaticLink("");
     }
   };
+  //
 
+  // changeCourse
   const handleChangeCourse = async () => {
     try {
       setShowChangeCourse(false);
@@ -223,7 +251,9 @@ const GroupPage: FC = (props) => {
       setCourseStaticLink("");
     }
   };
+  //
 
+  //deleteCourse
   const handleDeleteCourse = async (courseID: string) => {
     try {
       setShowDeleteCourse(false);
@@ -248,7 +278,9 @@ const GroupPage: FC = (props) => {
       handleShowErrorModal(error.message);
     }
   };
+  //
 
+  // deleteUser
   const handleDeleteUser = async (userIDToDelete: string) => {
     try {
       setShowDeleteUser(false);
@@ -271,6 +303,44 @@ const GroupPage: FC = (props) => {
       handleShowErrorModal(error.message);
     }
   };
+  //
+
+  // toggleAdmin
+  const [userToggleAdmin, setUserToggleAdmin] = useState("");
+
+  const handleToggleAdmin = async (userIDToggleAdmin: string) => {
+    try {
+      const groupDoc = await getDoc(doc(db, "groups", `${params.id}`));
+
+      let newGroup = {};
+      if (!groupDoc.data()?.admins.includes(userIDToggleAdmin)) {
+        newGroup = {
+          ...groupDoc.data(),
+          admins: [...groupDoc.data()?.admins, userIDToggleAdmin],
+        };
+      } else {
+        newGroup = {
+          ...groupDoc.data(),
+          admins: groupDoc
+            .data()
+            ?.admins.filter((adminID: string) => adminID !== userIDToggleAdmin),
+        };
+      }
+
+      setGroup(newGroup);
+
+      await setDoc(doc(db, "groups", `${params.id}`), newGroup);
+    } catch (error: any) {
+      handleShowErrorModal(error.message);
+    } finally {
+      setUserToggleAdmin("");
+    }
+  };
+  //
+
+  // check if User Is Group Admin
+  let isAdmin = checkUserIsGroupAdmin(group, user);
+  //
 
   return (
     <PrivateRoute>
@@ -290,20 +360,22 @@ const GroupPage: FC = (props) => {
 
           <div className="d-flex justify-content-center mt-5">
             <ButtonGroup>
-              <Button
-                variant="secondary"
-                size="lg"
-                className="text-white fs-6"
-                onClick={() => {
-                  handleShowGroupSettings();
+              {isAdmin ? (
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="text-white fs-6"
+                  onClick={() => {
+                    handleShowGroupSettings();
 
-                  setGroupName(group?.name);
-                  setGroupAvatar(group?.avatarURL);
-                  setGroupBackground(group?.backgroundURL);
-                }}
-              >
-                <i className="fas fa-cog"></i> <b>Settings</b>
-              </Button>
+                    setGroupName(group?.name);
+                    setGroupAvatar(group?.avatarURL);
+                    setGroupBackground(group?.backgroundURL);
+                  }}
+                >
+                  <i className="fas fa-cog"></i> <b>Settings</b>
+                </Button>
+              ) : null}
               <Button
                 variant="primary"
                 size="lg"
@@ -412,72 +484,78 @@ const GroupPage: FC = (props) => {
               <Col xs={9}>
                 <h2 className="text-white">Group courses</h2>
               </Col>
-              <Col xs={3} className="d-grid">
-                <Button
-                  variant="info"
-                  size="sm"
-                  className="text-white fs-6"
-                  onClick={handleShowCreateCourse}
-                >
-                  <b>Create Course</b>
-                </Button>
+              {isAdmin ? (
+                <Col xs={3} className="d-grid">
+                  <Button
+                    variant="info"
+                    size="sm"
+                    className="text-white fs-6"
+                    onClick={handleShowCreateCourse}
+                  >
+                    <b>Create Course</b>
+                  </Button>
 
-                <Modal
-                  show={showCreateCourse}
-                  onHide={handleCloseCreateCourse}
-                  centered
-                >
-                  <Modal.Header closeButton>
-                    <Modal.Title>Creating new course</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Form>
-                      <Form.Group className="mb-3">
-                        <Form.Label>
-                          Course name <span className="text-danger">*</span>
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter name"
-                          onChange={(event: any) => {
-                            setCourseName(event.target.value);
-                          }}
-                        />
-                      </Form.Group>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Static link</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter url"
-                          onChange={(event: any) => {
-                            setCourseStaticLink(event.target.value);
-                          }}
-                        />
-                      </Form.Group>
-                      <div className="d-grid gap-2">
-                        <Button
-                          variant="info"
-                          className="text-white"
-                          onClick={handleCreateCourse}
-                        >
-                          Create
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          onClick={handleCloseCreateCourse}
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </Form>
-                  </Modal.Body>
-                </Modal>
-              </Col>
+                  <Modal
+                    show={showCreateCourse}
+                    onHide={handleCloseCreateCourse}
+                    centered
+                  >
+                    <Modal.Header closeButton>
+                      <Modal.Title>Creating new course</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Form>
+                        <Form.Group className="mb-3">
+                          <Form.Label>
+                            Course name <span className="text-danger">*</span>
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter name"
+                            onChange={(event: any) => {
+                              setCourseName(event.target.value);
+                            }}
+                          />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Static link</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter url"
+                            onChange={(event: any) => {
+                              setCourseStaticLink(event.target.value);
+                            }}
+                          />
+                        </Form.Group>
+                        <div className="d-grid gap-2">
+                          <Button
+                            variant="info"
+                            className="text-white"
+                            onClick={handleCreateCourse}
+                          >
+                            Create
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            onClick={handleCloseCreateCourse}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </Form>
+                    </Modal.Body>
+                  </Modal>
+                </Col>
+              ) : null}
             </Row>
             <Container className="d-grid gap-3 mt-5">
               {courses?.map((course: any, index: number) => (
                 <Row key={`course-${course.id}`}>
-                  <Col xs={9} md={10} className="d-grid">
+                  <Col
+                    xs={isAdmin ? 9 : 12}
+                    md={isAdmin ? 10 : 12}
+                    className="d-grid"
+                  >
                     <Button
                       disabled={true}
                       variant="secondary"
@@ -493,33 +571,35 @@ const GroupPage: FC = (props) => {
                       </Row>
                     </Button>
                   </Col>
-                  <Col xs={3} md={2} className="d-grid gap-3">
-                    <ButtonGroup>
-                      <Button
-                        variant="secondary"
-                        className="lesson-btn"
-                        onClick={() => {
-                          setCourseToChange(course);
-                          handleShowChangeCourse();
+                  {isAdmin ? (
+                    <Col xs={3} md={2} className="d-grid gap-3">
+                      <ButtonGroup>
+                        <Button
+                          variant="secondary"
+                          className="lesson-btn"
+                          onClick={() => {
+                            setCourseToChange(course);
+                            handleShowChangeCourse();
 
-                          setCourseName(course.name);
-                          setCourseStaticLink(course.staticLink);
-                        }}
-                      >
-                        <i className="fas fa-cog"></i>
-                      </Button>
-                      <Button
-                        variant="danger"
-                        className="lesson-btn"
-                        onClick={() => {
-                          setCourseToDelete(course);
-                          handleShowDeleteCourse();
-                        }}
-                      >
-                        <i className="fas fa-trash-alt"></i>
-                      </Button>
-                    </ButtonGroup>
-                  </Col>
+                            setCourseName(course.name);
+                            setCourseStaticLink(course.staticLink);
+                          }}
+                        >
+                          <i className="fas fa-cog"></i>
+                        </Button>
+                        <Button
+                          variant="danger"
+                          className="lesson-btn"
+                          onClick={() => {
+                            setCourseToDelete(course);
+                            handleShowDeleteCourse();
+                          }}
+                        >
+                          <i className="fas fa-trash-alt"></i>
+                        </Button>
+                      </ButtonGroup>
+                    </Col>
+                  ) : null}
                 </Row>
               ))}
 
@@ -541,9 +621,6 @@ const GroupPage: FC = (props) => {
                         variant="danger"
                         className="text-white"
                         onClick={() => {
-                          console.log("^^^ Deleting the course ^^^");
-                          console.log(`courseId: ${courseToDelete?.id}`);
-
                           handleDeleteCourse(courseToDelete?.id);
                         }}
                       >
@@ -614,7 +691,11 @@ const GroupPage: FC = (props) => {
             <Container className="d-grid gap-3 mt-5">
               {users?.map((item: any, index: number) => (
                 <Row key={`student-${item.id}`}>
-                  <Col xs={9} md={10} className="d-grid gap-3">
+                  <Col
+                    xs={isAdmin ? 9 : 12}
+                    md={isAdmin ? 10 : 12}
+                    className="d-grid gap-3"
+                  >
                     <Button
                       disabled={true}
                       variant="secondary"
@@ -637,27 +718,45 @@ const GroupPage: FC = (props) => {
                     </Button>
                   </Col>
 
-                  <Col xs={3} md={2} className="d-grid gap-3">
-                    <ButtonGroup>
-                      <Button
-                        disabled={true}
-                        variant="secondary"
-                        className="userAdmin-btn"
-                      >
-                        <i className="fas fa-user-shield"></i>
-                      </Button>
-                      <Button
-                        variant="danger"
-                        className="lesson-btn"
-                        onClick={() => {
-                          setUserToDelete(item);
-                          handleShowDeleteUser();
-                        }}
-                      >
-                        <i className="fas fa-trash-alt"></i>
-                      </Button>
-                    </ButtonGroup>
-                  </Col>
+                  {isAdmin ? (
+                    <Col xs={3} md={2} className="d-grid gap-3 text-white">
+                      <ButtonGroup>
+                        <Button
+                          disabled={item.id === user.id}
+                          variant={
+                            group?.admins.find(
+                              (adminID: any) => adminID === item.id
+                            )
+                              ? "warning"
+                              : "primary"
+                          }
+                          className="userAdmin-btn"
+                          onClick={() => {
+                            handleToggleAdmin(item.id);
+                          }}
+                        >
+                          {group?.admins.find(
+                            (adminID: any) => adminID === item.id
+                          ) ? (
+                            <BsShieldSlashFill />
+                          ) : (
+                            <BsShieldShaded />
+                          )}
+                        </Button>
+                        <Button
+                          disabled={item.id === user.id}
+                          variant="danger"
+                          className="delete-user-btn"
+                          onClick={() => {
+                            setUserToDelete(item);
+                            handleShowDeleteUser();
+                          }}
+                        >
+                          <i className="fas fa-trash-alt"></i>
+                        </Button>
+                      </ButtonGroup>
+                    </Col>
+                  ) : null}
                 </Row>
               ))}
 

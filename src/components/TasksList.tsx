@@ -36,6 +36,8 @@ type TasksListProps = {
   courses: any;
   buttonClassNames: string;
   title: string;
+  titleNoTasks: string;
+  isAdmin: boolean;
 };
 
 export const TasksList: FC<TasksListProps> = ({
@@ -43,6 +45,8 @@ export const TasksList: FC<TasksListProps> = ({
   courses,
   buttonClassNames,
   title,
+  titleNoTasks,
+  isAdmin,
 }) => {
   const params = useParams();
   const db = getFirestore();
@@ -165,10 +169,14 @@ export const TasksList: FC<TasksListProps> = ({
                 </Col>
                 <Col xs={12} md={10} className="d-grid">
                   <Row>
-                    <Col xs={9} md={10} className="d-grid gap-3">
+                    <Col
+                      xs={isAdmin ? 9 : 12}
+                      md={isAdmin ? 10 : 12}
+                      className="d-grid gap-3"
+                    >
                       <Button
                         variant={buttonClassNames}
-                        href={`/groups/${params.id}/tasks/${task?.id}`}
+                        href={`/groups/${task?.group}/tasks/${task?.id}`}
                       >
                         <Row>
                           <Col xs={1} className="task-number text-align-right">
@@ -202,52 +210,54 @@ export const TasksList: FC<TasksListProps> = ({
                         </Row>
                       </Button>
                     </Col>
-                    <Col xs={3} md={2} className="d-grid gap-3">
-                      <ButtonGroup>
-                        <Button
-                          variant="secondary"
-                          className="task-change-btn"
-                          onClick={() => {
-                            // console.log(task);
-                            // console.log(task.deadlineTime);
-                            // console.log(
-                            //   getPrettyTimeByStamp(task.deadlineTime)
-                            // );
-                            setTaskToChange(task);
-                            handleShowChangeTask();
+                    {isAdmin ? (
+                      <Col xs={3} md={2} className="d-grid gap-3">
+                        <ButtonGroup>
+                          <Button
+                            variant="secondary"
+                            className="task-change-btn"
+                            onClick={() => {
+                              // console.log(task);
+                              // console.log(task.deadlineTime);
+                              // console.log(
+                              //   getPrettyTimeByStamp(task.deadlineTime)
+                              // );
+                              setTaskToChange(task);
+                              handleShowChangeTask();
 
-                            setTaskTitle(task.title);
-                            setTaskDescription(task.description);
-                            setTaskDeadLineTime(
-                              getPrettyTimeByStamp(task.deadlineTime)
-                            );
-                            // setCourseIndex(courses.indexOf(task.course));
-                            setTaskDeadLineDate(
-                              moment.unix(task.deadlineTime.seconds).toDate()
-                            );
-                          }}
-                        >
-                          <i className="fas fa-cog"></i>
-                        </Button>
-                        <Button
-                          variant="danger"
-                          className="task-delete-btn"
-                          onClick={() => {
-                            setTaskToDelete(task);
-                            handleShowDeleteTask();
-                          }}
-                        >
-                          <i className="fas fa-trash-alt"></i>
-                        </Button>
-                      </ButtonGroup>
-                    </Col>
+                              setTaskTitle(task.title);
+                              setTaskDescription(task.description);
+                              setTaskDeadLineTime(
+                                getPrettyTimeByStamp(task.deadlineTime)
+                              );
+                              // setCourseIndex(courses.indexOf(task.course));
+                              setTaskDeadLineDate(
+                                moment.unix(task.deadlineTime.seconds).toDate()
+                              );
+                            }}
+                          >
+                            <i className="fas fa-cog"></i>
+                          </Button>
+                          <Button
+                            variant="danger"
+                            className="task-delete-btn"
+                            onClick={() => {
+                              setTaskToDelete(task);
+                              handleShowDeleteTask();
+                            }}
+                          >
+                            <i className="fas fa-trash-alt"></i>
+                          </Button>
+                        </ButtonGroup>
+                      </Col>
+                    ) : null}
                   </Row>
                 </Col>
               </Row>
             );
           })
         ) : (
-          <h2 className="text-muted">No lessons this day</h2>
+          <h2 className="text-muted">{titleNoTasks}</h2>
         )}
 
         <Modal show={showChangeTask} onHide={handleCloseChangeTask} centered>
@@ -284,24 +294,6 @@ export const TasksList: FC<TasksListProps> = ({
                   }}
                 />
               </Form.Group>
-
-              {/* <Form.Group className="mb-3 task-course">
-                <Form.Label>
-                  Course <span className="text-danger">*</span>
-                </Form.Label>
-                <Form.Select
-                  onChange={(event: any) => {
-                    setCourseIndex(event.target.value);
-                  }}
-                >
-                  <option>Choose course ...</option>
-                  {courses?.map((item: any, index: number) => (
-                    <option key={index} value={index}>
-                      {item.name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group> */}
 
               <Form.Group className="mb-3 justify-content-center">
                 <Form.Label>

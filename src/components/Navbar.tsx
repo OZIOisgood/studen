@@ -68,8 +68,8 @@ export const NavBar: FC = () => {
                   <Nav.Link href={ROUTES.COURSES}>
                     <i className="fas fa-chalkboard-teacher"></i> Courses
                   </Nav.Link>
-                  <Nav.Link href={ROUTES.HOMEWORK}>
-                    <i className="fas fa-book-open"></i> Homework
+                  <Nav.Link href={ROUTES.HOMEWORKS}>
+                    <i className="fas fa-book-open"></i> Homeworks
                   </Nav.Link>
                 </>
               ) : !initializing ? (

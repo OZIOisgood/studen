@@ -37,9 +37,14 @@ import "../styles/components/lessons.sass";
 type LessonsProps = {
   groupID: string | undefined;
   timeCalendar: any;
+  isAdmin: boolean;
 };
 
-export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
+export const Lessons: FC<LessonsProps> = ({
+  groupID,
+  timeCalendar,
+  isAdmin,
+}) => {
   const { firestore } = useContext(FirebaseContext);
 
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -348,7 +353,12 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   </Col>
                 </Row>
               </Col>
-              <Col xs={7} sm={7} md={9} className="d-grid gap-3">
+              <Col
+                xs={isAdmin ? 7 : 10}
+                sm={isAdmin ? 7 : 10}
+                md={isAdmin ? 9 : 11}
+                className="d-grid gap-3"
+              >
                 {" "}
                 <Button
                   disabled={true}
@@ -375,40 +385,42 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
                   </Row>
                 </Button>
               </Col>
-              <Col xs={3} md={2} className="d-grid gap-3">
-                <ButtonGroup>
-                  <Button
-                    variant="secondary"
-                    key={`changeBtn-${item.id}`}
-                    className="lesson-btn"
-                    onClick={() => {
-                      setUseLessonNumber(false);
-                      setLessonToChange(item);
-                      handleShowChangeLesson();
+              {isAdmin ? (
+                <Col xs={3} md={2} className="d-grid gap-3">
+                  <ButtonGroup>
+                    <Button
+                      variant="secondary"
+                      key={`changeBtn-${item.id}`}
+                      className="lesson-btn"
+                      onClick={() => {
+                        setUseLessonNumber(false);
+                        setLessonToChange(item);
+                        handleShowChangeLesson();
 
-                      setLessonName(item.name);
-                      setLessonBeginningTime(
-                        getPrettyTimeByStamp(item.beginningTime)
-                      );
-                      setLessonEndTime(getPrettyTimeByStamp(item.endTime));
-                      setLessonConferenceLink(item.conferenceLink);
-                    }}
-                  >
-                    <i className="fas fa-cog"></i>
-                  </Button>
-                  <Button
-                    variant="danger"
-                    key={`deleteBtn-${item.id}`}
-                    className="lesson-btn"
-                    onClick={() => {
-                      setLessonToDelete(item);
-                      handleShowDeleteLesson();
-                    }}
-                  >
-                    <i className="fas fa-trash-alt"></i>
-                  </Button>
-                </ButtonGroup>
-              </Col>
+                        setLessonName(item.name);
+                        setLessonBeginningTime(
+                          getPrettyTimeByStamp(item.beginningTime)
+                        );
+                        setLessonEndTime(getPrettyTimeByStamp(item.endTime));
+                        setLessonConferenceLink(item.conferenceLink);
+                      }}
+                    >
+                      <i className="fas fa-cog"></i>
+                    </Button>
+                    <Button
+                      variant="danger"
+                      key={`deleteBtn-${item.id}`}
+                      className="lesson-btn"
+                      onClick={() => {
+                        setLessonToDelete(item);
+                        handleShowDeleteLesson();
+                      }}
+                    >
+                      <i className="fas fa-trash-alt"></i>
+                    </Button>
+                  </ButtonGroup>
+                </Col>
+              ) : null}
             </Row>
           ))
         ) : (
@@ -449,41 +461,45 @@ export const Lessons: FC<LessonsProps> = ({ groupID, timeCalendar }) => {
           </Modal.Body>
         </Modal>
 
-        <Button
-          size="lg"
-          variant="info"
-          className="text-white mt-2"
-          onClick={handleShowAddLesson}
-        >
-          <b>
-            <i className="far fa-calendar-plus"></i> Add new lesson
-          </b>
-        </Button>
-
-        <Row>
-          <Col xs={12} md={6} className="d-grid gap-2">
+        {isAdmin ? (
+          <>
             <Button
               size="lg"
-              variant="secondary"
+              variant="info"
               className="text-white mt-2"
-              onClick={handleShowCopyLastWeek}
+              onClick={handleShowAddLesson}
             >
-              <i className="fas fa-angle-left"></i> <b>Copy last week</b>
+              <b>
+                <i className="far fa-calendar-plus"></i> Add new lesson
+              </b>
             </Button>
-          </Col>
 
-          <Col xs={12} md={6} className="d-grid gap-2">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="text-white mt-2"
-              onClick={handleShowCopyWeekBeforeLast}
-            >
-              <i className="fas fa-angle-double-left"></i>{" "}
-              <b>Copy week before last</b>
-            </Button>
-          </Col>
-        </Row>
+            <Row>
+              <Col xs={12} md={6} className="d-grid gap-2">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="text-white mt-2"
+                  onClick={handleShowCopyLastWeek}
+                >
+                  <i className="fas fa-angle-left"></i> <b>Copy last week</b>
+                </Button>
+              </Col>
+
+              <Col xs={12} md={6} className="d-grid gap-2">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="text-white mt-2"
+                  onClick={handleShowCopyWeekBeforeLast}
+                >
+                  <i className="fas fa-angle-double-left"></i>{" "}
+                  <b>Copy week before last</b>
+                </Button>
+              </Col>
+            </Row>
+          </>
+        ) : null}
 
         <Modal
           show={showChangeLesson}

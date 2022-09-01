@@ -15,7 +15,7 @@ import {
 import { useFirestoreQuery } from "../hooks";
 import { PrivateRoute, GroupRoute, TasksList, ErrorModal } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import { getTimeNow, getUser } from "../utils";
+import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
 import Calendar from "react-calendar";
 import moment from "moment";
 
@@ -154,6 +154,10 @@ const TasksPage: FC = (props) => {
     setTaskDeadLineDate(date);
   };
 
+  // check if User Is Group Admin
+  let isAdmin = checkUserIsGroupAdmin(group, user);
+  //
+
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
@@ -173,6 +177,8 @@ const TasksPage: FC = (props) => {
             courses={courses}
             buttonClassNames="danger"
             title="Overdue"
+            titleNoTasks="No overdue tasks"
+            isAdmin={isAdmin}
           />
 
           <TasksList
@@ -180,6 +186,8 @@ const TasksPage: FC = (props) => {
             courses={courses}
             buttonClassNames="warning"
             title="To Do"
+            titleNoTasks="No tasks to do"
+            isAdmin={isAdmin}
           />
 
           <TasksList
@@ -187,19 +195,22 @@ const TasksPage: FC = (props) => {
             courses={courses}
             buttonClassNames="success"
             title="Done"
+            titleNoTasks="No done tasks"
+            isAdmin={isAdmin}
           />
 
-          <Button
-            size="lg"
-            variant="info"
-            className="text-white mt-2"
-            onClick={handleShowAddTask}
-          >
-            <b>
-              <i className="far fa-calendar-plus"></i> Add new task
-              {/* <i class="fa-solid fa-books-medical"></i> */}
-            </b>
-          </Button>
+          {isAdmin ? (
+            <Button
+              size="lg"
+              variant="info"
+              className="text-white mt-2"
+              onClick={handleShowAddTask}
+            >
+              <b>
+                <i className="far fa-calendar-plus"></i> Add new task
+              </b>
+            </Button>
+          ) : null}
 
           <Modal show={showAddTask} onHide={handleCloseAddTask} centered>
             <Modal.Header closeButton>

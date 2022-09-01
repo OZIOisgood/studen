@@ -6,3 +6,4 @@ export { default as getUser } from "./getUser";
 export { default as getAuthErrorDesc } from "./getAuthErrorDesc";
 export { default as setUser } from "./setUser";
 export { default as usePageReloadInterval } from "./usePageReloadInterval";
+export { default as checkUserIsGroupAdmin } from "./checkUserIsGroupAdmin";

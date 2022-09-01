@@ -116,7 +116,7 @@ export const Tasks: FC<TasksProps> = ({
             );
           })
         ) : (
-          <h3 className="text-white text-center">No tasks are overdue</h3>
+          <h3 className="text-muted text-center">No tasks are overdue</h3>
         )}
         <h3 className="text-white">To Do tasks:</h3>
         {toDoHomeworksList?.length !== 0 ? (

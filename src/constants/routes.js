@@ -4,6 +4,6 @@ export const SIGN_IN = "/signin";
 export const SIGN_UP = "/signup";
 export const GROUPS = "/groups";
 export const COURSES = "#";
-export const HOMEWORK = "#";
+export const HOMEWORKS = "/homeworks";
 export const PROFILE = "/profile";
 export const SETTINGS = "#";
