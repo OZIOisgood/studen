@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
   Container,
@@ -39,14 +39,17 @@ import { FirebaseContext } from "../context/firebase";
 import * as ROUTES from "../constants/routes";
 import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
 import { BsShieldShaded, BsShieldSlashFill } from "react-icons/bs";
-import { FaUserAlt } from "react-icons/fa";
 
 import "../styles/pages/group.sass";
+import { storage } from "../firebase-config";
+import { deleteObject, ref } from "firebase/storage";
 
 const GroupPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
   const user = getUser();
   const params = useParams();
+  const groupID = `${params.id}`;
+  const navigate = useNavigate();
 
   // Error modal
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -202,6 +205,126 @@ const GroupPage: FC = (props) => {
   };
   //
 
+  // deleteGroup
+  const handleDeleteGroup = async () => {
+    try {
+      navigate("/home");
+
+      const coursesToDeleteCollectionRef = collection(firestore, "courses");
+      const coursesToDeleteQuery = query(
+        coursesToDeleteCollectionRef,
+        where("group", "==", groupID)
+      );
+      const coursesToDeleteSnapshot = await getDocs(coursesToDeleteQuery);
+      const coursesToDelete = coursesToDeleteSnapshot.docs.map((doc: any) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      coursesToDelete.forEach((course) => {
+        (async () => {
+          const lessonsToDeleteCollectionRef = collection(firestore, "lessons");
+          const lessonsToDeleteQuery = query(
+            lessonsToDeleteCollectionRef,
+            where("course", "==", course.id)
+          );
+          const lessonsToDeleteSnapshot = await getDocs(lessonsToDeleteQuery);
+          const lessonsToDelete = lessonsToDeleteSnapshot.docs.map(
+            (doc: any) => ({
+              ...doc.data(),
+              id: doc.id,
+            })
+          );
+
+          lessonsToDelete.forEach((lesson) => {
+            // delete lesson
+            deleteDoc(doc(db, "lessons", lesson.id));
+          });
+        })();
+
+        // delete course
+        deleteDoc(doc(db, "courses", course.id));
+      });
+
+      const answersToDeleteCollectionRef = collection(
+        firestore,
+        "doneHomeworks"
+      );
+      const answersToDeleteQuery = query(
+        answersToDeleteCollectionRef,
+        where("group", "==", groupID)
+      );
+      const answersToDeleteSnapshot = await getDocs(answersToDeleteQuery);
+      const answersToDelete = answersToDeleteSnapshot.docs.map((doc: any) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      answersToDelete.forEach((answer) => {
+        if (answer.file.ref !== "") {
+          const fileRef = ref(storage, answer.file.ref);
+
+          // delete answer file
+          deleteObject(fileRef);
+        }
+
+        // delete answer
+        deleteDoc(doc(db, "doneHomeworks", answer.id));
+      });
+
+      const tasksToDeleteCollectionRef = collection(firestore, "homeworks");
+      const tasksToDeleteQuery = query(
+        tasksToDeleteCollectionRef,
+        where("group", "==", groupID)
+      );
+      const tasksToDeleteSnapshot = await getDocs(tasksToDeleteQuery);
+      const tasksToDelete = tasksToDeleteSnapshot.docs.map((doc: any) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      tasksToDelete.forEach((task) => {
+        if (task.file.ref !== "") {
+          const fileRef = ref(storage, task.file.ref);
+
+          // delete task file
+          deleteObject(fileRef);
+        }
+
+        // delete task
+        deleteDoc(doc(db, "homeworks", task.id));
+      });
+
+      const usersToChangeCollectionRef = collection(firestore, "users");
+      const usersToChangeQuery = query(
+        usersToChangeCollectionRef,
+        where("groups", "array-contains", groupID)
+      );
+      const usersToChangeSnapshot = await getDocs(usersToChangeQuery);
+      const usersToChange = usersToChangeSnapshot.docs.map((doc: any) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      const newUser = {
+        groups: arrayRemove(groupID),
+      };
+
+      usersToChange.forEach((user) => {
+        const usersToChangeDocRef = doc(db, "users", user.id);
+
+        // change user
+        updateDoc(usersToChangeDocRef, newUser);
+      });
+
+      // delete group
+      deleteDoc(doc(db, "groups", groupID));
+    } catch (error: any) {
+      handleShowErrorModal(error.message);
+    }
+  };
+  //
+
   // createCourse
   const handleCreateCourse = async () => {
     try {
@@ -209,8 +332,8 @@ const GroupPage: FC = (props) => {
 
       if (courseName === "")
         throw new Error("You haven't entered course name.");
-      if (courseStaticLink === "")
-        throw new Error("You haven't entered course static link.");
+      // if (courseStaticLink === "")
+      //   throw new Error("You haven't entered course static link.");
 
       await addDoc(collection(db, "courses"), {
         name: courseName,
@@ -450,9 +573,9 @@ const GroupPage: FC = (props) => {
                       <Button
                         variant="danger"
                         className="text-white"
-                        // onClick={() => {
-                        //   handleDeleteGroup();
-                        // }}
+                        onClick={() => {
+                          handleDeleteGroup();
+                        }}
                       >
                         <b>Delete group</b>
                       </Button>
@@ -697,9 +820,10 @@ const GroupPage: FC = (props) => {
                     className="d-grid gap-3"
                   >
                     <Button
-                      disabled={true}
+                      // disabled={true}
                       variant="secondary"
                       className="user-btn"
+                      href={`/profile/${item.id}`}
                     >
                       <Row>
                         <Col xs={1} className="user-number">

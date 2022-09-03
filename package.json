@@ -20,6 +20,7 @@
     "firebase": "^9.6.3",
     "firebase-tools": "^11.1.0",
     "gh-pages": "^3.2.3",
+    "googleapis": "^107.0.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "react": "^17.0.2",
@@ -32,6 +33,7 @@
     "react-scripts": "5.0.0",
     "sass": "^1.45.2",
     "typescript": "^4.5.4",
+    "uuid": "^8.3.2",
     "web-vitals": "^2.1.2"
   },
   "scripts": {
@@ -61,6 +63,7 @@
     ]
   },
   "devDependencies": {
+    "@types/uuid": "^8.3.4",
     "node-sass": "^7.0.1",
     "sass-loader": "^12.4.0"
   }

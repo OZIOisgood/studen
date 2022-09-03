@@ -21,8 +21,12 @@ import moment from "moment";
 
 import "react-calendar/dist/Calendar.css";
 import "../styles/pages/tasks.sass";
+import { v4 } from "uuid";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "../firebase-config";
 
 const TasksPage: FC = (props) => {
+  console.log("############## TasksPage ##############");
   const { firestore } = useContext(FirebaseContext);
 
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -66,19 +70,29 @@ const TasksPage: FC = (props) => {
   );
   const allHomeworks = useFirestoreQuery(homeworksQuery);
 
+  console.log("allHomeworks:");
+  console.log(allHomeworks);
+
   const doneHomeworksCollectionRef = collection(firestore, "doneHomeworks");
   const doneHomeworksQuery = query(
     doneHomeworksCollectionRef,
-    where("user", "==", user.id)
+    where("user", "==", user.id),
+    where("group", "==", params.id)
     // orderBy("deadlineTime", "asc")
   );
   const doneHomeworks = useFirestoreQuery(doneHomeworksQuery);
+
+  console.log("doneHomeworks:");
+  console.log(doneHomeworks);
 
   let doneHomeworksList = doneHomeworks?.map((doneHomework: any) => {
     return allHomeworks?.find(
       (homework: any) => homework.id === doneHomework.homework
     );
   });
+
+  console.log("doneHomeworksList:");
+  console.log(doneHomeworksList);
 
   let toDoHomeworksList: any[] = [];
   let overdueHomeworksList: any[] = [];
@@ -101,6 +115,12 @@ const TasksPage: FC = (props) => {
     }
   });
 
+  console.log("toDoHomeworksList:");
+  console.log(toDoHomeworksList);
+
+  console.log("overdueHomeworksList:");
+  console.log(overdueHomeworksList);
+
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   const [showAddTask, setShowAddTask] = useState(false);
@@ -118,6 +138,8 @@ const TasksPage: FC = (props) => {
 
   const db = getFirestore();
 
+  const [fileTask, setFileTask] = useState<any>(null);
+
   const handleAddTask = async () => {
     try {
       setShowAddTask(false);
@@ -129,16 +151,44 @@ const TasksPage: FC = (props) => {
       );
       const createTimeTimestamp = Timestamp.fromDate(getTimeNow().toDate());
 
+      let fileURL: string | void = ""; // link for the file
+      let fileREF: string = ""; // `homeworkFiles/${v4}`
+      let fileName: string = ""; // name of the file + extension
+
       const newTask = {
         title: taskTitle,
+        description: taskDescription,
+        file: {
+          URL: fileURL,
+          ref: fileREF,
+          name: fileName,
+        },
         group: params.id,
         course: courses != null ? courses[Number(courseIndex)].id : "",
         createTime: createTimeTimestamp,
         deadlineTime: deadlineTimeTimestamp,
-        description: taskDescription,
       };
 
-      await addDoc(collection(db, "homeworks"), newTask);
+      if (fileTask != null) {
+        fileREF = v4();
+
+        const fileExtension = fileTask.name.split(".").pop();
+        newTask.file.ref = `homeworkFiles/${fileREF}.${fileExtension}`;
+
+        const fileRef = ref(storage, newTask.file.ref);
+        await uploadBytes(fileRef, fileTask).then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            newTask.file.URL = url;
+            newTask.file.name = fileTask?.name;
+
+            addDoc(collection(db, "homeworks"), newTask);
+          });
+        });
+      } else {
+        addDoc(collection(db, "homeworks"), newTask);
+      }
+
+      // await addDoc(collection(db, "homeworks"), newTask);
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
@@ -147,6 +197,7 @@ const TasksPage: FC = (props) => {
       setCourseIndex("0");
       setTaskDeadLineTime("");
       setTaskDeadLineDate(getTimeNow().toDate());
+      setFileTask(null);
     }
   };
 
@@ -158,6 +209,7 @@ const TasksPage: FC = (props) => {
   let isAdmin = checkUserIsGroupAdmin(group, user);
   //
 
+  console.log("±±±±±±±±±±±±±±±±± End ±±±±±±±±±±±±±±±±±");
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
@@ -241,6 +293,17 @@ const TasksPage: FC = (props) => {
                     rows={3}
                     onChange={(event: any) => {
                       setTaskDescription(event.target.value);
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3 task-answer">
+                  <Form.Label>Additional file</Form.Label>
+                  <Form.Control
+                    type="file"
+                    placeholder="Add file"
+                    onChange={(event: any) => {
+                      setFileTask(event.target.files[0]);
                     }}
                   />
                 </Form.Group>

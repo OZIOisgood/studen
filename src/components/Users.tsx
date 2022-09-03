@@ -14,10 +14,11 @@ export const Users: FC<UsersProps> = ({ users, title }) => {
       <Container className="d-grid gap-3 mt-5">
         {users?.map((item: any, index: number) => (
           <Button
-            disabled={true}
+            // disabled={true}
             variant="secondary"
             key={item.id}
             className="user-btn"
+            href={`/profile/${item.id}`}
           >
             <Row>
               <Col xs={1} className="user-number">

@@ -290,7 +290,6 @@ const GroupsPage: FC = (props) => {
         </Row>
 
         <Groups title="My groups" groups={myGroups} />
-        {/* <Groups title="All groups" groups={allGroups} /> */}
 
         <ErrorModal
           modalTitle="Error detected"

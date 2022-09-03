@@ -30,10 +30,22 @@ import {
   getTimeNow,
   getUser,
 } from "../utils";
-import { BsFillFileEarmarkPlusFill, BsFillTrashFill } from "react-icons/bs";
+import {
+  BsFillFileEarmarkFill,
+  BsFillFileEarmarkPlusFill,
+  BsFillTrashFill,
+} from "react-icons/bs";
 
 import "../styles/pages/task.sass";
 import moment from "moment";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import { v4 } from "uuid";
+import { storage } from "../firebase-config";
 
 const TaskPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
@@ -103,6 +115,7 @@ const TaskPage: FC = (props) => {
   const [showAddAnswer, setShowAddAnswer] = useState(false);
 
   const [taskAnswer, setTaskAnswer] = useState("");
+  const [fileTaskAnswer, setFileTaskAnswer] = useState<any>(null);
 
   const handleCloseAddAnswer = () => setShowAddAnswer(false);
   const handleShowAddAnswer = () => setShowAddAnswer(true);
@@ -115,20 +128,46 @@ const TaskPage: FC = (props) => {
 
       const addTimeTimestamp = Timestamp.fromDate(getTimeNow().toDate());
 
+      let fileURL: string | void = ""; // link for the file
+      let fileREF: string = ""; // `homeworkAnswerFiles/${v4}`
+      let fileName: string = ""; // name of the file + extension
+
       const newAnswer = {
         answer: taskAnswer,
+        file: {
+          URL: fileURL,
+          ref: fileREF,
+          name: fileName,
+        },
+        group: params.groupID,
         homework: params.taskID,
         user: user.id,
         addTime: addTimeTimestamp,
       };
 
-      console.log(newAnswer);
+      if (fileTaskAnswer != null) {
+        fileREF = v4();
 
-      await addDoc(collection(db, "doneHomeworks"), newAnswer);
+        const fileExtension = fileTaskAnswer.name.split(".").pop();
+        newAnswer.file.ref = `homeworkAnswerFiles/${fileREF}.${fileExtension}`;
+
+        const fileRef = ref(storage, newAnswer.file.ref);
+        await uploadBytes(fileRef, fileTaskAnswer).then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            newAnswer.file.URL = url;
+            newAnswer.file.name = fileTaskAnswer?.name;
+
+            addDoc(collection(db, "doneHomeworks"), newAnswer);
+          });
+        });
+      } else {
+        addDoc(collection(db, "doneHomeworks"), newAnswer);
+      }
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
       setTaskAnswer("");
+      setFileTaskAnswer(null);
     }
   };
   //
@@ -143,6 +182,11 @@ const TaskPage: FC = (props) => {
     try {
       setShowDeleteAnswer(false);
 
+      if (answer?.file.ref !== "") {
+        const fileRef = ref(storage, answer?.file.ref);
+        deleteObject(fileRef);
+      }
+
       await deleteDoc(doc(db, "doneHomeworks", answer?.id));
     } catch (error: any) {
       handleShowErrorModal(error.message);
@@ -150,9 +194,7 @@ const TaskPage: FC = (props) => {
   };
   //
 
-  console.log(answers);
-  // console.log(task?.deadlineTime);
-  // console.log(moment.unix(task?.deadlineTime));
+  console.log(task);
 
   return (
     <PrivateRoute>
@@ -167,7 +209,7 @@ const TaskPage: FC = (props) => {
 
           <Row className="mt-5">
             <Col xs={12} lg={8}>
-              <Alert variant="dark box">
+              <Alert variant="dark box d-grid">
                 <h1 className="text-white">{task?.title}</h1>
                 <h2 className="text-white">
                   {
@@ -176,17 +218,57 @@ const TaskPage: FC = (props) => {
                   }
                 </h2>
                 <h3 className="text-white mt-4">{task?.description}</h3>
+                <Button
+                  size="lg"
+                  variant={"outline-light"}
+                  className="mt-4"
+                  href={task?.file?.URL}
+                  target="_blank"
+                >
+                  <Row>
+                    <Col xs={2}>
+                      <h1 className="m-0">
+                        <BsFillFileEarmarkFill className="centered-label" />
+                      </h1>
+                    </Col>
+                    <Col xs={10}>
+                      <h3 className="m-0 text-align-left mt-1">
+                        {task?.file?.name}
+                      </h3>
+                    </Col>
+                  </Row>
+                </Button>
               </Alert>
               {answer !== undefined ? (
-                <Alert variant="dark box">
+                <Alert variant="dark box d-grid">
                   <h1 className="text-white">Your answer:</h1>
-                  <h3 className="text-white mt-4">
+                  <h3 className="text-white mt-3">
                     {answer !== undefined
                       ? answer?.answer !== ""
                         ? answer.answer
                         : "Sent without an answer"
                       : null}
                   </h3>
+                  <Button
+                    size="lg"
+                    variant={"outline-light"}
+                    className="mt-4"
+                    href={answer?.file.URL}
+                    target="_blank"
+                  >
+                    <Row>
+                      <Col xs={2}>
+                        <h1 className="m-0">
+                          <BsFillFileEarmarkFill className="centered-label" />
+                        </h1>
+                      </Col>
+                      <Col xs={10}>
+                        <h3 className="m-0 text-align-left mt-1">
+                          {answer?.file.name}
+                        </h3>
+                      </Col>
+                    </Row>
+                  </Button>
                 </Alert>
               ) : null}
             </Col>
@@ -312,11 +394,24 @@ const TaskPage: FC = (props) => {
                   />
                 </Form.Group>
 
+                <Form.Group className="mb-3 task-answer">
+                  <Form.Label>Additional file</Form.Label>
+                  <Form.Control
+                    type="file"
+                    placeholder="Add file"
+                    onChange={(event: any) => {
+                      setFileTaskAnswer(event.target.files[0]);
+                    }}
+                  />
+                </Form.Group>
+
                 <div className="d-grid mt-5">
                   <Button
                     variant="info"
                     className="text-white"
-                    onClick={handleAddAnswer}
+                    onClick={() => {
+                      handleAddAnswer();
+                    }}
                   >
                     <b>
                       <BsFillFileEarmarkPlusFill className="centered-label" />{" "}

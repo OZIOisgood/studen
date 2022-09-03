@@ -9,6 +9,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import moment from "moment";
 import { FC, useContext, useState } from "react";
 import {
@@ -24,6 +25,7 @@ import {
 import Calendar from "react-calendar";
 import { useParams } from "react-router-dom";
 import { FirebaseContext } from "../context/firebase";
+import { storage } from "../firebase-config";
 import {
   getPrettyDateByStamp,
   getPrettyTimeByStamp,
@@ -89,10 +91,18 @@ export const TasksList: FC<TasksListProps> = ({
       }));
 
       answersToDelete.forEach((answer) => {
-        deleteDoc(doc(db, "doneHomeworks", answer.id));
+        if (answer.file.ref !== "") {
+          const fileRef = ref(storage, answer?.file.ref);
+          deleteObject(fileRef);
+        }
 
-        console.log(`$$$ Delete: answer.id ${answer.id} $$$`);
+        deleteDoc(doc(db, "doneHomeworks", answer.id));
       });
+
+      if (taskToDelete?.file.ref !== "") {
+        const fileRef = ref(storage, taskToDelete?.file.ref);
+        deleteObject(fileRef);
+      }
 
       await deleteDoc(doc(db, "homeworks", homeworkID));
     } catch (error: any) {
