@@ -38,7 +38,7 @@ const SignUpPage: FC = (props) => {
 
       if (signupEmail === "") throw new Error("auth/email-not-entered");
       if (signupPassword === "") throw new Error("auth/password-not-entered");
-      if (signupLastname !== signupPasswordConfirmation)
+      if (signupPassword !== signupPasswordConfirmation)
         throw new Error("auth/passwords-not-equal");
       if (signupLastname === "") throw new Error("auth/lastname-not-entered");
       if (signupFirstname === "") throw new Error("auth/firstname-not-entered");
