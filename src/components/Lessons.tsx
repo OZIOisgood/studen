@@ -30,7 +30,7 @@ import { useParams } from "react-router";
 import { ErrorModal } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
-import { getPrettyTimeByStamp, momentWeek } from "../utils";
+import { checkTime, getPrettyTimeByStamp, momentWeek } from "../utils";
 
 import "../styles/components/lessons.sass";
 
@@ -88,7 +88,6 @@ export const Lessons: FC<LessonsProps> = ({
     where("beginningTime", "<=", timeCalendar.endOf("day").toDate()),
     orderBy("beginningTime", "asc")
   );
-  // const lessons = useFirestoreQuery(lessonsQuery);
 
   if (timeCalendarChanged)
     onSnapshot(lessonsQuery, (snapshot: any) => {
@@ -140,7 +139,10 @@ export const Lessons: FC<LessonsProps> = ({
   const handleShowCopyWeekBeforeLast = () => setShowCopyWeekBeforeLast(true);
 
   const [lessonName, setLessonName] = useState("");
-  const [courseIndex, setCourseIndex] = useState("0");
+  const [courseIndex, setCourseIndex] = useState("Choose course ...");
+  const [lessonNumberIndex, setLessonNumberIndex] = useState(
+    "Choose lesson number ..."
+  );
   const [useLessonNumber, setUseLessonNumber] = useState(true);
   const [lessonBeginningTime, setLessonBeginningTime] = useState("");
   const [lessonEndTime, setLessonEndTime] = useState("");
@@ -163,12 +165,22 @@ export const Lessons: FC<LessonsProps> = ({
     try {
       setShowChangeLesson(false);
 
-      // if (lessonName === "") throw new Error("You haven't entered group name.");
-      // if (lessonName === "") throw new Error("You haven't entered group name.");
-      // if (lessonBeginningTime === "")
-      //   throw new Error("You haven't entered beginning time of lesson.");
-      // if (lessonEndTime === "")
-      //   throw new Error("You haven't entered end time of lesson.");
+      if (lessonName === "")
+        throw new Error("You haven't entered lesson name.");
+      if (lessonNumberIndex === "Choose lesson number ..." && useLessonNumber)
+        throw new Error("You haven't choosed lesson number.");
+      if (lessonBeginningTime === "")
+        throw new Error("You haven't entered beginning time of lesson.");
+      if (lessonEndTime === "")
+        throw new Error("You haven't entered end time of lesson.");
+      if (!checkTime(lessonBeginningTime))
+        throw new Error(
+          'You entered incorrect beginning time of lesson.\nPlese enter it in format "00:00".'
+        );
+      if (!checkTime(lessonEndTime))
+        throw new Error(
+          'You entered incorrect end time of lesson.\nPlese enter it in format "00:00".'
+        );
 
       const beginningTimeTimestamp = Timestamp.fromDate(
         moment(
@@ -193,6 +205,7 @@ export const Lessons: FC<LessonsProps> = ({
       handleShowErrorModal(error.message);
     } finally {
       setLessonName("");
+      setLessonNumberIndex("Choose lesson number ...");
       setLessonBeginningTime("");
       setLessonEndTime("");
       setLessonConferenceLink("");
@@ -207,6 +220,27 @@ export const Lessons: FC<LessonsProps> = ({
       setShowAddLesson(false);
       let beginningTimeTimestamp: any;
       let endTimeTimestamp: any;
+
+      if (lessonName === "")
+        throw new Error("You haven't entered lesson name.");
+      if (courseIndex === "Choose course ...")
+        throw new Error("You haven't choosed course.");
+      if (lessonNumberIndex === "Choose lesson number ..." && useLessonNumber)
+        throw new Error("You haven't choosed lesson number.");
+      if (lessonBeginningTime === "")
+        throw new Error("You haven't entered beginning time of lesson.");
+      if (lessonEndTime === "")
+        throw new Error("You haven't entered end time of lesson.");
+      if (!checkTime(lessonBeginningTime))
+        throw new Error(
+          'You entered incorrect beginning time of lesson.\nPlese enter it in format "00:00".'
+        );
+      if (!checkTime(lessonEndTime))
+        throw new Error(
+          'You entered incorrect end time of lesson.\nPlese enter it in format "00:00".'
+        );
+
+      console.log(courseIndex);
 
       const groupUTCOffset = group?.UTCOffset;
       const userUTCOffset = moment().format("Z");
@@ -266,7 +300,8 @@ export const Lessons: FC<LessonsProps> = ({
       handleShowErrorModal(error.message);
     } finally {
       setLessonName("");
-      setCourseIndex("0");
+      setCourseIndex("Choose course ...");
+      setLessonNumberIndex("Choose lesson number ...");
       setLessonBeginningTime("");
       setLessonEndTime("");
       setLessonConferenceLink("");
@@ -570,6 +605,7 @@ export const Lessons: FC<LessonsProps> = ({
                       variant={useLessonNumber ? "success" : "secondary"}
                       onClick={() => {
                         setUseLessonNumber(true);
+                        setLessonNumberIndex("Choose lesson number ...");
                       }}
                     >
                       Lesson number
@@ -578,6 +614,7 @@ export const Lessons: FC<LessonsProps> = ({
                       variant={!useLessonNumber ? "success" : "secondary"}
                       onClick={() => {
                         setUseLessonNumber(false);
+                        setLessonNumberIndex("Choose lesson number ...");
                       }}
                     >
                       Choose time
@@ -596,6 +633,8 @@ export const Lessons: FC<LessonsProps> = ({
 
                         setLessonBeginningTime(values[0]);
                         setLessonEndTime(values[1]);
+
+                        setLessonNumberIndex(event.target.value);
                       }}
                     >
                       <option>Choose lesson number ...</option>
@@ -666,7 +705,7 @@ export const Lessons: FC<LessonsProps> = ({
                       disabled={
                         courses != null
                           ? courses[Number(courseIndex)]?.staticLink === ""
-                          : false
+                          : true
                       }
                       variant={useStaticLink ? "success" : "secondary"}
                       onClick={() => {
@@ -770,6 +809,7 @@ export const Lessons: FC<LessonsProps> = ({
                       variant={useLessonNumber ? "success" : "secondary"}
                       onClick={() => {
                         setUseLessonNumber(true);
+                        setLessonNumberIndex("Choose lesson number ...");
                       }}
                     >
                       Lesson number
@@ -778,6 +818,7 @@ export const Lessons: FC<LessonsProps> = ({
                       variant={!useLessonNumber ? "success" : "secondary"}
                       onClick={() => {
                         setUseLessonNumber(false);
+                        setLessonNumberIndex("Choose lesson number ...");
                       }}
                     >
                       Choose time
@@ -796,6 +837,8 @@ export const Lessons: FC<LessonsProps> = ({
 
                         setLessonBeginningTime(values[0]);
                         setLessonEndTime(values[1]);
+
+                        setLessonNumberIndex(event.target.value);
                       }}
                     >
                       <option>Choose lesson number ...</option>
@@ -857,8 +900,10 @@ export const Lessons: FC<LessonsProps> = ({
                     <Button
                       disabled={
                         courses != null
-                          ? courses[Number(courseIndex)]?.staticLink === ""
-                          : false
+                          ? courseIndex !== "Choose course ..."
+                            ? courses[Number(courseIndex)]?.staticLink === ""
+                            : true
+                          : true
                       }
                       variant={useStaticLink ? "success" : "secondary"}
                       onClick={() => {

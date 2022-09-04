@@ -15,7 +15,12 @@ import {
 import { useFirestoreQuery } from "../hooks";
 import { PrivateRoute, GroupRoute, TasksList, ErrorModal } from "../components";
 import { FirebaseContext } from "../context/firebase";
-import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
+import {
+  checkTime,
+  checkUserIsGroupAdmin,
+  getTimeNow,
+  getUser,
+} from "../utils";
 import Calendar from "react-calendar";
 import moment from "moment";
 
@@ -26,9 +31,11 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebase-config";
 
 const TasksPage: FC = (props) => {
-  console.log("############## TasksPage ##############");
   const { firestore } = useContext(FirebaseContext);
+  const user = getUser();
+  const params = useParams();
 
+  // Error modal
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -37,11 +44,9 @@ const TasksPage: FC = (props) => {
     setErrorMessage(message);
     setShowErrorModal(true);
   };
+  //
 
-  const user = getUser();
-
-  const params = useParams();
-
+  // group
   const [group, setGroup] = useState<DocumentData | undefined>({});
 
   const groupRef = doc(firestore, "groups", `${params.id}`);
@@ -54,14 +59,18 @@ const TasksPage: FC = (props) => {
     getGroup();
     // eslint-disable-next-line
   }, []);
+  //
 
+  // courses
   const coursesCollectionRef = collection(firestore, "courses");
   const coursesQuery = query(
     coursesCollectionRef,
     where("group", "==", params.id)
   );
   const courses = useFirestoreQuery(coursesQuery);
+  //
 
+  // tasks
   const homeworksCollectionRef = collection(firestore, "homeworks");
   const homeworksQuery = query(
     homeworksCollectionRef,
@@ -69,9 +78,6 @@ const TasksPage: FC = (props) => {
     // orderBy("deadlineTime", "asc")
   );
   const allHomeworks = useFirestoreQuery(homeworksQuery);
-
-  console.log("allHomeworks:");
-  console.log(allHomeworks);
 
   const doneHomeworksCollectionRef = collection(firestore, "doneHomeworks");
   const doneHomeworksQuery = query(
@@ -82,17 +88,11 @@ const TasksPage: FC = (props) => {
   );
   const doneHomeworks = useFirestoreQuery(doneHomeworksQuery);
 
-  console.log("doneHomeworks:");
-  console.log(doneHomeworks);
-
   let doneHomeworksList = doneHomeworks?.map((doneHomework: any) => {
     return allHomeworks?.find(
       (homework: any) => homework.id === doneHomework.homework
     );
   });
-
-  console.log("doneHomeworksList:");
-  console.log(doneHomeworksList);
 
   let toDoHomeworksList: any[] = [];
   let overdueHomeworksList: any[] = [];
@@ -114,24 +114,19 @@ const TasksPage: FC = (props) => {
       overdueHomeworksList.push(homework);
     }
   });
+  //
 
-  console.log("toDoHomeworksList:");
-  console.log(toDoHomeworksList);
-
-  console.log("overdueHomeworksList:");
-  console.log(overdueHomeworksList);
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////
-
+  // addTask
   const [showAddTask, setShowAddTask] = useState(false);
 
   const [taskTitle, setTaskTitle] = useState("");
-  const [courseIndex, setCourseIndex] = useState("");
+  const [courseIndex, setCourseIndex] = useState("Choose course ...");
   const [taskDeadLineTime, setTaskDeadLineTime] = useState("");
   const [taskDeadLineDate, setTaskDeadLineDate] = useState(
     getTimeNow().toDate()
   );
   const [taskDescription, setTaskDescription] = useState("");
+  const [taskMaxMark, setTaskMaxMark] = useState("");
 
   const handleCloseAddTask = () => setShowAddTask(false);
   const handleShowAddTask = () => setShowAddTask(true);
@@ -143,6 +138,20 @@ const TasksPage: FC = (props) => {
   const handleAddTask = async () => {
     try {
       setShowAddTask(false);
+
+      if (taskTitle === "") throw new Error("You haven't entered task title.");
+      if (taskDescription === "")
+        throw new Error("You haven't entered task description.");
+      if (courseIndex === "Choose course ...")
+        throw new Error("You haven't choosed course.");
+      if (taskDeadLineTime === "")
+        throw new Error("You haven't entered deadline time of lesson.");
+      if (!checkTime(taskDeadLineTime))
+        throw new Error(
+          'You entered incorrect deadline time of lesson.\nPlese enter it in format "00:00".'
+        );
+      if (taskMaxMark === "")
+        throw new Error("You haven't entered maximum mark.");
 
       const deadlineTimeTimestamp = Timestamp.fromDate(
         moment(
@@ -163,6 +172,7 @@ const TasksPage: FC = (props) => {
           ref: fileREF,
           name: fileName,
         },
+        maxMark: parseInt(taskMaxMark),
         group: params.id,
         course: courses != null ? courses[Number(courseIndex)].id : "",
         createTime: createTimeTimestamp,
@@ -187,29 +197,28 @@ const TasksPage: FC = (props) => {
       } else {
         addDoc(collection(db, "homeworks"), newTask);
       }
-
-      // await addDoc(collection(db, "homeworks"), newTask);
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
       setTaskTitle("");
       setTaskDescription("");
-      setCourseIndex("0");
+      setCourseIndex("Choose course ...");
       setTaskDeadLineTime("");
       setTaskDeadLineDate(getTimeNow().toDate());
       setFileTask(null);
     }
   };
+  //
 
+  // date Changed
   const handleDateChange = (date: Date) => {
     setTaskDeadLineDate(date);
   };
+  //
 
   // check if User Is Group Admin
   let isAdmin = checkUserIsGroupAdmin(group, user);
   //
-
-  console.log("±±±±±±±±±±±±±±±±± End ±±±±±±±±±±±±±±±±±");
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
@@ -342,6 +351,20 @@ const TasksPage: FC = (props) => {
                     placeholder='Time format "00:00"'
                     onChange={(event: any) => {
                       setTaskDeadLineTime(event.target.value);
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3 task-max-mark">
+                  <Form.Label>
+                    Task maximum mark <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    placeholder="Enter maximum mark"
+                    onChange={(event: any) => {
+                      setTaskMaxMark(event.target.value);
                     }}
                   />
                 </Form.Group>

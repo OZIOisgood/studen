@@ -134,6 +134,7 @@ const GroupPage: FC = (props) => {
   //
 
   // state
+  const [showDeleteGroup, setShowDeleteGroup] = useState(false);
   const [showCreateCourse, setShowCreateCourse] = useState(false);
   const [showDeleteCourse, setShowDeleteCourse] = useState(false);
   const [showChangeCourse, setShowChangeCourse] = useState(false);
@@ -158,6 +159,9 @@ const GroupPage: FC = (props) => {
   //
 
   // handle Show and Close
+  const handleCloseDeleteGroup = () => setShowDeleteGroup(false);
+  const handleShowDeleteGroup = () => setShowDeleteGroup(true);
+
   const handleCloseCreateCourse = () => setShowCreateCourse(false);
   const handleShowCreateCourse = () => setShowCreateCourse(true);
 
@@ -188,6 +192,14 @@ const GroupPage: FC = (props) => {
         throw new Error("You haven't entered group avatar link.");
       if (groupBackground === "")
         throw new Error("You haven't entered group background link.");
+      if (groupUTCOffset === "")
+        throw new Error("You haven't entered UTC offset.");
+
+      const regexUTCOffset = /^[+-]{1}([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (!regexUTCOffset.test(groupUTCOffset))
+        throw new Error(
+          'You entered incorrect UTC offset.\nPlese enter it in format "+00:00" or "-00:00".'
+        );
 
       const newGroup = {
         name: groupName,
@@ -220,6 +232,8 @@ const GroupPage: FC = (props) => {
   // deleteGroup
   const handleDeleteGroup = async () => {
     try {
+      setShowDeleteGroup(false);
+
       navigate("/home");
 
       const coursesToDeleteCollectionRef = collection(firestore, "courses");
@@ -344,8 +358,6 @@ const GroupPage: FC = (props) => {
 
       if (courseName === "")
         throw new Error("You haven't entered course name.");
-      // if (courseStaticLink === "")
-      //   throw new Error("You haven't entered course static link.");
 
       await addDoc(collection(db, "courses"), {
         name: courseName,
@@ -368,8 +380,6 @@ const GroupPage: FC = (props) => {
 
       if (courseName === "")
         throw new Error("You haven't entered course name.");
-      if (courseStaticLink === "")
-        throw new Error("You haven't entered course static link.");
 
       const newCourse = {
         name: courseName,
@@ -476,8 +486,6 @@ const GroupPage: FC = (props) => {
   // check if User Is Group Admin
   let isAdmin = checkUserIsGroupAdmin(group, user);
   //
-
-  console.log(moment().format("Z"));
 
   return (
     <PrivateRoute>
@@ -602,7 +610,8 @@ const GroupPage: FC = (props) => {
                         variant="danger"
                         className="text-white"
                         onClick={() => {
-                          handleDeleteGroup();
+                          setShowGroupSettings(false);
+                          handleShowDeleteGroup();
                         }}
                       >
                         <b>Delete group</b>
@@ -613,6 +622,34 @@ const GroupPage: FC = (props) => {
                         onClick={handleCloseGroupSettings}
                       >
                         <b>Cancel</b>
+                      </Button>
+                    </div>
+                  </Form>
+                </Modal.Body>
+              </Modal>
+
+              <Modal
+                show={showDeleteGroup}
+                onHide={handleCloseDeleteGroup}
+                centered
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>Deleting the group</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Modal.Title className="fs-5 text-secondary">
+                    {`Are you sure you want to delete ${group?.name}?`}
+                  </Modal.Title>
+                  <Form>
+                    <div className="d-grid mt-4">
+                      <Button
+                        variant="danger"
+                        className="text-white"
+                        onClick={() => {
+                          handleDeleteGroup();
+                        }}
+                      >
+                        <b>Delete group</b>
                       </Button>
                     </div>
                   </Form>

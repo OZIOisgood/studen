@@ -21,6 +21,7 @@ const StarterPage: FC = (props) => {
   return (
     <>
       <NavBar />
+
       {user ? (
         <Navigate to={ROUTES.HOME} />
       ) : initializing ? (
@@ -143,6 +144,7 @@ const StarterPage: FC = (props) => {
           </div>
         </div>
       )}
+
       <Footer />
     </>
   );

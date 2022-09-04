@@ -20,6 +20,7 @@ import {
   where,
   deleteDoc,
   Timestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { useFirestoreQuery } from "../hooks";
 import { PrivateRoute, GroupRoute, ErrorModal } from "../components";
@@ -33,8 +34,8 @@ import {
 import {
   BsFillFileEarmarkFill,
   BsFillFileEarmarkPlusFill,
-  BsFillTrashFill,
 } from "react-icons/bs";
+import { AiFillEdit } from "react-icons/ai";
 
 import "../styles/pages/task.sass";
 import moment from "moment";
@@ -139,9 +140,12 @@ const TaskPage: FC = (props) => {
           ref: fileREF,
           name: fileName,
         },
+        mark: 0,
+        notChecked: true,
         group: params.groupID,
         homework: params.taskID,
         user: user.id,
+        lastEditTime: addTimeTimestamp,
         addTime: addTimeTimestamp,
       };
 
@@ -162,6 +166,67 @@ const TaskPage: FC = (props) => {
         });
       } else {
         addDoc(collection(db, "doneHomeworks"), newAnswer);
+      }
+    } catch (error: any) {
+      handleShowErrorModal(error.message);
+    } finally {
+      setTaskAnswer("");
+      setFileTaskAnswer(null);
+    }
+  };
+  //
+
+  // editAnswer
+  const [showEditAnswer, setShowEditAnswer] = useState(false);
+
+  const handleCloseEditAnswer = () => setShowEditAnswer(false);
+  const handleShowEditAnswer = () => setShowEditAnswer(true);
+
+  const handleEditAnswer = async () => {
+    try {
+      setShowEditAnswer(false);
+
+      if (answer?.file.ref !== "") {
+        const fileRef = ref(storage, answer?.file.ref);
+        deleteObject(fileRef);
+      }
+
+      const editTimeTimestamp = Timestamp.fromDate(getTimeNow().toDate());
+
+      let fileURL: string | void = ""; // link for the file
+      let fileREF: string = ""; // `homeworkAnswerFiles/${v4}`
+      let fileName: string = ""; // name of the file + extension
+
+      const newAnswer = {
+        answer: taskAnswer,
+        file: {
+          URL: fileURL,
+          ref: fileREF,
+          name: fileName,
+        },
+        notChecked: true,
+        lastEditTime: editTimeTimestamp,
+      };
+
+      if (fileTaskAnswer != null) {
+        fileREF = v4();
+
+        const fileExtension = fileTaskAnswer.name.split(".").pop();
+        newAnswer.file.ref = `homeworkAnswerFiles/${fileREF}.${fileExtension}`;
+
+        const fileRef = ref(storage, newAnswer.file.ref);
+        await uploadBytes(fileRef, fileTaskAnswer).then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            newAnswer.file.URL = url;
+            newAnswer.file.name = fileTaskAnswer?.name;
+
+            const changeDocRef = doc(db, "doneHomeworks", answer?.id);
+            updateDoc(changeDocRef, newAnswer);
+          });
+        });
+      } else {
+        const changeDocRef = doc(db, "doneHomeworks", answer?.id);
+        await updateDoc(changeDocRef, newAnswer);
       }
     } catch (error: any) {
       handleShowErrorModal(error.message);
@@ -194,8 +259,6 @@ const TaskPage: FC = (props) => {
   };
   //
 
-  console.log(task);
-
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
@@ -218,26 +281,32 @@ const TaskPage: FC = (props) => {
                   }
                 </h2>
                 <h3 className="text-white mt-4">{task?.description}</h3>
-                <Button
-                  size="lg"
-                  variant={"outline-light"}
-                  className="mt-4"
-                  href={task?.file?.URL}
-                  target="_blank"
-                >
-                  <Row>
-                    <Col xs={2}>
-                      <h1 className="m-0">
-                        <BsFillFileEarmarkFill className="centered-label" />
-                      </h1>
-                    </Col>
-                    <Col xs={10}>
-                      <h3 className="m-0 text-align-left mt-1">
-                        {task?.file?.name}
-                      </h3>
-                    </Col>
-                  </Row>
-                </Button>
+                {task?.file?.URL !== "" ? (
+                  <Button
+                    size="lg"
+                    variant={"outline-light"}
+                    className="mt-4"
+                    href={task?.file?.URL}
+                    target="_blank"
+                  >
+                    <Row>
+                      <Col xs={2}>
+                        <h1 className="m-0">
+                          <BsFillFileEarmarkFill className="centered-label" />
+                        </h1>
+                      </Col>
+                      <Col xs={10}>
+                        <h3 className="m-0 text-align-left mt-1">
+                          {task?.file?.name}
+                        </h3>
+                      </Col>
+                    </Row>
+                  </Button>
+                ) : (
+                  <h3 className="text-white mt-3">
+                    Sent without an additional file
+                  </h3>
+                )}
               </Alert>
               {answer !== undefined ? (
                 <Alert variant="dark box d-grid">
@@ -249,26 +318,32 @@ const TaskPage: FC = (props) => {
                         : "Sent without an answer"
                       : null}
                   </h3>
-                  <Button
-                    size="lg"
-                    variant={"outline-light"}
-                    className="mt-4"
-                    href={answer?.file.URL}
-                    target="_blank"
-                  >
-                    <Row>
-                      <Col xs={2}>
-                        <h1 className="m-0">
-                          <BsFillFileEarmarkFill className="centered-label" />
-                        </h1>
-                      </Col>
-                      <Col xs={10}>
-                        <h3 className="m-0 text-align-left mt-1">
-                          {answer?.file.name}
-                        </h3>
-                      </Col>
-                    </Row>
-                  </Button>
+                  {answer?.file?.URL !== "" ? (
+                    <Button
+                      size="lg"
+                      variant={"outline-light"}
+                      className="mt-4"
+                      href={answer?.file.URL}
+                      target="_blank"
+                    >
+                      <Row>
+                        <Col xs={2}>
+                          <h1 className="m-0">
+                            <BsFillFileEarmarkFill className="centered-label" />
+                          </h1>
+                        </Col>
+                        <Col xs={10}>
+                          <h3 className="m-0 text-align-left mt-1">
+                            {answer?.file.name}
+                          </h3>
+                        </Col>
+                      </Row>
+                    </Button>
+                  ) : (
+                    <h3 className="text-white mt-3">
+                      Sent without an additional file
+                    </h3>
+                  )}
                 </Alert>
               ) : null}
             </Col>
@@ -299,7 +374,7 @@ const TaskPage: FC = (props) => {
                   <>
                     <h4 className="text-white">
                       {moment
-                        .unix(answer?.addTime?.seconds)
+                        .unix(answer?.lastEditTime?.seconds)
                         .isAfter(getTimeNow())
                         ? "Answer is added"
                         : "Answer is added with delay"}
@@ -308,11 +383,10 @@ const TaskPage: FC = (props) => {
                       size="lg"
                       variant="warning"
                       className="text-white mt-2"
-                      onClick={handleShowDeleteAnswer}
+                      onClick={handleShowEditAnswer}
                     >
                       <b>
-                        <BsFillTrashFill className="centered-label" /> Delete
-                        answer
+                        <AiFillEdit className="centered-label" /> Edit answer
                       </b>
                     </Button>
                   </>
@@ -321,12 +395,31 @@ const TaskPage: FC = (props) => {
               {answer !== undefined ? (
                 <Alert variant="dark box d-grid">
                   <h4 className="text-white">
-                    Answer added:
-                    <br />
-                    {getPrettyTimeByStamp(answer?.addTime)}{" "}
-                    {getPrettyDateByStamp(answer?.addTime)}
+                    Your mark: <b>{answer?.mark + " / " + task?.maxMark}</b>
                   </h4>
                 </Alert>
+              ) : null}
+              {answer !== undefined ? (
+                <>
+                  {answer?.addTime.seconds !== answer?.lastEditTime.seconds ? (
+                    <Alert variant="dark box d-grid">
+                      <h4 className="text-white">
+                        Last edit:
+                        <br />
+                        {getPrettyTimeByStamp(answer?.lastEditTime)}{" "}
+                        {getPrettyDateByStamp(answer?.lastEditTime)}
+                      </h4>
+                    </Alert>
+                  ) : null}
+                  <Alert variant="dark box d-grid">
+                    <h4 className="text-white">
+                      Answer added:
+                      <br />
+                      {getPrettyTimeByStamp(answer?.addTime)}{" "}
+                      {getPrettyDateByStamp(answer?.addTime)}
+                    </h4>
+                  </Alert>
+                </>
               ) : null}
               <Alert variant="dark box d-grid">
                 <h4 className="text-white">
@@ -369,6 +462,53 @@ const TaskPage: FC = (props) => {
                     }}
                   >
                     <b>Delete answer</b>
+                  </Button>
+                </div>
+              </Form>
+            </Modal.Body>
+          </Modal>
+
+          <Modal show={showEditAnswer} onHide={handleCloseEditAnswer} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Editing the answer</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3 task-answer">
+                  <Form.Label>Task answer</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter answer"
+                    as="textarea"
+                    rows={3}
+                    onChange={(event: any) => {
+                      setTaskAnswer(event.target.value);
+                    }}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3 task-answer">
+                  <Form.Label>Additional file</Form.Label>
+                  <Form.Control
+                    type="file"
+                    placeholder="Add file"
+                    onChange={(event: any) => {
+                      setFileTaskAnswer(event.target.files[0]);
+                    }}
+                  />
+                </Form.Group>
+
+                <div className="d-grid mt-5">
+                  <Button
+                    variant="info"
+                    className="text-white"
+                    onClick={() => {
+                      handleEditAnswer();
+                    }}
+                  >
+                    <b>
+                      <AiFillEdit className="centered-label" /> Edit task
+                    </b>
                   </Button>
                 </div>
               </Form>

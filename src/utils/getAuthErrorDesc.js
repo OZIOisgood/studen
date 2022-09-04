@@ -3,6 +3,9 @@ export default function getAuthErrorDesc(errorCode) {
 }
 
 const authErrors = {
+  "email-not-entered": "You haven't entered your email.",
+  "password-not-entered": "You haven't entered your password.",
+  "passwords-not-equal": "Please, enter the same passwords.",
   "firstname-not-entered": "You haven't entered your first name.",
   "lastname-not-entered": "You haven't entered your last name.",
 

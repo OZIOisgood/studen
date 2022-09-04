@@ -9,7 +9,12 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { deleteObject, ref } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import moment from "moment";
 import { FC, useContext, useState } from "react";
 import {
@@ -24,9 +29,11 @@ import {
 } from "react-bootstrap";
 import Calendar from "react-calendar";
 import { useParams } from "react-router-dom";
+import { v4 } from "uuid";
 import { FirebaseContext } from "../context/firebase";
 import { storage } from "../firebase-config";
 import {
+  checkTime,
   getPrettyDateByStamp,
   getPrettyTimeByStamp,
   getTimeNow,
@@ -124,15 +131,26 @@ export const TasksList: FC<TasksListProps> = ({
   };
 
   const [taskTitle, setTaskTitle] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
   const [taskDeadLineTime, setTaskDeadLineTime] = useState("");
   const [taskDeadLineDate, setTaskDeadLineDate] = useState(
     getTimeNow().toDate()
   );
-  const [taskDescription, setTaskDescription] = useState("");
+  const [fileTask, setFileTask] = useState<any>(null);
 
   const handleChangeTask = async () => {
     try {
       setShowChangeTask(false);
+
+      if (taskTitle === "") throw new Error("You haven't entered task title.");
+      if (taskDescription === "")
+        throw new Error("You haven't entered task description.");
+      if (taskDeadLineTime === "")
+        throw new Error("You haven't entered deadline time of lesson.");
+      if (!checkTime(taskDeadLineTime))
+        throw new Error(
+          'You entered incorrect deadline time of lesson.\nPlese enter it in format "00:00".'
+        );
 
       const deadlineTimeTimestamp = Timestamp.fromDate(
         moment(
@@ -140,19 +158,41 @@ export const TasksList: FC<TasksListProps> = ({
         ).toDate()
       );
 
+      let fileURL: string | void = ""; // link for the file
+      let fileREF: string = ""; // `homeworkFiles/${v4}`
+      let fileName: string = ""; // name of the file + extension
+
       const newTask = {
         title: taskTitle,
-        group: taskToChange.group,
-        course: taskToChange.course,
-        createTime: taskToChange.createTime,
-        deadlineTime: deadlineTimeTimestamp,
         description: taskDescription,
+        file: {
+          URL: fileURL,
+          ref: fileREF,
+          name: fileName,
+        },
+        deadlineTime: deadlineTimeTimestamp,
       };
 
-      console.log(newTask);
+      if (fileTask != null) {
+        fileREF = v4();
 
-      const changeDocRef = doc(db, "homeworks", taskToChange.id);
-      await updateDoc(changeDocRef, newTask);
+        const fileExtension = fileTask.name.split(".").pop();
+        newTask.file.ref = `homeworkFiles/${fileREF}.${fileExtension}`;
+
+        const fileRef = ref(storage, newTask.file.ref);
+        await uploadBytes(fileRef, fileTask).then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            newTask.file.URL = url;
+            newTask.file.name = fileTask?.name;
+
+            const changeDocRef = doc(db, "homeworks", taskToChange.id);
+            updateDoc(changeDocRef, newTask);
+          });
+        });
+      } else {
+        const changeDocRef = doc(db, "homeworks", taskToChange.id);
+        await updateDoc(changeDocRef, newTask);
+      }
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
@@ -160,6 +200,7 @@ export const TasksList: FC<TasksListProps> = ({
       setTaskDescription("");
       setTaskDeadLineTime("");
       setTaskDeadLineDate(getTimeNow().toDate());
+      setFileTask(null);
     }
   };
   //
@@ -322,6 +363,17 @@ export const TasksList: FC<TasksListProps> = ({
                   placeholder='Time format "00:00"'
                   onChange={(event: any) => {
                     setTaskDeadLineTime(event.target.value);
+                  }}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3 task-answer">
+                <Form.Label>Additional file</Form.Label>
+                <Form.Control
+                  type="file"
+                  placeholder="Add file"
+                  onChange={(event: any) => {
+                    setFileTask(event.target.files[0]);
                   }}
                 />
               </Form.Group>
