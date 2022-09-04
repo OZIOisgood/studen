@@ -205,16 +205,53 @@ export const Lessons: FC<LessonsProps> = ({
   const handleAddLesson = async () => {
     try {
       setShowAddLesson(false);
+      let beginningTimeTimestamp: any;
+      let endTimeTimestamp: any;
 
-      const beginningTimeTimestamp = Timestamp.fromDate(
-        moment(
-          `${timeCalendar.format("YYYY-MM-DD")} ${lessonBeginningTime}`
-        ).toDate()
-      );
-      const endTimeTimestamp = Timestamp.fromDate(
-        moment(`${timeCalendar.format("YYYY-MM-DD")} ${lessonEndTime}`).toDate()
-      );
+      const groupUTCOffset = group?.UTCOffset;
+      const userUTCOffset = moment().format("Z");
+      if (groupUTCOffset !== userUTCOffset) {
+        const groupUTCOffsetPlus =
+          groupUTCOffset?.slice(0, 1) === "+" ? true : false;
+        const groupUTCOffsetHours = parseInt(groupUTCOffset?.slice(1, 3));
+        const groupUTCOffsetMinutes = parseInt(groupUTCOffset?.slice(4, 5));
 
+        const userUTCOffsetPlus =
+          userUTCOffset?.slice(0, 1) === "+" ? true : false;
+        const userUTCOffsetHours = parseInt(userUTCOffset?.slice(1, 3));
+        const userUTCOffsetMinutes = parseInt(userUTCOffset?.slice(4, 5));
+
+        const hourDifference =
+          groupUTCOffsetHours * (groupUTCOffsetPlus ? 1 : -1) -
+          userUTCOffsetHours * (userUTCOffsetPlus ? 1 : -1);
+        const minutesDifference =
+          groupUTCOffsetMinutes * (groupUTCOffsetPlus ? 1 : -1) -
+          userUTCOffsetMinutes * (userUTCOffsetPlus ? 1 : -1);
+
+        beginningTimeTimestamp = Timestamp.fromDate(
+          moment(`${timeCalendar.format("YYYY-MM-DD")} ${lessonBeginningTime}`)
+            .add(hourDifference * -1, "hours")
+            .add(minutesDifference * -1, "minutes")
+            .toDate()
+        );
+        endTimeTimestamp = Timestamp.fromDate(
+          moment(`${timeCalendar.format("YYYY-MM-DD")} ${lessonEndTime}`)
+            .add(hourDifference * -1, "hours")
+            .add(minutesDifference * -1, "minutes")
+            .toDate()
+        );
+      } else {
+        beginningTimeTimestamp = Timestamp.fromDate(
+          moment(
+            `${timeCalendar.format("YYYY-MM-DD")} ${lessonBeginningTime}`
+          ).toDate()
+        );
+        endTimeTimestamp = Timestamp.fromDate(
+          moment(
+            `${timeCalendar.format("YYYY-MM-DD")} ${lessonEndTime}`
+          ).toDate()
+        );
+      }
       const newLesson = {
         name: lessonName,
         group: params.id,

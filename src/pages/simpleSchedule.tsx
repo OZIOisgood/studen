@@ -10,7 +10,7 @@ import {
 import { FC, useContext, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { Avatar, NavBar, Schedule } from "../components";
+import { Avatar, Footer, NavBar, Schedule } from "../components";
 import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
@@ -90,6 +90,8 @@ const SimpleSchedulePage: FC = (props) => {
 
         <Schedule courses={courses} lessons={lessons} />
       </Container>
+
+      <Footer />
     </>
   );
 };

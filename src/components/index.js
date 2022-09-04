@@ -8,5 +8,6 @@ export { Avatar } from "./Avatar";
 export { PrivateRoute } from "./PrivateRoute";
 export { GroupRoute } from "./GroupRoute";
 export { NavBar } from "./Navbar";
+export { Footer } from "./Footer";
 export { Loader } from "./Loader";
 export { ErrorModal } from "./ErrorModal";

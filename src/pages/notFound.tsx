@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Alert, Container } from "react-bootstrap";
-import { NavBar } from "../components";
+import { Footer, NavBar } from "../components";
 // import * as ROUTES from "../constants/routes";
 
 const NotFoundPage: FC = (props) => {
@@ -12,6 +12,7 @@ const NotFoundPage: FC = (props) => {
           <h1 className="fs-5">Page not found</h1>
         </Alert>
       </Container>
+      <Footer />
     </>
   );
 };

@@ -1,6 +1,6 @@
 import React, { FC, useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { NavBar, Loader } from "../components";
+import { NavBar, Loader, Footer } from "../components";
 import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
 
@@ -14,6 +14,7 @@ export const PrivateRoute: FC<PrivateRouteProps> = (props) => {
   return (
     <>
       <NavBar />
+
       {user ? (
         props.children
       ) : initializing ? (
@@ -21,6 +22,8 @@ export const PrivateRoute: FC<PrivateRouteProps> = (props) => {
       ) : (
         <Navigate to={ROUTES.SIGN_IN} />
       )}
+
+      <Footer />
     </>
   );
 };

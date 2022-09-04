@@ -43,6 +43,7 @@ import { BsShieldShaded, BsShieldSlashFill } from "react-icons/bs";
 import "../styles/pages/group.sass";
 import { storage } from "../firebase-config";
 import { deleteObject, ref } from "firebase/storage";
+import moment from "moment";
 
 const GroupPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
@@ -65,7 +66,7 @@ const GroupPage: FC = (props) => {
   // get group snapshot
   const [group, setGroup] = useState<DocumentData | undefined>({});
 
-  const groupRef = doc(firestore, "groups", `${params.id}`);
+  const groupRef = doc(firestore, "groups", groupID);
   useEffect(() => {
     const getGroup = async () => {
       const data = await getDoc(groupRef);
@@ -145,6 +146,7 @@ const GroupPage: FC = (props) => {
   const [groupName, setGroupName] = useState("");
   const [groupAvatar, setGroupAvatar] = useState("");
   const [groupBackground, setGroupBackground] = useState("");
+  const [groupUTCOffset, setGroupUTCOffset] = useState("");
 
   const [courseToDelete, setCourseToDelete] = useState(
     courses ? courses[0] : null
@@ -191,16 +193,26 @@ const GroupPage: FC = (props) => {
         name: groupName,
         avatarURL: groupAvatar,
         backgroundURL: groupBackground,
+        UTCOffset: groupUTCOffset,
       };
 
-      const changeDocRef = doc(db, "groups", `${params.id}`);
+      const changeDocRef = doc(db, "groups", groupID);
       await updateDoc(changeDocRef, newGroup);
+
+      setGroup({
+        ...group,
+        name: groupName,
+        avatarURL: groupAvatar,
+        backgroundURL: groupBackground,
+        UTCOffset: groupUTCOffset,
+      });
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
       setGroupName("");
       setGroupAvatar("");
       setGroupBackground("");
+      setGroupUTCOffset("");
     }
   };
   //
@@ -413,11 +425,11 @@ const GroupPage: FC = (props) => {
         users: arrayRemove(userIDToDelete),
       };
 
-      const changeGroupDocRef = doc(db, "groups", `${params.id}`);
+      const changeGroupDocRef = doc(db, "groups", groupID);
       await updateDoc(changeGroupDocRef, newGroup);
 
       const newUser = {
-        groups: arrayRemove(`${params.id}`),
+        groups: arrayRemove(groupID),
       };
 
       const changeUserDocRef = doc(db, "users", userIDToDelete);
@@ -433,7 +445,7 @@ const GroupPage: FC = (props) => {
 
   const handleToggleAdmin = async (userIDToggleAdmin: string) => {
     try {
-      const groupDoc = await getDoc(doc(db, "groups", `${params.id}`));
+      const groupDoc = await getDoc(doc(db, "groups", groupID));
 
       let newGroup = {};
       if (!groupDoc.data()?.admins.includes(userIDToggleAdmin)) {
@@ -452,7 +464,7 @@ const GroupPage: FC = (props) => {
 
       setGroup(newGroup);
 
-      await setDoc(doc(db, "groups", `${params.id}`), newGroup);
+      await setDoc(doc(db, "groups", groupID), newGroup);
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
@@ -464,6 +476,8 @@ const GroupPage: FC = (props) => {
   // check if User Is Group Admin
   let isAdmin = checkUserIsGroupAdmin(group, user);
   //
+
+  console.log(moment().format("Z"));
 
   return (
     <PrivateRoute>
@@ -494,6 +508,7 @@ const GroupPage: FC = (props) => {
                     setGroupName(group?.name);
                     setGroupAvatar(group?.avatarURL);
                     setGroupBackground(group?.backgroundURL);
+                    setGroupUTCOffset(group?.UTCOffset);
                   }}
                 >
                   <i className="fas fa-cog"></i> <b>Settings</b>
@@ -558,6 +573,19 @@ const GroupPage: FC = (props) => {
                         placeholder="Enter url"
                         onChange={(event: any) => {
                           setGroupBackground(event.target.value);
+                        }}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>
+                        UTC offset <span className="text-danger">*</span>
+                      </Form.Label>
+                      <Form.Control
+                        defaultValue={group?.UTCOffset}
+                        type="url"
+                        placeholder='Enter UTC offset in format "+00:00"'
+                        onChange={(event: any) => {
+                          setGroupUTCOffset(event.target.value);
                         }}
                       />
                     </Form.Group>

@@ -10,6 +10,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import moment from "moment";
 import { FC, useContext, useState } from "react";
 import {
   Button,
@@ -141,6 +142,7 @@ const GroupsPage: FC = (props) => {
           "18:30/20:05",
           "20:20/21:55",
         ],
+        UTCOffset: moment().format("Z"),
       });
 
       let userDoc = await getDoc(doc(db, "users", user.id));
