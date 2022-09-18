@@ -4,19 +4,13 @@ import { Container } from "react-bootstrap";
 import { Groups, PrivateRoute, Schedule } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
-import { getTimeNow } from "../utils";
+import { getTimeNow, getUser } from "../utils";
 
 import "../styles/pages/home.sass";
 
 const HomePage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
-
-  const userJSON = localStorage.getItem("authUser");
-  const user = userJSON ? JSON.parse(userJSON) : null;
-
-  // const usersCollectionRef = collection(firestore, "users");
-  // const usersQuery = query(usersCollectionRef);
-  // const users = useFirestoreQuery(usersQuery);
+  const user = getUser();
 
   let courses: any = [];
   try {

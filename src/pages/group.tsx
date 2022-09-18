@@ -487,6 +487,11 @@ const GroupPage: FC = (props) => {
   let isAdmin = checkUserIsGroupAdmin(group, user);
   //
 
+  // console.log("############");
+  // console.log("user: ");
+  // console.log(user);
+  // console.log("############");
+
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>

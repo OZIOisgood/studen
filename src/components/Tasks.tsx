@@ -45,9 +45,6 @@ export const Tasks: FC<TasksProps> = ({
     }
   });
 
-  // overdueHomeworksList = [];
-  // toDoHomeworksList = [];
-
   return (
     <Alert variant="dark box mt-5 tasks-container">
       <Row>
@@ -80,7 +77,10 @@ export const Tasks: FC<TasksProps> = ({
                   </span>
                 </Col>
                 <Col xs={12} md={10} className="d-grid">
-                  <Button variant="danger" target="_blank">
+                  <Button
+                    variant="danger"
+                    href={`/groups/${groupID}/tasks/${task.id}`}
+                  >
                     <Row>
                       <Col xs={1} className="task-number text-align-right">
                         <h4>{index + 1}.</h4>
@@ -129,7 +129,10 @@ export const Tasks: FC<TasksProps> = ({
                   </span>
                 </Col>
                 <Col xs={12} md={10} className="d-grid">
-                  <Button variant="warning" target="_blank">
+                  <Button
+                    variant="warning"
+                    href={`/groups/${groupID}/tasks/${task.id}`}
+                  >
                     <Row>
                       <Col xs={1} className="task-number text-align-right">
                         <h4>{index + 1}.</h4>

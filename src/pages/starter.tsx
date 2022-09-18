@@ -1,13 +1,11 @@
 import { FC, useContext } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { Navigate } from "react-router";
+import { Footer, Loader, NavBar } from "../components";
+import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
 
-import { Footer, Loader, NavBar } from "../components";
-import { Navigate } from "react-router";
-import * as ROUTES from "../constants/routes";
-
 import "../styles/pages/starter.sass";
-import moment from "moment";
 
 const spacerobot = require("../assets/starterPage/spacerobot.png");
 const spaceship = require("../assets/starterPage/spaceship.png");
@@ -17,7 +15,19 @@ const spacebase = require("../assets/starterPage/spacebase.png");
 
 const StarterPage: FC = (props) => {
   const { user, initializing } = useContext(FirebaseContext);
+  // const navigate = useNavigate();
 
+  // // signOut
+  // const signout = async () => {
+  //   await signOut(auth);
+  //   await localStorage.removeItem("authUser");
+  //   await navigate("/");
+  // };
+  // //
+
+  // if (getUser() == null && user != null) {
+  //   signout();
+  // }
   return (
     <>
       <NavBar />
