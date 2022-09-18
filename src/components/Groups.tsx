@@ -22,36 +22,43 @@ export const Groups: FC<GroupsProps> = ({ groups, title }) => {
     myGroupsCollectionRef,
     where("users", "array-contains", user.id)
   );
-  const myGroups = useFirestoreQuery(myGroupsQuery);
+  let myGroups = useFirestoreQuery(myGroupsQuery);
+
+  groups = [];
+  myGroups = [];
 
   return (
     <Alert variant="dark box mt-5 box-groups">
       <h2 className="text-white">{title}</h2>
       <Container className="mt-3">
-        <Row xs={1} md={2} lg={3}>
-          {groups?.map((group: any, index: number) => (
-            <Col key={group.id} className="mt-4">
-              <Button
-                disabled={
-                  !myGroups?.find((myGroup: any) => myGroup.id === group.id)
-                }
-                variant="secondary"
-                className="group-btn d-flex"
-                style={{
-                  backgroundImage: `url(${group.backgroundURL})`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-                href={`${ROUTES.GROUPS}/${group.id}`}
-              >
-                <h3 className="fs-2">
-                  <b>{group.name}</b>
-                </h3>
-              </Button>
-            </Col>
-          ))}
-        </Row>
+        {groups.length !== 0 ? (
+          <Row xs={1} md={2} lg={3}>
+            {groups?.map((group: any, index: number) => (
+              <Col key={group.id} className="mt-4">
+                <Button
+                  disabled={
+                    !myGroups?.find((myGroup: any) => myGroup.id === group.id)
+                  }
+                  variant="secondary"
+                  className="group-btn d-flex"
+                  style={{
+                    backgroundImage: `url(${group.backgroundURL})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                  href={`${ROUTES.GROUPS}/${group.id}`}
+                >
+                  <h3 className="fs-2">
+                    <b>{group.name}</b>
+                  </h3>
+                </Button>
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          <h3 className="text-muted text-center">No groups</h3>
+        )}
       </Container>
     </Alert>
   );
