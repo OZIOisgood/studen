@@ -24,8 +24,8 @@ export const Groups: FC<GroupsProps> = ({ groups, title }) => {
   );
   let myGroups = useFirestoreQuery(myGroupsQuery);
 
-  groups = [];
-  myGroups = [];
+  // groups = [];
+  // myGroups = [];
 
   return (
     <Alert variant="dark box mt-5 box-groups">
