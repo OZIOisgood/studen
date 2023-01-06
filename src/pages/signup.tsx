@@ -1,11 +1,12 @@
 import { FC, useState } from "react";
-import { Button, Container, Form, Spinner } from "react-bootstrap";
+import { Container, Form } from "react-bootstrap";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase-config";
-import { getFirestore, setDoc, doc, getDoc } from "firebase/firestore";
+import { auth, firestore as db } from "../firebase-config";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 import * as ROUTES from "../constants/routes";
 import { getAuthErrorDesc, setUser } from "../utils";
 import { ErrorModal, Footer } from "../components";
+import { Steps } from "../components/signup/Steps";
 
 import "../styles/pages/signin.sass";
 
@@ -23,14 +24,13 @@ const SignUpPage: FC = (props) => {
     setShowErrorModal(true);
   };
 
+  const [step, setStep] = useState(0);
+
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
-  const [signupPasswordConfirmation, setSignupPasswordConfirmation] =
-    useState("");
+  const [signupPasswordConfirmation, setSignupPasswordConfirmation] = useState("");
   const [signupLastname, setLastname] = useState("");
   const [signupFirstname, setFirstname] = useState("");
-
-  const db = getFirestore();
 
   const signup = async () => {
     try {
@@ -90,105 +90,23 @@ const SignUpPage: FC = (props) => {
             <img src={logo} className="logo text-center" alt="studen logo" />
           </a>
           <h1 className="text-white fs-3 mt-5 text-center">Please sign up</h1>
-          <Form.Group controlId="sign-up-email-address" className="mt-4">
-            <Form.Label className="text-white">
-              Email <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="email"
-              size="lg"
-              placeholder="Email address"
-              className="position-relative"
-              disabled={loading}
-              onChange={(event: any) => {
-                setSignupEmail(event.target.value);
-              }}
-            />
-          </Form.Group>
-          <Form.Group controlId="sign-up-password" className="mt-4">
-            <Form.Label className="text-white">
-              Password <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="password"
-              size="lg"
-              placeholder="Password"
-              disabled={loading}
-              className="position-relative"
-              onChange={(event: any) => {
-                setSignupPassword(event.target.value);
-              }}
-            />
-          </Form.Group>
-          <Form.Group controlId="sign-up-password" className="mt-3">
-            <Form.Label className="text-white">
-              Password confirmation <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="password"
-              size="lg"
-              placeholder="Confirm password"
-              disabled={loading}
-              className="position-relative"
-              onChange={(event: any) => {
-                setSignupPasswordConfirmation(event.target.value);
-              }}
-            />
-          </Form.Group>
-          <Form.Group className="mt-4 lesson-name">
-            <Form.Label className="text-white">
-              Lastname <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              size="lg"
-              placeholder="Enter your lastname"
-              onChange={(event: any) => {
-                setLastname(event.target.value);
-              }}
-            />
-          </Form.Group>
-          <Form.Group className="mt-3 lesson-name">
-            <Form.Label className="text-white">
-              Firstname <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              size="lg"
-              placeholder="Enter your firstname"
-              onChange={(event: any) => {
-                setFirstname(event.target.value);
-              }}
-            />
-          </Form.Group>
-          <div className="d-grid">
-            <Button
-              variant="info"
-              className="mt-5"
-              size="lg"
-              onClick={signup}
-              disabled={loading}
-            >
-              <span className="text-white fs-5">
-                {loading === false ? (
-                  <>
-                    <i className="fas fa-user-plus"></i> Sign up
-                  </>
-                ) : (
-                  <>
-                    <Spinner
-                      as="span"
-                      animation="grow"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                    Loading...
-                  </>
-                )}
-              </span>
-            </Button>
-          </div>
+
+          <Steps
+            step={step}
+            setStep={setStep}
+            loading={loading}
+            signupEmail={signupEmail}
+            signupPassword={signupPassword}
+            signupPasswordConfirmation={signupPasswordConfirmation}
+            signupLastname={signupLastname}
+            signupFirstname={signupFirstname}
+            setSignupEmail={setSignupEmail}
+            setSignupPassword={setSignupPassword}
+            setSignupPasswordConfirmation={setSignupPasswordConfirmation}
+            setLastname={setLastname}
+            setFirstname={setFirstname}
+            signup={signup}
+          />
 
           <Footer />
         </Form>
