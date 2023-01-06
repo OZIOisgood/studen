@@ -53,64 +53,63 @@ export const NavBar: FC = () => {
             alt="studen logo"
           />
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav d-flex">
-          <Nav className="me-auto">
-            <Nav className="justify-content-end flex-grow-1 pe-3">
-              {user ? (
-                <>
-                  <Nav.Link href={ROUTES.HOME}>
-                    <i className="fas fa-home"></i> Home
-                  </Nav.Link>
-                  <Nav.Link href={ROUTES.GROUPS}>
-                    <i className="fas fa-users"></i> Groups
-                  </Nav.Link>
-                  <Nav.Link href={ROUTES.COURSES}>
-                    <i className="fas fa-chalkboard-teacher"></i> Courses
-                  </Nav.Link>
-                  <Nav.Link href={ROUTES.HOMEWORKS}>
-                    <i className="fas fa-book-open"></i> Homeworks
-                  </Nav.Link>
-                </>
-              ) : !initializing ? (
-                <Nav.Link href={ROUTES.HOME}>
-                  <i className="fas fa-home"></i> Home
-                </Nav.Link>
-              ) : null}
-            </Nav>
-          </Nav>
-          <Nav>
-            {user ? (
-              <DropdownButton
-                align={{ lg: "end" }}
-                id="dropdown-basic-button"
-                menuVariant="dark"
-                variant="info"
-                className="dropdown-avatar"
-                title={<Avatar email={user.email} height={28} size={50} />}
-              >
-                <Dropdown.Item disabled>{user.email}</Dropdown.Item>
-                <hr />
-                <Dropdown.Item href={`${ROUTES.PROFILE}/${user.uid}`}>
-                  Profile
-                </Dropdown.Item>
-                <Dropdown.Item href={ROUTES.SETTINGS}>Settings</Dropdown.Item>
-                <hr />
-                <Dropdown.Item href="/" onClick={signout}>
-                  <span className="text-danger">
-                    <i className="fas fa-sign-out-alt"></i> Sign out
-                  </span>
-                </Dropdown.Item>
-              </DropdownButton>
-            ) : !initializing ? (
+
+        {
+          user ? (
+            <>
+              <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+              <Navbar.Collapse id="responsive-navbar-nav d-flex">
+                <Nav className="me-auto">
+                  <Nav className="justify-content-end flex-grow-1 pe-3">
+                    <Nav.Link href={ROUTES.HOME}>
+                      <i className="fas fa-home"></i> Home
+                    </Nav.Link>
+                    <Nav.Link href={ROUTES.GROUPS}>
+                      <i className="fas fa-users"></i> Groups
+                    </Nav.Link>
+                    <Nav.Link href={ROUTES.COURSES}>
+                      <i className="fas fa-chalkboard-teacher"></i> Courses
+                    </Nav.Link>
+                    <Nav.Link href={ROUTES.HOMEWORKS}>
+                      <i className="fas fa-book-open"></i> Homeworks
+                    </Nav.Link>
+                  </Nav>
+                </Nav>
+                <Nav>
+                  <DropdownButton
+                    align={{ lg: "end" }}
+                    id="dropdown-basic-button"
+                    menuVariant="dark"
+                    variant="info"
+                    className="dropdown-avatar"
+                    title={<Avatar email={user.email} height={28} size={50} />}
+                  >
+                    <Dropdown.Item disabled>{user.email}</Dropdown.Item>
+                    <hr />
+                    <Dropdown.Item href={`${ROUTES.PROFILE}/${user.uid}`}>
+                      Profile
+                    </Dropdown.Item>
+                    <Dropdown.Item href={ROUTES.SETTINGS}>Settings</Dropdown.Item>
+                    <hr />
+                    <Dropdown.Item href="/" onClick={signout}>
+                      <span className="text-danger">
+                        <i className="fas fa-sign-out-alt"></i> Sign out
+                      </span>
+                    </Dropdown.Item>
+                  </DropdownButton>
+                </Nav>
+              </Navbar.Collapse>
+            </>
+          ) : !initializing && (
+            <Nav className="justify-content-end">
               <Button variant="info" href="/signin">
                 <span className="text-white">
                   <i className="fas fa-sign-in-alt"></i> Sign in
                 </span>
               </Button>
-            ) : null}
-          </Nav>
-        </Navbar.Collapse>
+            </Nav>
+          )
+        }
 
         <ErrorModal
           modalTitle="Error detected"
