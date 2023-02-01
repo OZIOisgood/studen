@@ -711,13 +711,13 @@ export const Lessons: FC<LessonsProps> = ({
                       onClick={() => {
                         if (
                           courses != null
-                            ? courses[Number(courseIndex)].staticLink
+                            ? courses[Number(courseIndex)]?.staticLink
                             : false
                         ) {
                           setUseStaticLink(true);
                           setLessonConferenceLink(
                             courses != null
-                              ? courses[Number(courseIndex)].staticLink
+                              ? courses[Number(courseIndex)]?.staticLink
                               : ""
                           );
                         }
@@ -743,7 +743,7 @@ export const Lessons: FC<LessonsProps> = ({
                   ) : (
                     <Alert variant="secondary">
                       {courses != null
-                        ? courses[Number(courseIndex)].staticLink
+                        ? courses[Number(courseIndex)]?.staticLink
                         : ""}
                     </Alert>
                   )}
@@ -909,13 +909,13 @@ export const Lessons: FC<LessonsProps> = ({
                       onClick={() => {
                         if (
                           courses != null
-                            ? courses[Number(courseIndex)].staticLink
+                            ? courses[Number(courseIndex)]?.staticLink
                             : false
                         ) {
                           setUseStaticLink(true);
                           setLessonConferenceLink(
                             courses != null
-                              ? courses[Number(courseIndex)].staticLink
+                              ? courses[Number(courseIndex)]?.staticLink
                               : ""
                           );
                         }
@@ -939,7 +939,7 @@ export const Lessons: FC<LessonsProps> = ({
                   ) : (
                     <Alert variant="secondary">
                       {courses != null
-                        ? courses[Number(courseIndex)].staticLink
+                        ? courses[Number(courseIndex)]?.staticLink
                         : ""}
                     </Alert>
                   )}
