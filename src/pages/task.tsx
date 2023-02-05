@@ -107,7 +107,8 @@ const TaskPage: FC = (props) => {
   const answersCollectionRef = collection(firestore, "doneHomeworks");
   const answersQuery = query(
     answersCollectionRef,
-    where("homework", "==", params.taskID)
+    where("homework", "==", params.taskID),
+    where("user", "==", user.id)
   );
   const answers = useFirestoreQuery(answersQuery);
   const answer = answers !== null ? answers[0] : undefined;
@@ -127,9 +128,8 @@ const TaskPage: FC = (props) => {
     setFileTaskAnswer(null);
   };
 
-  const handleCloseAddTask = () => setInputsToDefault();
-  const handleCloseAddAnswer = () => setShowAddAnswer(false);
   const handleShowAddAnswer = () => setShowAddAnswer(true);
+  const handleCloseAddAnswer = () => setInputsToDefault();
 
   const db = getFirestore();
 
@@ -395,6 +395,16 @@ const TaskPage: FC = (props) => {
                     >
                       <b>
                         <AiFillEdit className="centered-label" /> Edit answer
+                      </b>
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="danger"
+                      className="text-white mt-2"
+                      onClick={handleShowDeleteAnswer}
+                    >
+                      <b>
+                        <i className="fas fa-trash-alt"></i> Delete answer
                       </b>
                     </Button>
                   </>
