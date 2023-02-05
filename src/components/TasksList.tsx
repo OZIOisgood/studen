@@ -16,7 +16,7 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import moment from "moment";
-import { FC, useContext, useState } from "react";
+import { FC, useContext, useRef, useState } from "react";
 import {
   Button,
   Container,
@@ -39,6 +39,7 @@ import {
   getTimeNow,
 } from "../utils";
 import { ErrorModal } from "./ErrorModal";
+import { validateFile } from "../utils/validation/uploadedFileValidation";
 
 type TasksListProps = {
   tasks: any;
@@ -123,7 +124,17 @@ export const TasksList: FC<TasksListProps> = ({
 
   const [showChangeTask, setShowChangeTask] = useState(false);
 
-  const handleCloseChangeTask = () => setShowChangeTask(false);
+
+  const setInputsToDefault = () => {
+    setShowChangeTask(false);
+    setTaskTitle("");
+    setTaskDescription("");
+    setTaskDeadLineTime("");
+    setTaskDeadLineDate(getTimeNow().toDate());
+    setFileTask(null);
+  };
+
+  const handleCloseChangeTask = () => setInputsToDefault();
   const handleShowChangeTask = () => setShowChangeTask(true);
 
   const handleDateChange = (date: Date) => {
@@ -136,7 +147,10 @@ export const TasksList: FC<TasksListProps> = ({
   const [taskDeadLineDate, setTaskDeadLineDate] = useState(
     getTimeNow().toDate()
   );
+  
+  const fileInputRef = useRef(null);
   const [fileTask, setFileTask] = useState<any>(null);
+  const [showFileWarning, setShowFileWarning] = useState(false);
 
   const handleChangeTask = async () => {
     try {
@@ -196,11 +210,7 @@ export const TasksList: FC<TasksListProps> = ({
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
-      setTaskTitle("");
-      setTaskDescription("");
-      setTaskDeadLineTime("");
-      setTaskDeadLineDate(getTimeNow().toDate());
-      setFileTask(null);
+      setInputsToDefault();
     }
   };
   //
@@ -268,11 +278,6 @@ export const TasksList: FC<TasksListProps> = ({
                             variant="secondary"
                             className="task-change-btn"
                             onClick={() => {
-                              // console.log(task);
-                              // console.log(task.deadlineTime);
-                              // console.log(
-                              //   getPrettyTimeByStamp(task.deadlineTime)
-                              // );
                               setTaskToChange(task);
                               handleShowChangeTask();
 
@@ -281,7 +286,6 @@ export const TasksList: FC<TasksListProps> = ({
                               setTaskDeadLineTime(
                                 getPrettyTimeByStamp(task.deadlineTime)
                               );
-                              // setCourseIndex(courses.indexOf(task.course));
                               setTaskDeadLineDate(
                                 moment.unix(task.deadlineTime.seconds).toDate()
                               );
@@ -367,15 +371,33 @@ export const TasksList: FC<TasksListProps> = ({
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3 task-answer">
+              <Form.Group className="mb-3 task-file">
                 <Form.Label>Additional file</Form.Label>
                 <Form.Control
+                  isInvalid={showFileWarning}
+                  ref={fileInputRef}
                   type="file"
                   placeholder="Add file"
                   onChange={(event: any) => {
-                    setFileTask(event.target.files[0]);
+                      const file = event.target.files[0];
+              
+                      if (validateFile(file)) {
+                        setFileTask(file);
+                        setShowFileWarning(false);
+                      } else {
+                        (fileInputRef.current as any).value = "";
+                        setShowFileWarning(true);
+                      }
                   }}
                 />
+                <Form.Label
+                  className={
+                    `text-${
+                    showFileWarning ? 'danger' : 'secondary'
+                    }`
+                  }>
+                  The file must be less than 50 MB
+                </Form.Label>
               </Form.Group>
 
               <div className="d-grid mt-5">

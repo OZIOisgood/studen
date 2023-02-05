@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Button,
@@ -47,6 +47,7 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { storage } from "../firebase-config";
+import { validateFile } from "../utils/validation/uploadedFileValidation";
 
 const TaskPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
@@ -117,7 +118,16 @@ const TaskPage: FC = (props) => {
 
   const [taskAnswer, setTaskAnswer] = useState("");
   const [fileTaskAnswer, setFileTaskAnswer] = useState<any>(null);
+  const fileInputRef = useRef(null);
+  const [showFileWarning, setShowFileWarning] = useState(false);
 
+  const setInputsToDefault = () => {
+    setShowAddAnswer(false);
+    setTaskAnswer("");
+    setFileTaskAnswer(null);
+  };
+
+  const handleCloseAddTask = () => setInputsToDefault();
   const handleCloseAddAnswer = () => setShowAddAnswer(false);
   const handleShowAddAnswer = () => setShowAddAnswer(true);
 
@@ -170,8 +180,7 @@ const TaskPage: FC = (props) => {
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
-      setTaskAnswer("");
-      setFileTaskAnswer(null);
+      setInputsToDefault();
     }
   };
   //
@@ -231,8 +240,7 @@ const TaskPage: FC = (props) => {
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
-      setTaskAnswer("");
-      setFileTaskAnswer(null);
+      setInputsToDefault();
     }
   };
   //
@@ -440,34 +448,6 @@ const TaskPage: FC = (props) => {
             </Col>
           </Row>
 
-          <Modal
-            show={showDeleteAnswer}
-            onHide={handleCloseDeleteAnswer}
-            centered
-          >
-            <Modal.Header closeButton>
-              <Modal.Title>Deleting the answer</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Modal.Title className="fs-5 text-secondary">
-                {`Are you sure you want to delete this answer?`}
-              </Modal.Title>
-              <Form>
-                <div className="d-grid mt-4">
-                  <Button
-                    variant="danger"
-                    className="text-white"
-                    onClick={() => {
-                      handleDeleteAnswer();
-                    }}
-                  >
-                    <b>Delete answer</b>
-                  </Button>
-                </div>
-              </Form>
-            </Modal.Body>
-          </Modal>
-
           <Modal show={showEditAnswer} onHide={handleCloseEditAnswer} centered>
             <Modal.Header closeButton>
               <Modal.Title>Editing the answer</Modal.Title>
@@ -487,15 +467,32 @@ const TaskPage: FC = (props) => {
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-3 task-answer">
+                <Form.Group className="mb-3 task-file">
                   <Form.Label>Additional file</Form.Label>
                   <Form.Control
+                    isInvalid={showFileWarning}
+                    ref={fileInputRef}
                     type="file"
                     placeholder="Add file"
                     onChange={(event: any) => {
-                      setFileTaskAnswer(event.target.files[0]);
+                      const file = event.target.files[0];
+
+                      if (validateFile(file)) {
+                        setFileTaskAnswer(file);
+                        setShowFileWarning(false);
+                      } else {
+                        (fileInputRef.current as any).value = "";
+                        setShowFileWarning(true);
+                      }
                     }}
                   />
+                  <Form.Label
+                    className={`text-${
+                      showFileWarning ? "danger" : "secondary"
+                    }`}
+                  >
+                    The file must be less than 50 MB
+                  </Form.Label>
                 </Form.Group>
 
                 <div className="d-grid mt-5">
@@ -534,15 +531,32 @@ const TaskPage: FC = (props) => {
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-3 task-answer">
+                <Form.Group className="mb-3 task-file">
                   <Form.Label>Additional file</Form.Label>
                   <Form.Control
+                    isInvalid={showFileWarning}
+                    ref={fileInputRef}
                     type="file"
                     placeholder="Add file"
                     onChange={(event: any) => {
-                      setFileTaskAnswer(event.target.files[0]);
+                      const file = event.target.files[0];
+
+                      if (validateFile(file)) {
+                        setFileTaskAnswer(file);
+                        setShowFileWarning(false);
+                      } else {
+                        (fileInputRef.current as any).value = "";
+                        setShowFileWarning(true);
+                      }
                     }}
                   />
+                  <Form.Label
+                    className={`text-${
+                      showFileWarning ? "danger" : "secondary"
+                    }`}
+                  >
+                    The file must be less than 50 MB
+                  </Form.Label>
                 </Form.Group>
 
                 <div className="d-grid mt-5">
@@ -557,6 +571,34 @@ const TaskPage: FC = (props) => {
                       <BsFillFileEarmarkPlusFill className="centered-label" />{" "}
                       Add task
                     </b>
+                  </Button>
+                </div>
+              </Form>
+            </Modal.Body>
+          </Modal>
+
+          <Modal
+            show={showDeleteAnswer}
+            onHide={handleCloseDeleteAnswer}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Deleting the answer</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Modal.Title className="fs-5 text-secondary">
+                {`Are you sure you want to delete this answer?`}
+              </Modal.Title>
+              <Form>
+                <div className="d-grid mt-4">
+                  <Button
+                    variant="danger"
+                    className="text-white"
+                    onClick={() => {
+                      handleDeleteAnswer();
+                    }}
+                  >
+                    <b>Delete answer</b>
                   </Button>
                 </div>
               </Form>

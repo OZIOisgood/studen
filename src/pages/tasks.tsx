@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Container, Modal, Form } from "react-bootstrap";
 import {
@@ -29,6 +29,7 @@ import "../styles/pages/tasks.sass";
 import { v4 } from "uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebase-config";
+import { validateFile } from "../utils/validation/uploadedFileValidation";
 
 const TasksPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
@@ -127,13 +128,26 @@ const TasksPage: FC = (props) => {
   );
   const [taskDescription, setTaskDescription] = useState("");
   const [taskMaxMark, setTaskMaxMark] = useState("");
+  
+  const fileInputRef = useRef(null);
+  const [fileTask, setFileTask] = useState<any>(null);
+  const [showFileWarning, setShowFileWarning] = useState(false);
 
-  const handleCloseAddTask = () => setShowAddTask(false);
+
+  const setInputsToDefault = () => {
+    setShowAddTask(false);
+    setTaskTitle("");
+    setTaskDescription("");
+    setCourseIndex("Choose course ...");
+    setTaskDeadLineTime("");
+    setTaskDeadLineDate(getTimeNow().toDate());
+    setFileTask(null);
+  };
+
+  const handleCloseAddTask = () => setInputsToDefault();
   const handleShowAddTask = () => setShowAddTask(true);
 
   const db = getFirestore();
-
-  const [fileTask, setFileTask] = useState<any>(null);
 
   const handleAddTask = async () => {
     try {
@@ -200,12 +214,7 @@ const TasksPage: FC = (props) => {
     } catch (error: any) {
       handleShowErrorModal(error.message);
     } finally {
-      setTaskTitle("");
-      setTaskDescription("");
-      setCourseIndex("Choose course ...");
-      setTaskDeadLineTime("");
-      setTaskDeadLineDate(getTimeNow().toDate());
-      setFileTask(null);
+      setInputsToDefault();
     }
   };
   //
@@ -306,15 +315,33 @@ const TasksPage: FC = (props) => {
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-3 task-answer">
+                <Form.Group className="mb-3 task-file">
                   <Form.Label>Additional file</Form.Label>
                   <Form.Control
+                    isInvalid={showFileWarning}
+                    ref={fileInputRef}
                     type="file"
                     placeholder="Add file"
                     onChange={(event: any) => {
-                      setFileTask(event.target.files[0]);
+                      const file = event.target.files[0];
+              
+                      if (validateFile(file)) {
+                        setFileTask(file);
+                        setShowFileWarning(false);
+                      } else {
+                        (fileInputRef.current as any).value = "";
+                        setShowFileWarning(true);
+                      }
                     }}
                   />
+                  <Form.Label
+                    className={
+                      `text-${
+                      showFileWarning ? 'danger' : 'secondary'
+                      }`
+                    }>
+                    The file must be less than 50 MB
+                  </Form.Label>
                 </Form.Group>
 
                 <Form.Group className="mb-3 task-course">
