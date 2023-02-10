@@ -13,6 +13,7 @@ import {
   getTimeNow,
   usePageReloadInterval,
 } from "../utils";
+import { Paper } from "./Paper";
 
 import "../styles/components/schedule.sass";
 
@@ -73,7 +74,7 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
   }
 
   return (
-    <Alert variant="dark box mt-5 schedule-container">
+    <Paper variant="mt-5 schedule-container">
       <Row>
         <Col xs={9}>
           <h2 className="text-white">Schedule</h2>
@@ -240,6 +241,6 @@ export const Schedule: FC<ScheduleProps> = ({ courses, lessons, groupID }) => {
           <h2 className="text-muted text-center ">No lessons this day</h2>
         )}
       </Container>
-    </Alert>
+    </Paper>
   );
 };

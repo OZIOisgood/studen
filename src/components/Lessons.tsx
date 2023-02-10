@@ -31,6 +31,7 @@ import { ErrorModal } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { checkTime, getPrettyTimeByStamp, momentWeek } from "../utils";
+import { Paper } from "./Paper";
 
 import "../styles/components/lessons.sass";
 
@@ -406,7 +407,7 @@ export const Lessons: FC<LessonsProps> = ({
   };
 
   return (
-    <Alert variant="dark box mt-5 lessons-container">
+    <Paper variant="mt-5 lessons-container">
       <Container className="d-grid gap-3">
         {lessons.length !== 0 ? (
           lessons?.map((item: any, index: number) => (
@@ -1019,6 +1020,6 @@ export const Lessons: FC<LessonsProps> = ({
           errorMessage={errorMessage}
         />
       </Container>
-    </Alert>
+    </Paper>
   );
 };

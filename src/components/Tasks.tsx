@@ -1,8 +1,9 @@
 import { FC } from "react";
-import { Alert, Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { getPrettyDateByStamp, getTimeNow } from "../utils";
-
 import moment from "moment";
+import { Paper } from "./Paper";
+
 import "../styles/components/tasks.sass";
 
 type TasksProps = {
@@ -46,7 +47,7 @@ export const Tasks: FC<TasksProps> = ({
   });
 
   return (
-    <Alert variant="dark box mt-5 tasks-container">
+    <Paper variant="mt-5 tasks-container">
       <Row>
         <Col xs={9}>
           <h2 className="text-white">Homeworks</h2>
@@ -171,6 +172,6 @@ export const Tasks: FC<TasksProps> = ({
           <h3 className="text-muted text-center">No tasks to do</h3>
         )}
       </Container>
-    </Alert>
+    </Paper>
   );
 };

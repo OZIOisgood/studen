@@ -2,8 +2,6 @@ import { FC, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Button,
-  Container,
-  Alert,
   Row,
   Col,
   Modal,
@@ -49,6 +47,7 @@ import { validateFile } from "../utils/validation/uploadedFileValidation";
 import { Wrapper } from "../components/Wrapper";
 
 import "../styles/pages/task.sass";
+import { Paper } from "../components/Paper";
 
 const TaskPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
@@ -284,7 +283,7 @@ const TaskPage: FC = (props) => {
 
           <Row className="mt-5">
             <Col xs={12} lg={8}>
-              <Alert variant="dark box d-grid">
+              <Paper variant="d-grid">
                 <h1 className="text-white">{task?.title}</h1>
                 <h2 className="text-white">
                   {
@@ -319,9 +318,9 @@ const TaskPage: FC = (props) => {
                     Sent without an additional file
                   </h3>
                 )}
-              </Alert>
+              </Paper>
               {answer !== undefined ? (
-                <Alert variant="dark box d-grid">
+                <Paper variant="d-grid">
                   <h1 className="text-white">Your answer:</h1>
                   <h3 className="text-white mt-3">
                     {answer !== undefined
@@ -356,11 +355,11 @@ const TaskPage: FC = (props) => {
                       Sent without an additional file
                     </h3>
                   )}
-                </Alert>
+                </Paper>
               ) : null}
             </Col>
             <Col xs={12} lg={4}>
-              <Alert variant="dark box d-grid">
+              <Paper variant="d-grid">
                 {answer === undefined ? (
                   <>
                     <h3 className="text-white">Answer is not added</h3>
@@ -413,52 +412,52 @@ const TaskPage: FC = (props) => {
                     </Button>
                   </>
                 )}
-              </Alert>
+              </Paper>
               {answer !== undefined ? (
-                <Alert variant="dark box d-grid">
+                <Paper variant="d-grid">
                   <h4 className="text-white">
                     Your mark: <b>{answer?.mark + " / " + task?.maxMark}</b>
                   </h4>
-                </Alert>
+                </Paper>
               ) : null}
               {answer !== undefined ? (
                 <>
                   {answer?.addTime.seconds !== answer?.lastEditTime.seconds ? (
-                    <Alert variant="dark box d-grid">
+                    <Paper variant="d-grid">
                       <h4 className="text-white">
                         Last edit:
                         <br />
                         {getPrettyTimeByStamp(answer?.lastEditTime)}{" "}
                         {getPrettyDateByStamp(answer?.lastEditTime)}
                       </h4>
-                    </Alert>
+                    </Paper>
                   ) : null}
-                  <Alert variant="dark box d-grid">
+                  <Paper variant="d-grid">
                     <h4 className="text-white">
                       Answer added:
                       <br />
                       {getPrettyTimeByStamp(answer?.addTime)}{" "}
                       {getPrettyDateByStamp(answer?.addTime)}
                     </h4>
-                  </Alert>
+                  </Paper>
                 </>
               ) : null}
-              <Alert variant="dark box d-grid">
+              <Paper variant="d-grid">
                 <h4 className="text-white">
                   Deadline:
                   <br />
                   {getPrettyTimeByStamp(task?.deadlineTime)}{" "}
                   {getPrettyDateByStamp(task?.deadlineTime)}
                 </h4>
-              </Alert>
-              <Alert variant="dark box d-grid">
+              </Paper>
+              <Paper variant="d-grid">
                 <h4 className="text-white">
                   Created:
                   <br />
                   {getPrettyTimeByStamp(task?.createTime)}{" "}
                   {getPrettyDateByStamp(task?.deadlineTime)}
                 </h4>
-              </Alert>
+              </Paper>
             </Col>
           </Row>
 

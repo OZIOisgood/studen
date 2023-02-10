@@ -1,12 +1,13 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Container, Alert, Row, Col } from "react-bootstrap";
+import { Button, Container, Row, Col } from "react-bootstrap";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { PrivateRoute, GroupRoute, Lessons } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
 import moment from "moment";
 import { Wrapper } from "../components/Wrapper";
+import { Paper } from "../components/Paper";
 
 import "../styles/pages/schedule.sass";
 
@@ -92,7 +93,7 @@ const SchedulePage: FC = (props) => {
             <span className="text-muted">{" / "}</span> Schedule
           </h1>
 
-          <Alert variant="dark box mt-5 box">
+          <Paper variant="mt-5">
             <Container>
               <Row className="mt-3">
                 <Col xs={2} md={1} className="text-align-right">
@@ -189,7 +190,7 @@ const SchedulePage: FC = (props) => {
               ))} */}
               </Row>
             </Container>
-          </Alert>
+          </Paper>
 
           <Lessons
             groupID={params.id}

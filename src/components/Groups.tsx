@@ -1,12 +1,13 @@
 import { collection, query, where } from "firebase/firestore";
 import { FC, useContext } from "react";
-import { Button, Container, Alert, Row, Col } from "react-bootstrap";
+import { Button, Container, Row, Col } from "react-bootstrap";
 import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 
 import "../styles/components/groups.sass";
 import { getUser } from "../utils";
+import { Paper } from "./Paper";
 
 type GroupsProps = {
   groups: any;
@@ -28,7 +29,7 @@ export const Groups: FC<GroupsProps> = ({ groups, title }) => {
   // myGroups = [];
 
   return (
-    <Alert variant="dark box mt-5 box-groups">
+    <Paper variant="mt-5 box-groups">
       <h2 className="text-white">{title}</h2>
       <Container className="mt-3">
         {groups.length !== 0 ? (
@@ -60,6 +61,6 @@ export const Groups: FC<GroupsProps> = ({ groups, title }) => {
           <h3 className="text-muted text-center">No groups</h3>
         )}
       </Container>
-    </Alert>
+    </Paper>
   );
 };

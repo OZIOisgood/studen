@@ -20,7 +20,6 @@ import { FC, useContext, useRef, useState } from "react";
 import {
   Button,
   Container,
-  Alert,
   Row,
   Col,
   ButtonGroup,
@@ -40,6 +39,7 @@ import {
 } from "../utils";
 import { ErrorModal } from "./ErrorModal";
 import { validateFile } from "../utils/validation/uploadedFileValidation";
+import { Paper } from "./Paper";
 
 type TasksListProps = {
   tasks: any;
@@ -216,7 +216,7 @@ export const TasksList: FC<TasksListProps> = ({
   //
 
   return (
-    <Alert variant="dark box">
+    <Paper>
       <Container className="d-grid gap-3">
         <h2 className="text-white">{title}</h2>
         {tasks.length !== 0 ? (
@@ -450,6 +450,6 @@ export const TasksList: FC<TasksListProps> = ({
           errorMessage={errorMessage}
         />
       </Container>
-    </Alert>
+    </Paper>
   );
 };

@@ -1,6 +1,7 @@
 import { FC } from "react";
-import { Button, Container, Alert, Row, Col } from "react-bootstrap";
+import { Button, Container, Row, Col } from "react-bootstrap";
 import { Avatar } from "../components";
+import { Paper } from "./Paper";
 
 type UsersProps = {
   users: any;
@@ -9,7 +10,7 @@ type UsersProps = {
 
 export const Users: FC<UsersProps> = ({ users, title }) => {
   return (
-    <Alert variant="dark box mt-5">
+    <Paper variant="mt-5">
       <h2 className="text-white">{title}</h2>
       <Container className="d-grid gap-3 mt-5">
         {users?.map((item: any, index: number) => (
@@ -34,6 +35,6 @@ export const Users: FC<UsersProps> = ({ users, title }) => {
           </Button>
         ))}
       </Container>
-    </Alert>
+    </Paper>
   );
 };

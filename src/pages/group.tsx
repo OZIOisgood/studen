@@ -43,6 +43,7 @@ import { storage } from "../firebase-config";
 import { deleteObject, ref } from "firebase/storage";
 import moment from "moment";
 import { Wrapper } from "../components/Wrapper";
+import { Paper } from "../components/Paper";
 
 import "../styles/pages/group.sass";
 
@@ -676,7 +677,7 @@ const GroupPage: FC = (props) => {
             groupID={params.id}
           />
 
-          <Alert variant="dark box mt-5">
+          <Paper variant="mt-5">
             <Row>
               <Col xs={9}>
                 <h2 className="text-white">Group courses</h2>
@@ -881,9 +882,9 @@ const GroupPage: FC = (props) => {
                 </Modal.Body>
               </Modal>
             </Container>
-          </Alert>
+          </Paper>
 
-          <Alert variant="dark box mt-5">
+          <Paper variant="mt-5">
             <h2 className="text-white">Students</h2>
             <Container className="d-grid gap-3 mt-5">
               {users?.map((item: any, index: number) => (
@@ -997,7 +998,7 @@ const GroupPage: FC = (props) => {
                 errorMessage={errorMessage}
               />
             </Container>
-          </Alert>
+          </Paper>
         </Wrapper>
       </GroupRoute>
     </PrivateRoute>
