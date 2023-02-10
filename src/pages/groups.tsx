@@ -22,6 +22,7 @@ import {
   Row,
 } from "react-bootstrap";
 import { ErrorModal, Groups, PrivateRoute } from "../components";
+import { Wrapper } from "../components/Wrapper";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { getUser, setUser } from "../utils";
@@ -170,7 +171,7 @@ const GroupsPage: FC = (props) => {
 
   return (
     <PrivateRoute>
-      <Container className="mt-5">
+      <Wrapper className="pt-5">
         <Row>
           <Col xs={6}>
             <h1 className="text-white">Groups</h1>
@@ -300,7 +301,7 @@ const GroupsPage: FC = (props) => {
           handleCloseErrorModal={handleCloseErrorModal}
           errorMessage={errorMessage}
         />
-      </Container>
+      </Wrapper>
     </PrivateRoute>
   );
 };

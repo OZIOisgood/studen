@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Container, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form } from "react-bootstrap";
 import {
   collection,
   doc,
@@ -18,6 +18,7 @@ import { FirebaseContext } from "../context/firebase";
 import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
 import Calendar from "react-calendar";
 import moment from "moment";
+import { Wrapper } from "../components/Wrapper";
 
 import "react-calendar/dist/Calendar.css";
 import "../styles/pages/allTasks.sass";
@@ -95,7 +96,10 @@ const AllTasksPage: FC = (props) => {
 
   return (
     <PrivateRoute>
-      <Container className="mt-5 tasks-container d-grid gap-3">
+      <Wrapper
+        showBackground
+        className="pt-5 tasks-container d-grid gap-3"
+      >
         <h1 className="text-white mb-5">
           <a href={`/home`} className="text-decoration-none text-white">
             Home
@@ -129,7 +133,7 @@ const AllTasksPage: FC = (props) => {
           titleNoTasks="No done tasks"
           isAdmin={false}
         />
-      </Container>
+      </Wrapper>
     </PrivateRoute>
   );
 };

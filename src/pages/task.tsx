@@ -36,8 +36,6 @@ import {
   BsFillFileEarmarkPlusFill,
 } from "react-icons/bs";
 import { AiFillEdit } from "react-icons/ai";
-
-import "../styles/pages/task.sass";
 import moment from "moment";
 import {
   deleteObject,
@@ -48,6 +46,9 @@ import {
 import { v4 } from "uuid";
 import { storage } from "../firebase-config";
 import { validateFile } from "../utils/validation/uploadedFileValidation";
+import { Wrapper } from "../components/Wrapper";
+
+import "../styles/pages/task.sass";
 
 const TaskPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
@@ -270,7 +271,10 @@ const TaskPage: FC = (props) => {
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
-        <Container className="mt-5 task-container">
+        <Wrapper
+          showBackground
+          className="pt-5 task-container"
+        >
           <h1 className="text-white">
             <a href={`/groups/${params.groupID}`}>{group?.name}</a>
             <span className="text-muted">{" / "}</span>{" "}
@@ -622,7 +626,7 @@ const TaskPage: FC = (props) => {
             handleCloseErrorModal={handleCloseErrorModal}
             errorMessage={errorMessage}
           />
-        </Container>
+        </Wrapper>
       </GroupRoute>
     </PrivateRoute>
   );

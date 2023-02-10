@@ -6,6 +6,7 @@ import { PrivateRoute, GroupRoute, Lessons } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
 import moment from "moment";
+import { Wrapper } from "../components/Wrapper";
 
 import "../styles/pages/schedule.sass";
 
@@ -82,7 +83,10 @@ const SchedulePage: FC = (props) => {
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
-        <Container className="mt-5 group-schedule-container">
+        <Wrapper
+          showBackground
+          className="pt-5 group-schedule-container"
+        >
           <h1 className="text-white">
             <a href={`/groups/${params.id}`}>{group?.name}</a>
             <span className="text-muted">{" / "}</span> Schedule
@@ -192,7 +196,7 @@ const SchedulePage: FC = (props) => {
             timeCalendar={timeCalendar}
             isAdmin={isAdmin}
           />
-        </Container>
+        </Wrapper>
       </GroupRoute>
     </PrivateRoute>
   );

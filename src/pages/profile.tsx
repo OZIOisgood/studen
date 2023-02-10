@@ -12,6 +12,7 @@ import { FC, useContext, useEffect, useState } from "react";
 import { Button, Container, Form, Modal } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { Avatar, ErrorModal, Groups, PrivateRoute } from "../components";
+import { Wrapper } from "../components/Wrapper";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { getUser } from "../utils";
@@ -95,7 +96,10 @@ const ProfilePage: FC = (props) => {
 
   return (
     <PrivateRoute>
-      <Container className="mt-5">
+      <Wrapper
+        showBackground
+        className="pt-5"
+      >
         <div className="d-flex justify-content-center">
           <Avatar email={profile?.email} height={150} size={250} />
         </div>
@@ -200,7 +204,7 @@ const ProfilePage: FC = (props) => {
         ) : null}
 
         <Groups title="User groups" groups={userGroups} />
-      </Container>
+      </Wrapper>
 
       <ErrorModal
         modalTitle="Error detected"

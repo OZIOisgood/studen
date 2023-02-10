@@ -8,13 +8,14 @@ import {
   where,
 } from "firebase/firestore";
 import { FC, useContext, useEffect, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { Avatar, Footer, NavBar, Schedule } from "../components";
 import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { getTimeNow } from "../utils";
+import { Wrapper } from "../components/Wrapper";
 
 import "../styles/pages/schedule.sass";
 
@@ -64,7 +65,10 @@ const SimpleSchedulePage: FC = (props) => {
     <>
       <NavBar />
 
-      <Container className="mt-5 group-simple-schedule-container">
+      <Wrapper
+        showBackground
+        className="pt-5 group-simple-schedule-container"
+      >
         <div className="d-flex justify-content-center">
           <Avatar href={group?.avatarURL} height={150} size={250} />
         </div>
@@ -89,7 +93,7 @@ const SimpleSchedulePage: FC = (props) => {
         </div>
 
         <Schedule courses={courses} lessons={lessons} />
-      </Container>
+      </Wrapper>
 
       <Footer />
     </>

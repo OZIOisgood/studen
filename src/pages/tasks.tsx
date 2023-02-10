@@ -23,13 +23,14 @@ import {
 } from "../utils";
 import Calendar from "react-calendar";
 import moment from "moment";
-
-import "react-calendar/dist/Calendar.css";
-import "../styles/pages/tasks.sass";
 import { v4 } from "uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebase-config";
 import { validateFile } from "../utils/validation/uploadedFileValidation";
+import { Wrapper } from "../components/Wrapper";
+
+import "react-calendar/dist/Calendar.css";
+import "../styles/pages/tasks.sass";
 
 const TasksPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
@@ -228,10 +229,14 @@ const TasksPage: FC = (props) => {
   // check if User Is Group Admin
   let isAdmin = checkUserIsGroupAdmin(group, user);
   //
+  
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
-        <Container className="mt-5 tasks-container d-grid gap-3">
+        <Wrapper
+          showBackground
+          className="pt-5 tasks-container d-grid gap-3"
+        >
           <h1 className="text-white mb-5">
             <a
               href={`/groups/${params.id}`}
@@ -418,7 +423,7 @@ const TasksPage: FC = (props) => {
             handleCloseErrorModal={handleCloseErrorModal}
             errorMessage={errorMessage}
           />
-        </Container>
+        </Wrapper>
       </GroupRoute>
     </PrivateRoute>
   );

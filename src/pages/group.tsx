@@ -39,11 +39,12 @@ import { FirebaseContext } from "../context/firebase";
 import * as ROUTES from "../constants/routes";
 import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
 import { BsShieldShaded, BsShieldSlashFill } from "react-icons/bs";
-
-import "../styles/pages/group.sass";
 import { storage } from "../firebase-config";
 import { deleteObject, ref } from "firebase/storage";
 import moment from "moment";
+import { Wrapper } from "../components/Wrapper";
+
+import "../styles/pages/group.sass";
 
 const GroupPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
@@ -495,7 +496,10 @@ const GroupPage: FC = (props) => {
   return (
     <PrivateRoute>
       <GroupRoute groupUsers={group?.users} userID={user?.id}>
-        <Container className="mt-5">
+        <Wrapper
+          showBackground
+          className="pt-5"
+        >
           <div className="d-flex justify-content-center">
             <Avatar href={group?.avatarURL} height={150} size={250} />
           </div>
@@ -994,7 +998,7 @@ const GroupPage: FC = (props) => {
               />
             </Container>
           </Alert>
-        </Container>
+        </Wrapper>
       </GroupRoute>
     </PrivateRoute>
   );
