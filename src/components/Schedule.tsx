@@ -1,19 +1,14 @@
+import moment from "moment";
 import { FC } from "react";
 import {
-  Button,
-  Container,
-  Alert,
-  ButtonGroup,
-  Row,
-  Col,
+  Button, ButtonGroup, Col, Container, Row
 } from "react-bootstrap";
-import moment from "moment";
+import { Paper } from "../components";
 import {
   getPrettyTimeByStamp,
   getTimeNow,
-  usePageReloadInterval,
+  usePageReloadInterval
 } from "../utils";
-import { Paper } from "./Paper";
 
 import "../styles/components/schedule.sass";
 

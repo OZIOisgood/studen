@@ -5,23 +5,21 @@ import {
   getDoc,
   orderBy,
   query,
-  where,
+  where
 } from "firebase/firestore";
 import { FC, useContext, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { Avatar, Footer, NavBar, Schedule } from "../components";
+import { Avatar, Footer, NavBar, Schedule, Wrapper } from "../components";
 import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { getTimeNow } from "../utils";
-import { Wrapper } from "../components/Wrapper";
 
 import "../styles/pages/schedule.sass";
 
 const SimpleSchedulePage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
-
   const params = useParams();
 
   const [group, setGroup] = useState<DocumentData | undefined>({});
@@ -56,10 +54,6 @@ const SimpleSchedulePage: FC = (props) => {
     where("group", "==", params.id)
   );
   const courses = useFirestoreQuery(coursesQuery);
-
-  // console.clear();
-  console.log("\n\n````````````````` SimpleSchedulePage ````````````````````");
-  // console.log(`timeCalendar: ${timeCalendar.format("DD/MM/YYYY")}`);
 
   return (
     <>

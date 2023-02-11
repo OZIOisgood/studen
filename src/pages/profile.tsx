@@ -6,22 +6,18 @@ import {
   getFirestore,
   query,
   updateDoc,
-  where,
+  where
 } from "firebase/firestore";
 import { FC, useContext, useEffect, useState } from "react";
-import { Button, Container, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { Avatar, ErrorModal, Groups, PrivateRoute } from "../components";
-import { Wrapper } from "../components/Wrapper";
+import { Avatar, ErrorModal, Groups, PrivateRoute, Wrapper } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { getUser } from "../utils";
 
-// import "../styles/pages/profile.sass";
-
 const ProfilePage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
-
   const user = getUser();
 
   const [showErrorModal, setShowErrorModal] = useState(false);

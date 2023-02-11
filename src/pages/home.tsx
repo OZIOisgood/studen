@@ -1,10 +1,9 @@
 import { collection, orderBy, query, where } from "firebase/firestore";
 import { FC, useContext } from "react";
-import { Groups, PrivateRoute, Schedule } from "../components";
+import { Groups, PrivateRoute, Schedule, Wrapper } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { getTimeNow, getUser } from "../utils";
-import { Wrapper } from "../components/Wrapper";
 
 import "../styles/pages/home.sass";
 
@@ -63,7 +62,6 @@ const HomePage: FC = (props) => {
         <h1 className="text-white">Home</h1>
         <Schedule courses={courses} lessons={lessons} />
         <Groups title="My groups" groups={myGroups} />
-        {/* <Users title="All users" users={users} /> */}
       </Wrapper>
     </PrivateRoute>
   );

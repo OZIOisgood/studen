@@ -7,39 +7,32 @@ import {
   query,
   Timestamp,
   updateDoc,
-  where,
+  where
 } from "firebase/firestore";
 import {
   deleteObject,
   getDownloadURL,
   ref,
-  uploadBytes,
+  uploadBytes
 } from "firebase/storage";
 import moment from "moment";
 import { FC, useContext, useRef, useState } from "react";
 import {
-  Button,
-  Container,
-  Row,
-  Col,
-  ButtonGroup,
-  Modal,
-  Form,
+  Button, ButtonGroup, Col, Container, Form, Modal, Row
 } from "react-bootstrap";
 import Calendar from "react-calendar";
 import { useParams } from "react-router-dom";
 import { v4 } from "uuid";
+import { ErrorModal, Paper } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { storage } from "../firebase-config";
 import {
   checkTime,
   getPrettyDateByStamp,
   getPrettyTimeByStamp,
-  getTimeNow,
+  getTimeNow
 } from "../utils";
-import { ErrorModal } from "./ErrorModal";
 import { validateFile } from "../utils/validation/uploadedFileValidation";
-import { Paper } from "./Paper";
 
 type TasksListProps = {
   tasks: any;

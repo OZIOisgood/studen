@@ -1,49 +1,28 @@
-import { FC, useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import {
-  Button,
-  Container,
-  Alert,
-  Row,
-  Col,
-  ButtonGroup,
-  Modal,
-  Form,
-} from "react-bootstrap";
-import {
-  addDoc,
-  collection,
-  doc,
+  addDoc, arrayRemove, collection, deleteDoc, doc,
   DocumentData,
   getDoc,
   getDocs,
   getFirestore,
   orderBy,
-  query,
-  where,
-  deleteDoc,
-  updateDoc,
-  arrayRemove,
-  setDoc,
+  query, setDoc, updateDoc, where
 } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
-import {
-  PrivateRoute,
-  GroupRoute,
-  Avatar,
-  Schedule,
-  Tasks,
-  ErrorModal,
-} from "../components";
-import { FirebaseContext } from "../context/firebase";
-import * as ROUTES from "../constants/routes";
-import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
-import { BsShieldShaded, BsShieldSlashFill } from "react-icons/bs";
-import { storage } from "../firebase-config";
 import { deleteObject, ref } from "firebase/storage";
-import moment from "moment";
-import { Wrapper } from "../components/Wrapper";
-import { Paper } from "../components/Paper";
+import { FC, useContext, useEffect, useState } from "react";
+import {
+  Button, ButtonGroup, Col, Container, Form, Modal, Row
+} from "react-bootstrap";
+import { BsShieldShaded, BsShieldSlashFill } from "react-icons/bs";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Avatar, ErrorModal, GroupRoute, Paper, PrivateRoute, Schedule,
+  Tasks, Wrapper
+} from "../components";
+import * as ROUTES from "../constants/routes";
+import { FirebaseContext } from "../context/firebase";
+import { storage } from "../firebase-config";
+import { useFirestoreQuery } from "../hooks";
+import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
 
 import "../styles/pages/group.sass";
 
@@ -453,6 +432,7 @@ const GroupPage: FC = (props) => {
   //
 
   // toggleAdmin
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [userToggleAdmin, setUserToggleAdmin] = useState("");
 
   const handleToggleAdmin = async (userIDToggleAdmin: string) => {
@@ -488,11 +468,6 @@ const GroupPage: FC = (props) => {
   // check if User Is Group Admin
   let isAdmin = checkUserIsGroupAdmin(group, user);
   //
-
-  // console.log("############");
-  // console.log("user: ");
-  // console.log(user);
-  // console.log("############");
 
   return (
     <PrivateRoute>
@@ -895,7 +870,6 @@ const GroupPage: FC = (props) => {
                     className="d-grid gap-3"
                   >
                     <Button
-                      // disabled={true}
                       variant="secondary"
                       className="user-btn"
                       href={`/profile/${item.id}`}

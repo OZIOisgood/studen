@@ -1,13 +1,13 @@
 import { collection, query, where } from "firebase/firestore";
 import { FC, useContext } from "react";
-import { Button, Container, Row, Col } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { Paper } from "../components";
 import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
+import { getUser } from "../utils";
 
 import "../styles/components/groups.sass";
-import { getUser } from "../utils";
-import { Paper } from "./Paper";
 
 type GroupsProps = {
   groups: any;
@@ -24,9 +24,6 @@ export const Groups: FC<GroupsProps> = ({ groups, title }) => {
     where("users", "array-contains", user.id)
   );
   let myGroups = useFirestoreQuery(myGroupsQuery);
-
-  // groups = [];
-  // myGroups = [];
 
   return (
     <Paper variant="mt-5 box-groups">

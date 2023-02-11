@@ -12,7 +12,7 @@ import {
   query,
   Timestamp,
   updateDoc,
-  where,
+  where
 } from "firebase/firestore";
 import moment from "moment";
 import { FC, useContext, useEffect, useState } from "react";
@@ -24,14 +24,13 @@ import {
   Container,
   Form,
   Modal,
-  Row,
+  Row
 } from "react-bootstrap";
 import { useParams } from "react-router";
-import { ErrorModal } from "../components";
+import { ErrorModal, Paper } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { checkTime, getPrettyTimeByStamp, momentWeek } from "../utils";
-import { Paper } from "./Paper";
 
 import "../styles/components/lessons.sass";
 

@@ -2,19 +2,19 @@ import { FC } from "react";
 import { Route, Routes } from "react-router-dom";
 import * as ROUTES from "../constants/routes";
 
-import StarterPage from "../pages/starter";
-import HomePage from "../pages/home";
-import GroupsPage from "../pages/groups";
+import AllTasksPage from "../pages/allTasks";
 import GroupPage from "../pages/group";
+import GroupsPage from "../pages/groups";
+import HomePage from "../pages/home";
+import NotFoundPage from "../pages/notFound";
 import ProfilePage from "../pages/profile";
 import SchedulePage from "../pages/schedule";
-import TasksPage from "../pages/tasks";
-import TaskPage from "../pages/task";
-import SimpleSchedulePage from "../pages/simpleSchedule";
-import AllTasksPage from "../pages/allTasks";
 import SignInPage from "../pages/signin";
 import SignUpPage from "../pages/signup";
-import NotFoundPage from "../pages/notFound";
+import SimpleSchedulePage from "../pages/simpleSchedule";
+import StarterPage from "../pages/starter";
+import TaskPage from "../pages/task";
+import TasksPage from "../pages/tasks";
 
 const AppRoutes: FC = () => {
   return (

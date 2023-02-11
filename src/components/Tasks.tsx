@@ -1,8 +1,8 @@
+import moment from "moment";
 import { FC } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
+import { Paper } from "../components";
 import { getPrettyDateByStamp, getTimeNow } from "../utils";
-import moment from "moment";
-import { Paper } from "./Paper";
 
 import "../styles/components/tasks.sass";
 

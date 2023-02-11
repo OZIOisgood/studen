@@ -1,8 +1,6 @@
 import { FC } from "react";
-import { Alert, Container } from "react-bootstrap";
-import { Footer, NavBar } from "../components";
-import { Wrapper } from "../components/Wrapper";
-// import * as ROUTES from "../constants/routes";
+import { Alert } from "react-bootstrap";
+import { Footer, NavBar, Wrapper } from "../components";
 
 const NotFoundPage: FC = (props) => {
   return (

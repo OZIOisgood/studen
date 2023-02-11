@@ -15,19 +15,7 @@ const spacebase = require("../assets/starterPage/spacebase.png");
 
 const StarterPage: FC = (props) => {
   const { user, initializing } = useContext(FirebaseContext);
-  // const navigate = useNavigate();
-
-  // // signOut
-  // const signout = async () => {
-  //   await signOut(auth);
-  //   await localStorage.removeItem("authUser");
-  //   await navigate("/");
-  // };
-  // //
-
-  // if (getUser() == null && user != null) {
-  //   signout();
-  // }
+  
   return (
     <>
       <NavBar />

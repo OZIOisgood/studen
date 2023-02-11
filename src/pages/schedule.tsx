@@ -1,21 +1,17 @@
-import { FC, useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Button, Container, Row, Col } from "react-bootstrap";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
-import { PrivateRoute, GroupRoute, Lessons } from "../components";
+import moment from "moment";
+import { FC, useContext, useEffect, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import { GroupRoute, Lessons, Paper, PrivateRoute, Wrapper } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { checkUserIsGroupAdmin, getTimeNow, getUser } from "../utils";
-import moment from "moment";
-import { Wrapper } from "../components/Wrapper";
-import { Paper } from "../components/Paper";
 
 import "../styles/pages/schedule.sass";
 
 const SchedulePage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
-
   const user = getUser();
-
   const params = useParams();
 
   const [group, setGroup] = useState<DocumentData | undefined>({});
@@ -40,42 +36,6 @@ const SchedulePage: FC = (props) => {
   );
 
   const timeNowDayNumber = Number(timeNow.format("DD"));
-
-  // const {
-  //   prevWeekBeginning,
-  //   prevWeekEnd,
-  //   nextWeekBeginning,
-  //   nextWeekEnd,
-  //   weeksInMonth,
-  //   daysInFirstWeek,
-  //   daysInLastWeek,
-  // } = momentWeek(timeCalendar);
-
-  // const dayNumbers = [...Array(timeCalendar.daysInMonth())];
-
-  // let tempDayButton = 1;
-  // let tempWeekRendering = 1;
-  // let tempDaysInWeekRendered = 0;
-
-  //   const [lessons, setLessons] = useState<any>([]);
-
-  //   const dateChanged = () => {
-  //   };
-
-  //   const lessonsCollectionRef = collection(firestore, "lessons");
-  //   const lessonsQuery = query(
-  //     lessonsCollectionRef,
-  //     where("group", "==", params.id),
-  //     where("beginningTime", ">=", timeCalendar.startOf("day").toDate()),
-  //     where("beginningTime", "<=", timeCalendar.endOf("day").toDate()),
-  //     orderBy("beginningTime", "asc")
-  //   );
-  //   const lessons = useFirestoreQuery(lessonsQuery);
-
-  // console.clear();
-  // console.log("\n\n````````````````` SchedulePage ````````````````````");
-  // console.log(`timeCalendar: ${timeCalendar.format("DD/MM/YYYY")}`);
-  // console.log(timeNowDayNumber);
 
   // check if User Is Group Admin
   let isAdmin = checkUserIsGroupAdmin(group, user);
@@ -165,29 +125,6 @@ const SchedulePage: FC = (props) => {
                     {index + 1}
                   </Button>
                 ))}
-                {/* {[...Array(weeksInMonth)].map((week, weekIndex) => (
-                <Col
-                  xs={12}
-                  sm={{ span: 6, offset: 3 }}
-                  style={{
-                    border: "1px solid lightgray",
-                    borderRadius: "15px",
-                  }}
-                  className="gap-3 p-1"
-                >
-                  {
-                    // if (tempWeekRendering === 1) {
-                
-                    // }
-                    dayNumbers.map((day, dayIndex) => {
-                    if (tempDayButton !== day) {
-                      return <h5>{tempDayButton++}</h5>;
-                    } else {
-                      return null;
-                    }
-                  })}
-                </Col>
-              ))} */}
               </Row>
             </Container>
           </Paper>

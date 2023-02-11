@@ -1,4 +1,4 @@
-import { FC, ReactElement } from "react";
+import { FC } from "react";
 import { Alert } from "react-bootstrap";
 import styled from "styled-components";
 

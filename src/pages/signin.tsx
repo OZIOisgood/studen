@@ -2,11 +2,10 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { FC, useState } from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
-import { ErrorModal, Footer } from "../components";
+import { ErrorModal, Footer, Wrapper } from "../components";
 import * as ROUTES from "../constants/routes";
 import { auth } from "../firebase-config";
 import { getAuthErrorDesc, setUser } from "../utils";
-import { Wrapper } from "../components/Wrapper";
 
 import "../styles/pages/signin.sass";
 
@@ -101,12 +100,6 @@ const SignInPage: FC = (props) => {
             }}
           />
         </Form.Group>
-        {/* <Form.Group
-        controlId="remember-me"
-        className="d-flex justify-content-center mt-3"
-      >
-        <Form.Check label="Remember me" className="text-white" />
-      </Form.Group> */}
         <div className="d-grid">
           <Button
             variant="info"

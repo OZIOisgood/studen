@@ -8,32 +8,23 @@ import {
   query,
   setDoc,
   updateDoc,
-  where,
+  where
 } from "firebase/firestore";
 import moment from "moment";
 import { FC, useContext, useState } from "react";
 import {
   Button,
   ButtonGroup,
-  Col,
-  Container,
-  Form,
+  Col, Form,
   Modal,
-  Row,
+  Row
 } from "react-bootstrap";
-import { ErrorModal, Groups, PrivateRoute } from "../components";
-import { Wrapper } from "../components/Wrapper";
+import { ErrorModal, Groups, PrivateRoute, Wrapper } from "../components";
 import { FirebaseContext } from "../context/firebase";
 import { useFirestoreQuery } from "../hooks";
 import { getUser, setUser } from "../utils";
 
 const GroupsPage: FC = (props) => {
-  // console.clear();
-
-  console.log(
-    "++++++++++++++++++++++++++++++++++++++ GroupsPage ++++++++++++++++++++++++++++++++++++++"
-  );
-
   const { firestore } = useContext(FirebaseContext);
 
   const user = getUser();
@@ -53,19 +44,6 @@ const GroupsPage: FC = (props) => {
     where("users", "array-contains", user.id)
   );
   const myGroups = useFirestoreQuery(myGroupsQuery);
-
-  console.log("~~~~~~~~~~~~~~~~ myGroups ~~~~~~~~~~~~~~~~");
-  console.log(user);
-  console.log(myGroups);
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
-  // const allGroupsCollectionRef = collection(firestore, "groups");
-  // const allGroupsQuery = query(allGroupsCollectionRef);
-  // const allGroups = useFirestoreQuery(allGroupsQuery);
-
-  console.log(
-    "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  );
 
   const [showJoin, setShowJoin] = useState(false);
   const [showCreate, setShowCreate] = useState(false);

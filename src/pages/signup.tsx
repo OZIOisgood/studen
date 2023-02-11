@@ -1,13 +1,12 @@
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { FC, useState } from "react";
 import { Form } from "react-bootstrap";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, firestore as db } from "../firebase-config";
-import { setDoc, doc, getDoc } from "firebase/firestore";
-import * as ROUTES from "../constants/routes";
-import { getAuthErrorDesc, setUser } from "../utils";
-import { ErrorModal, Footer } from "../components";
+import { ErrorModal, Footer, Wrapper } from "../components";
 import { Steps } from "../components/signup/Steps";
-import { Wrapper } from "../components/Wrapper";
+import * as ROUTES from "../constants/routes";
+import { auth, firestore as db } from "../firebase-config";
+import { getAuthErrorDesc, setUser } from "../utils";
 
 import "../styles/pages/signin.sass";
 

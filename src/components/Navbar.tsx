@@ -1,19 +1,16 @@
+import { signOut } from "firebase/auth";
 import { FC, useContext, useState } from "react";
 import {
-  Navbar,
-  Nav,
   Button,
   Container,
   Dropdown,
-  DropdownButton,
+  DropdownButton, Nav, Navbar
 } from "react-bootstrap";
-import { signOut } from "firebase/auth";
-import { Avatar } from "./Avatar";
-import { FirebaseContext } from "../context/firebase";
+import { Avatar, ErrorModal } from "../components";
 import * as ROUTES from "../constants/routes";
+import { FirebaseContext } from "../context/firebase";
 
 import "../styles/components/navbar.sass";
-import { ErrorModal } from "./ErrorModal";
 
 const logo = require("../assets/studen_mid_logo_white.png");
 

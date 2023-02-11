@@ -1,33 +1,27 @@
-import { FC, useContext, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Button, Container, Modal, Form } from "react-bootstrap";
 import {
-  collection,
+  addDoc, collection,
   doc,
   DocumentData,
-  getDoc,
-  query,
-  where,
-  getFirestore,
-  Timestamp,
-  addDoc,
+  getDoc, getFirestore, query, Timestamp, where
 } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute, GroupRoute, TasksList, ErrorModal } from "../components";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import moment from "moment";
+import { FC, useContext, useEffect, useRef, useState } from "react";
+import { Button, Form, Modal } from "react-bootstrap";
+import Calendar from "react-calendar";
+import { useParams } from "react-router-dom";
+import { v4 } from "uuid";
+import { ErrorModal, GroupRoute, PrivateRoute, TasksList, Wrapper } from "../components";
 import { FirebaseContext } from "../context/firebase";
+import { storage } from "../firebase-config";
+import { useFirestoreQuery } from "../hooks";
 import {
   checkTime,
   checkUserIsGroupAdmin,
   getTimeNow,
-  getUser,
+  getUser
 } from "../utils";
-import Calendar from "react-calendar";
-import moment from "moment";
-import { v4 } from "uuid";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "../firebase-config";
 import { validateFile } from "../utils/validation/uploadedFileValidation";
-import { Wrapper } from "../components/Wrapper";
 
 import "react-calendar/dist/Calendar.css";
 import "../styles/pages/tasks.sass";
@@ -77,7 +71,6 @@ const TasksPage: FC = (props) => {
   const homeworksQuery = query(
     homeworksCollectionRef,
     where("group", "==", params.id)
-    // orderBy("deadlineTime", "asc")
   );
   const allHomeworks = useFirestoreQuery(homeworksQuery);
 
@@ -86,7 +79,6 @@ const TasksPage: FC = (props) => {
     doneHomeworksCollectionRef,
     where("user", "==", user.id),
     where("group", "==", params.id)
-    // orderBy("deadlineTime", "asc")
   );
   const doneHomeworks = useFirestoreQuery(doneHomeworksQuery);
 

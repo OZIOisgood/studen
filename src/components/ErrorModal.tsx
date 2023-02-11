@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 
 type ErrorModalProps = {
   modalTitle: string;

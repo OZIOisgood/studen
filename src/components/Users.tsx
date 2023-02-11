@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { Button, Container, Row, Col } from "react-bootstrap";
-import { Avatar } from "../components";
-import { Paper } from "./Paper";
+import { Avatar, Paper } from "../components";
 
 type UsersProps = {
   users: any;
@@ -15,7 +14,6 @@ export const Users: FC<UsersProps> = ({ users, title }) => {
       <Container className="d-grid gap-3 mt-5">
         {users?.map((item: any, index: number) => (
           <Button
-            // disabled={true}
             variant="secondary"
             key={item.id}
             className="user-btn"

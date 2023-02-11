@@ -1,53 +1,43 @@
-import { FC, useContext, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import {
-  Button,
-  Row,
-  Col,
-  Modal,
-  Form,
-} from "react-bootstrap";
 import {
   addDoc,
-  collection,
-  doc,
+  collection, deleteDoc, doc,
   DocumentData,
   getDoc,
   getFirestore,
-  query,
-  where,
-  deleteDoc,
-  Timestamp,
-  updateDoc,
+  query, Timestamp,
+  updateDoc, where
 } from "firebase/firestore";
-import { useFirestoreQuery } from "../hooks";
-import { PrivateRoute, GroupRoute, ErrorModal } from "../components";
-import { FirebaseContext } from "../context/firebase";
-import {
-  getPrettyDateByStamp,
-  getPrettyTimeByStamp,
-  getTimeNow,
-  getUser,
-} from "../utils";
-import {
-  BsFillFileEarmarkFill,
-  BsFillFileEarmarkPlusFill,
-} from "react-icons/bs";
-import { AiFillEdit } from "react-icons/ai";
-import moment from "moment";
 import {
   deleteObject,
   getDownloadURL,
   ref,
-  uploadBytes,
+  uploadBytes
 } from "firebase/storage";
+import moment from "moment";
+import { FC, useContext, useEffect, useRef, useState } from "react";
+import {
+  Button, Col, Form, Modal, Row
+} from "react-bootstrap";
+import { AiFillEdit } from "react-icons/ai";
+import {
+  BsFillFileEarmarkFill,
+  BsFillFileEarmarkPlusFill
+} from "react-icons/bs";
+import { useParams } from "react-router-dom";
 import { v4 } from "uuid";
+import { ErrorModal, GroupRoute, Paper, PrivateRoute, Wrapper } from "../components";
+import { FirebaseContext } from "../context/firebase";
 import { storage } from "../firebase-config";
+import { useFirestoreQuery } from "../hooks";
+import {
+  getPrettyDateByStamp,
+  getPrettyTimeByStamp,
+  getTimeNow,
+  getUser
+} from "../utils";
 import { validateFile } from "../utils/validation/uploadedFileValidation";
-import { Wrapper } from "../components/Wrapper";
 
 import "../styles/pages/task.sass";
-import { Paper } from "../components/Paper";
 
 const TaskPage: FC = (props) => {
   const { firestore } = useContext(FirebaseContext);
