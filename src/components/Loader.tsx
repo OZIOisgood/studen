@@ -1,12 +1,21 @@
 import { FC } from "react";
 import { Container, Spinner } from "react-bootstrap";
+import styled from "styled-components";
 
-import "../styles/components/loader.sass";
+const StyledContainer = styled(Container)`
+  display: grid;
+  height: 100%;
+  place-items: center;
+`;
 
 export const Loader: FC = () => {
   return (
-    <Container id="main-container" className="d-grid h-100">
-      <Spinner animation="border" variant="info" />
-    </Container>
+    <StyledContainer>
+      <Spinner
+        // size="sm"
+        animation="border"
+        variant="info"
+      />
+    </StyledContainer>
   );
 };
