@@ -64,6 +64,7 @@
     ]
   },
   "devDependencies": {
+    "@types/md5": "^2.3.2",
     "@types/styled-components": "^5.1.26",
     "@types/uuid": "^8.3.4",
     "node-sass": "^7.0.1",
