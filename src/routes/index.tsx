@@ -8,6 +8,7 @@ import GroupsPage from "../pages/groups";
 import HomePage from "../pages/home";
 import NotFoundPage from "../pages/notFound";
 import ProfilePage from "../pages/profile";
+import ChatPage from "../pages/chat";
 import SchedulePage from "../pages/schedule";
 import SignInPage from "../pages/signin";
 import SignUpPage from "../pages/signup";
@@ -41,6 +42,8 @@ const AppRoutes: FC = () => {
         />
 
         <Route path={`${ROUTES.HOMEWORKS}`} element={<AllTasksPage />} />
+
+        <Route path={`${ROUTES.CHAT}`} element={<ChatPage />} />
 
         <Route path={`${ROUTES.PROFILE}/:id`} element={<ProfilePage />} />
 

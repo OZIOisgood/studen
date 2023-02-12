@@ -5,5 +5,6 @@ export const SIGN_UP = "/signup";
 export const GROUPS = "/groups";
 export const COURSES = "#";
 export const HOMEWORKS = "/homeworks";
+export const CHAT = "/chat";
 export const PROFILE = "/profile";
 export const SETTINGS = "#";
